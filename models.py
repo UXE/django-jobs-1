@@ -30,7 +30,7 @@ class Job(models.Model):
 
 class Applicant(models.Model):
     """A user with contact information and data specific to being an applicant to a job."""
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, unique=True)
 
     def __unicode__(self):
         try:
@@ -45,7 +45,20 @@ class Applicant(models.Model):
 
 
 class Application(models.Model):
-    """A relationship between an applicant and a job that represents the applicant's interest in the job."""
+    """
+    A relationship between an applicant and a job that represents the applicant's interest in the job.
+
+    # Create an application.
+    >>> from wwu_housing.jobs.models import *
+    >>> applicant = Applicant.objects.all()[0]
+    >>> job = Job.objects.all()[0]
+    >>> application = Application.objects.create(job=job, applicant=applicant)
+    >>> application.save()
+    >>>
+    # Make sure start timestamp was created.
+    >>> assert application.start_timestamp is not None
+    >>> 
+    """
     applicant = models.ForeignKey(Applicant)
     job = models.ForeignKey(Job)
     start_timestamp = models.DateTimeField(editable=False, help_text="The time when the applicant started the application.")
@@ -54,6 +67,9 @@ class Application(models.Model):
 
     class Admin:
         list_display = ('applicant', 'job', 'start_timestamp', 'end_timestamp')
+
+    def __unicode__(self):
+        return u"%s for %s" % (self.applicant, self.job)
 
     def save(self, *args, **kwargs):
         if not self.id:
