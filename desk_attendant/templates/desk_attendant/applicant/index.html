@@ -1,4 +1,4 @@
-{% extends 'jobs/desk_attendant/base.html' %}
+{% extends 'desk_attendant/applicant/base.html' %}
 
 {% block title %}Desk Attendant Application{% endblock %}
 
@@ -7,10 +7,14 @@
 
     <form action="" method="post">
     <ul>
-        {{ availability_form.as_ul }}
+        {% for field in availability_form %}
+            <div>{{ field.label }} {{ field }}</div>
+        {% endfor %}
+        {% comment %}
         {{ reference_form.as_ul }}
         {{ placement_preference_form.as_ul }}
         {{ essay_response_form.as_ul }}
+        {% endcomment %}
         <li><input type="submit" /></li>
     </ul>
     </form>

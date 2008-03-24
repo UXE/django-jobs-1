@@ -1,4 +1,5 @@
 from django import newforms as forms
+from models import Availability, Reference, PlacementPreference, EssayResponse
 
 
 class AvailabilityForm(forms.ModelForm):
