@@ -10,11 +10,27 @@
         {% for field in availability_form %}
             <div>{{ field.label }} {{ field }}</div>
         {% endfor %}
-        {% comment %}
-        {{ reference_form.as_ul }}
-        {{ placement_preference_form.as_ul }}
-        {{ essay_response_form.as_ul }}
-        {% endcomment %}
+        <div>
+        {% for field in reference_form1 %}
+            {{ field.label }} {{ field }}
+        {% endfor %}
+        </div>
+        <div>
+        {% for field in reference_form2 %}
+            {{ field.label }} {{ field }}
+        {% endfor %}
+        </div>
+        <div>
+        {% for field in reference_form3 %}
+            {{ field.label }} {{ field }}
+        {% endfor %}
+        </div>
+        {% for field in placement_preference_form %}
+            <div>{{ field.label }} {{ field }}</div>
+        {% endfor %}
+        {% for field in essay_response_form %}
+            <div>{{ field.label }} {{ field }}</div>
+        {% endfor %}
         <li><input type="submit" /></li>
     </ul>
     </form>
