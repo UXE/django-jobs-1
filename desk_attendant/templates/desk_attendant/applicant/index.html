@@ -13,6 +13,7 @@
             <div>{{ field.label }} {{ field }}</div>
         {% endfor %}
     </div>
+    {% comment %}
     <div id="reference_group">
         <h2>References</h2>
         <div>
@@ -31,16 +32,23 @@
         {% endfor %}
         </div>
     </div>
+    {% endcomment %}
+    <div id="reference_group">
+        <h2>References</h2>
+        {% for field in reference_forms %}
+            <div>{{ field.label }} {{ field }}</div>
+        {% endfor %}
+    </div>
     <div id="placement_preference">
         <h2>Placement Preference</h2>
         {% for field in placement_preference_form %}
-            <div>{{ field.label }} {{ field }}</div>
+            <div>{{ field.rank}} {{ field.name }}</div>
         {% endfor %}
     </div>
     <div id="essay_response">
         <h2>Essay Questions</h2>
         {% for essay_response in essay_response_form %}
-            <p style="font-weight: strong;">{{ essay_response.q_string }}</p>
+            <p style="font-weight: strong;">{{ essay_response.prompt }}</p>
             {{ essay_response.answer }}
         {% endfor %}
     </div>
