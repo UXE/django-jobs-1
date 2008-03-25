@@ -1,38 +1,44 @@
 {% extends 'base.html' %}
 
 {% block title %}Desk Attendant Application{% endblock %}
+{% block extrahead %}<link rel="stylesheet" href="/~cliftoi/media/css/desk-attendant.css" type="text/css">{% endblock %}
 
 {% block body %}
     <h1>Desk Attendant Application</h1>
 
     <form action="" method="post">
-    <ul>
-        {% for field in availability_form %}
-            <div>{{ field.label }} {{ field }}</div>
-        {% endfor %}
-        <div>
-        {% for field in reference_form1 %}
-            {{ field.label }} {{ field }}
-        {% endfor %}
-        </div>
-        <div>
-        {% for field in reference_form2 %}
-            {{ field.label }} {{ field }}
-        {% endfor %}
-        </div>
-        <div>
-        {% for field in reference_form3 %}
-            {{ field.label }} {{ field }}
-        {% endfor %}
-        </div>
-        {% for field in placement_preference_form %}
-            <div>{{ field.label }} {{ field }}</div>
-        {% endfor %}
-        {% for field in essay_response_form %}
-            <div>{{ field.label }} {{ field }}</div>
-        {% endfor %}
-        <li><input type="submit" /></li>
-    </ul>
+    {% for field in availability_form %}
+        <div>{{ field.label }} {{ field }}</div>
+    {% endfor %}
+    <div>
+    {% for field in reference_form1 %}
+        {{ field.label }} {{ field }}
+    {% endfor %}
+    </div>
+    <div>
+    {% for field in reference_form2 %}
+        {{ field.label }} {{ field }}
+    {% endfor %}
+    </div>
+    <div>
+    {% for field in reference_form3 %}
+       {{ field.label }} {{ field }}
+    {% endfor %}
+    </div>
+    {% for field in placement_preference_form %}
+        <div>{{ field.label }} {{ field }}</div>
+    {% endfor %}
+    {% for essay_response in essay_response_form %}
+        <p style="font-weight: strong;">{{ essay_response.q_string }}</p>
+        {{ essay_response.answer }}
+    {% endfor %}
+    {% comment %}
+    {% for field in essay_response_form %}
+        <div>{{ field.label }} {{ field.value }}</div>
+        <div>{{ field.label }} {{ field }}</div>
+    {% endfor %}
+    {% endcomment %}
+    <div><input type="submit" value="Submit Application" /></div>
     </form>
 {% endblock %}
 

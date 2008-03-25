@@ -1,7 +1,8 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response
-from django.template import RequestContext
+from django.template import Template, RequestContext, Context
 from forms import AvailabilityForm, ReferenceForm, PlacementPreferenceForm, EssayResponseForm
+from models import EssayQuestion
 
 @login_required
 def index(request):
@@ -9,18 +10,29 @@ def index(request):
     Displays the application form for a desk attendant applicant
     """
     data = request.POST or None
-    availability_form = AvailabilityForm(data)
-    reference_form1 = ReferenceForm(data)
-    reference_form2 = ReferenceForm(data)
-    reference_form3 = ReferenceForm(data)
-    placement_preference_form = PlacementPreferenceForm(data)
-    essay_response_form = EssayResponseForm(data)
 
-    return render_to_response('desk_attendant/applicant/index.html', {
-                              'availability_form': availability_form,
-                              'reference_form1': reference_form1,
-                              'reference_form2': reference_form2,
-                              'reference_form3': reference_form3,
-                              'placement_preference_form': placement_preference_form, 
-                              'essay_response_form': essay_response_form,
-                              }, context_instance=RequestContext(request))
+    # Generate a form for each essay question
+    questions = EssayQuestion.objects.all()
+    context = {}
+    context['essay_response_form'] = []
+    c = Context(context)
+    for question in questions:
+        t = Template(question.question)
+        question.question = t.render(c)
+        subform = EssayResponseForm(data, initial={'question': question.question}, prefix=question.id)
+        if request.method == 'POST' and form.is_valid() and subform.is_valid():
+            response = EssayResponse(question_id=question.id)
+            response.answer = subform.cleaned_data['answer']
+            response.save()
+        else:
+            form_complete = False # TODO
+        subform.q_string = question.question
+        context['essay_response_form'].append(subform)
+
+    context['availability_form'] = AvailabilityForm(data)
+    context['reference_form1'] = ReferenceForm(data)
+    context['reference_form2'] = ReferenceForm(data)
+    context['reference_form3'] = ReferenceForm(data)
+    context['placement_preference_form'] = PlacementPreferenceForm(data)
+    
+    return render_to_response('desk_attendant/applicant/index.html', context)

@@ -25,6 +25,11 @@ class PlacementPreference(models.Model):
 class EssayQuestion(models.Model):
     """Essay questions."""
     question = models.CharField(max_length=255)
+    class Admin:
+        pass
+
+    def __unicode__(self):
+        return self.question
 
 
 class EssayResponse(models.Model):
