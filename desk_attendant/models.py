@@ -1,11 +1,12 @@
 from django.db import models
 from wwu_housing.jobs.models import Application
+from wwu_housing.keymanager import Building, Community
 
 
 class Availability(models.Model):
     """Questions related to applicant's availability."""
     on_campus = models.BooleanField(verbose_name="Will you be living on campus next year?")
-    on_campus_where = models.CharField(max_length=30, verbose_name="If yes, where will you be living?")
+    on_campus_where = models.ForeignKey(Building)
     work_study = models.NullBooleanField(verbose_name="Do you anticipate having federal work study next year?")
     hours_available = models.PositiveSmallIntegerField(verbose_name="How many hours will you be available per week?", help_text="Please use a whole number from one to nineteen.")
 
@@ -18,7 +19,7 @@ class Reference(models.Model):
 
 class PlacementPreference(models.Model):
     """This allows applicants to select which communities they would like to work in the most."""
-    community = models.CharField(max_length=50)
+    community = models.ForeignKey(Community)
     rank = models.PositiveSmallIntegerField()
 
 
