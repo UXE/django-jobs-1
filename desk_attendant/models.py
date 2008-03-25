@@ -1,6 +1,6 @@
 from django.db import models
 from wwu_housing.jobs.models import Application
-from wwu_housing.keymanager import Building, Community
+from wwu_housing.keymanager.models import Building, Community
 
 
 class Availability(models.Model):
