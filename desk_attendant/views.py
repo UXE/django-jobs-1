@@ -19,7 +19,7 @@ def index(request):
     context['essay_response_form'] = []
     for question in questions:
         subform = EssayResponseForm(data, initial={'question': question.question}, prefix=question.id)
-        if request.method == 'POST' and form.is_valid() and subform.is_valid():
+        if request.method == 'POST' and subform.is_valid():
             EssayResponse(question_id=question.id).save()
         else:
             form_complete = False # TODO
@@ -30,7 +30,7 @@ def index(request):
     context['placement_preference_form'] = []
     for community in Community.objects.all():
         subform = PlacementPreferenceForm(data, initial={'community': community.name}, prefix=community.id)
-        if request.method == 'POST' and form.is_valid() and subform.is_valid():
+        if request.method == 'POST' and subform.is_valid():
             PlacementPreference(community_id=community.id).save()
         else:
             form_complete = False # TODO
@@ -40,13 +40,12 @@ def index(request):
     # Generate each reference form
     context['reference_forms'] = []
     for i in xrange(1, NUMBER_OF_REFERENCE_FORMS+1):
-        context['reference_forms'].append(ReferenceForm(data, prefix=i))
-        pass
+        subform = ReferenceForm(data, prefix=1)
+        if request == 'POST' and subform.is_valid():
+            context['reference_forms'].append(subform)
+        else:
+            form_complete = False # TODO
 
+    # Add the easy one and render
     context['availability_form'] = AvailabilityForm(data)
-    #context['reference_form1'] = ReferenceForm(data)
-    #context['reference_form2'] = ReferenceForm(data)
-    #context['reference_form3'] = ReferenceForm(data)
-    #context['placement_preference_form'] = PlacementPreferenceForm(data)
-    
     return render_to_response('desk_attendant/applicant/index.html', context)

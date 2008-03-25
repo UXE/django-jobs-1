@@ -13,26 +13,6 @@
             <div>{{ field.label }} {{ field }}</div>
         {% endfor %}
     </div>
-    {% comment %}
-    <div id="reference_group">
-        <h2>References</h2>
-        <div>
-        {% for field in reference_form1 %}
-            {{ field.label }} {{ field }}
-        {% endfor %}
-        </div>
-        <div>
-        {% for field in reference_form2 %}
-            {{ field.label }} {{ field }}
-        {% endfor %}
-        </div>
-        <div>
-        {% for field in reference_form3 %}
-           {{ field.label }} {{ field }}
-        {% endfor %}
-        </div>
-    </div>
-    {% endcomment %}
     <div id="reference_group">
         <h2>References</h2>
         {% for field in reference_forms %}
@@ -52,12 +32,6 @@
             {{ essay_response.answer }}
         {% endfor %}
     </div>
-    {% comment %}
-    {% for field in essay_response_form %}
-        <div>{{ field.label }} {{ field.value }}</div>
-        <div>{{ field.label }} {{ field }}</div>
-    {% endfor %}
-    {% endcomment %}
     <div><input type="submit" value="Submit Application" /></div>
     </form>
 {% endblock %}
