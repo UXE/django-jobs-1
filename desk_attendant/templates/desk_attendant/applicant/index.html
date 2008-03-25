@@ -10,13 +10,19 @@
     <div id="availability">
         <h2>General Information</h2>
         {% for field in availability_form %}
-            <div>{{ field.label }} {{ field }}</div>
+            <div>
+                {{ field.label }} {{ field }}
+                {% if field.help_text %}<span>{{ field.help_text }}</span>{% endif %}
+                {% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}
+            </div>
         {% endfor %}
     </div>
     <div id="reference_group">
         <h2>References</h2>
-        {% for field in reference_forms %}
-            <div>{{ field.label }} {{ field }}</div>
+        {% for reference_form in reference_forms %}
+            {% for field in reference_form %}
+                <div>{{ field.label }} {{ field }}</div>
+            {% endfor %}
         {% endfor %}
     </div>
     <div id="placement_preference">

@@ -20,9 +20,7 @@ def index(request):
     for question in questions:
         subform = EssayResponseForm(data, initial={'question': question.question}, prefix=question.id)
         if request.method == 'POST' and subform.is_valid():
-            EssayResponse(question_id=question.id).save()
-        else:
-            form_complete = False # TODO
+            subform.save()
         subform.prompt = question
         context['essay_response_form'].append(subform)
 
@@ -31,9 +29,7 @@ def index(request):
     for community in Community.objects.all():
         subform = PlacementPreferenceForm(data, initial={'community': community.name}, prefix=community.id)
         if request.method == 'POST' and subform.is_valid():
-            PlacementPreference(community_id=community.id).save()
-        else:
-            form_complete = False # TODO
+            subform.save()
         subform.name = community.name
         context['placement_preference_form'].append(subform)
 
@@ -42,9 +38,8 @@ def index(request):
     for i in xrange(1, NUMBER_OF_REFERENCE_FORMS+1):
         subform = ReferenceForm(data, prefix=1)
         if request == 'POST' and subform.is_valid():
-            context['reference_forms'].append(subform)
-        else:
-            form_complete = False # TODO
+            subform.save()
+        context['reference_forms'].append(subform)
 
     # Add the easy one and render
     context['availability_form'] = AvailabilityForm(data)
