@@ -7,9 +7,11 @@ class Availability(models.Model):
     """Questions related to applicant's availability."""
     #application = models.ForeignKey(Application, unique=True)
     on_campus = models.BooleanField(verbose_name="Will you be living on campus next year?")
-    on_campus_where = models.ForeignKey(Building)
+    on_campus_where = models.ForeignKey(Building, blank=True)
     work_study = models.NullBooleanField(verbose_name="Do you anticipate having federal work study next year?")
     hours_available = models.PositiveSmallIntegerField(verbose_name="How many hours will you be available per week?", help_text="Please use a whole number from one to nineteen.")
+    class Admin:
+        pass
 
 
 class Reference(models.Model):
@@ -17,6 +19,8 @@ class Reference(models.Model):
     #application = models.ForeignKey(Application)
     name = models.CharField(max_length=255, verbose_name="Reference's Name")
     phone = models.CharField(max_length=20, verbose_name="Reference's Phone Number")
+    class Admin:
+        pass
 
 
 class PlacementPreference(models.Model):
@@ -24,6 +28,8 @@ class PlacementPreference(models.Model):
     #application = models.ForeignKey(Application)
     community = models.ForeignKey(Community)
     rank = models.PositiveSmallIntegerField()
+    class Admin:
+        pass
 
 
 class EssayQuestion(models.Model):
@@ -41,6 +47,8 @@ class EssayResponse(models.Model):
     #application = models.ForeignKey(Application)
     question = models.ForeignKey(EssayQuestion)
     answer = models.TextField()
+    class Admin:
+        pass
 
 
 class ApplicantStatus(models.Model):
@@ -48,3 +56,5 @@ class ApplicantStatus(models.Model):
     #application = models.ForeignKey(Application)
     name = models.CharField(max_length=50)
     value = models.CharField(max_length=50)
+    class Admin:
+        pass
