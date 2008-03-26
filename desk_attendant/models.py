@@ -5,6 +5,7 @@ from wwu_housing.keymanager.models import Building, Community
 
 class Availability(models.Model):
     """Questions related to applicant's availability."""
+    #application = models.ForeignKey(Application, unique=True)
     on_campus = models.BooleanField(verbose_name="Will you be living on campus next year?")
     on_campus_where = models.ForeignKey(Building)
     work_study = models.NullBooleanField(verbose_name="Do you anticipate having federal work study next year?")
@@ -13,12 +14,14 @@ class Availability(models.Model):
 
 class Reference(models.Model):
     """This describes people who can vouch for an applicant."""
+    #application = models.ForeignKey(Application)
     name = models.CharField(max_length=255, verbose_name="Reference's Name")
     phone = models.CharField(max_length=20, verbose_name="Reference's Phone Number")
 
 
 class PlacementPreference(models.Model):
     """This allows applicants to select which communities they would like to work in the most."""
+    #application = models.ForeignKey(Application)
     community = models.ForeignKey(Community)
     rank = models.PositiveSmallIntegerField()
 
@@ -35,11 +38,13 @@ class EssayQuestion(models.Model):
 
 class EssayResponse(models.Model):
     """Applicant responses to the essay questions."""
+    #application = models.ForeignKey(Application)
     question = models.ForeignKey(EssayQuestion)
     answer = models.TextField()
 
 
 class ApplicantStatus(models.Model):
     """This tracks the status of the application in each hall (e.g., "applied," "hired," etc.)."""
+    #application = models.ForeignKey(Application)
     name = models.CharField(max_length=50)
     value = models.CharField(max_length=50)

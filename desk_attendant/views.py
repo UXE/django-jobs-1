@@ -1,15 +1,28 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response
 from django.template import Template, RequestContext, Context
+from wwu_housing import jobs
+from wwu_housing.keymanager.models import Community
 from forms import AvailabilityForm, ReferenceForm, PlacementPreferenceForm, EssayResponseForm
 from models import EssayQuestion, PlacementPreference
-from wwu_housing.keymanager.models import Community
 
 @login_required
-def index(request):
+def index(request, job):
     """
     Displays the application form for a desk attendant applicant
     """
+    # If the job close date has passed, display a message and exit.
+
+    # If the job deadline has passed, display a message and exit.
+
+    # Try to load Applicant instance for request user using jobs.Applicant.objects.get_or_create().
+
+    # Try to load Application instance for Applicant and Job (possibly by using jobs.Application.objects.get_or_create()).
+
+    # If Application was not created, display message or redirect user and exit.
+
+    # If Application was created, display application forms.
+
     NUMBER_OF_REFERENCE_FORMS = 3
     data = request.POST or None
     context = {}
@@ -43,4 +56,5 @@ def index(request):
 
     # Add the easy one and render
     context['availability_form'] = AvailabilityForm(data)
+    context['job'] = job
     return render_to_response('desk_attendant/applicant/index.html', context)
