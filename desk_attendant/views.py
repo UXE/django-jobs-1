@@ -49,7 +49,7 @@ def index(request, job):
     # Generate each reference form
     context['reference_forms'] = []
     for i in xrange(1, NUMBER_OF_REFERENCE_FORMS+1):
-        subform = ReferenceForm(data, prefix=1)
+        subform = ReferenceForm(data, prefix=i)
         if request == 'POST' and subform.is_valid():
             subform.save()
         context['reference_forms'].append(subform)
