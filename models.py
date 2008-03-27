@@ -12,9 +12,9 @@ class Job(models.Model):
     """
     title = models.CharField(max_length=255)
     description = models.TextField()
-    post_date = models.DateField(help_text="The date this job is to be posted online.")
-    open_date = models.DateTimeField(help_text="The date and time this job posting opens.")
-    close_date = models.DateTimeField(help_text="The date and time this job posting closes.")
+    post_datetime = models.DateField(help_text="The date this job is to be posted online.")
+    open_datetime = models.DateTimeField(help_text="The date and time this job posting opens.")
+    close_datetime = models.DateTimeField(help_text="The date and time this job posting closes.")
     deadline = models.DateTimeField(help_text="The date and time applications are due.")
     contact_email = models.EmailField()
     contact_address = models.ForeignKey(Address)
@@ -24,8 +24,8 @@ class Job(models.Model):
         return self.title
 
     class Admin:
-        list_display = ('title', 'open_date', 'close_date', 'description', 'post_date')
-        list_filter = ('open_date', 'close_date')
+        list_display = ('title', 'open_datetime', 'close_datetime', 'description', 'post_datetime')
+        list_filter = ('open_datetime', 'close_datetime')
 
 
 class Applicant(models.Model):
@@ -61,12 +61,12 @@ class Application(models.Model):
     """
     applicant = models.ForeignKey(Applicant)
     job = models.ForeignKey(Job)
-    start_timestamp = models.DateTimeField(editable=False, help_text="The time when the applicant started the application.")
-    end_timestamp = models.DateTimeField(blank=True, null=True, 
+    start_datetime = models.DateTimeField(editable=False, help_text="The time when the applicant started the application.")
+    end_datetime = models.DateTimeField(blank=True, null=True, 
                                          help_text="The time when the applicant submitted the application.")
 
     class Admin:
-        list_display = ('applicant', 'job', 'start_timestamp', 'end_timestamp')
+        list_display = ('applicant', 'job', 'start_datetime', 'end_datetime')
 
     def __unicode__(self):
         return u"%s for %s" % (self.applicant, self.job)
