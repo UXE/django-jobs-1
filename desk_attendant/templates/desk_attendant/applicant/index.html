@@ -20,13 +20,12 @@
     <div id="reference_group">
         <h2>References</h2>
         {% for reference_form in reference_forms %}
-            {% if reference_form.errors %}<div><span class="errors">{{ reference_form.errors }}</span></div>{% endif %}
+            <div style="margin-bottom: .5em;">
+            {% if reference_form.non_field_errors %}<div><span class="errors">{{ reference_form.non_field_errors }}</span></div>{% endif %}
             {% for field in reference_form %}
-                <div>
                     {{ field.label }} {{ field }}
-                    {% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}
-                </div>
             {% endfor %}
+            </div>
         {% endfor %}
     </div>
     <div id="placement_preference">

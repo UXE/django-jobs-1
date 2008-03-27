@@ -13,7 +13,7 @@ def index(request, job):
     Displays the application form for a desk attendant applicant
     """
     # If the job close date has passed, display a message and exit.
-    if datetime.now() > job.close_date:
+    if datetime.now() > job.close_datetime:
         pass
 
     # If the job deadline has passed, display a message and exit.

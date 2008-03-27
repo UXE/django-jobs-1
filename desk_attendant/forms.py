@@ -10,18 +10,11 @@ class AvailabilityForm(forms.ModelForm):
 
 class ReferenceForm(forms.ModelForm):
     def clean(self):
-        try:
-            if (len(self.name) > 0 and len(self.phone) == 0) or (len(self.name) == 0 and len(self.phone) > 0):
-                raise forms.ValidationError('You must either leave both fields blank for a given reference or fill out both fields')
-            else:
-                #TODO: do validation?  We need to decide on how to represent phone numbers and what constitues a phone number
-                #TODO: clean data?
-                #return dict of clean values... don't know if I did this right...
-                return {'name': self.name, 'phone': self.phone}
-        except:
+        # We require either both fields filled out or neither
+        if (len(self.cleaned_data.get('name')) > 0 and len(self.cleaned_data.get('phone')) == 0) or (len(self.cleaned_data.get('name')) == 0 and len(self.cleaned_data.get('phone')) > 0):
             raise forms.ValidationError('You must either leave both fields blank for a given reference or fill out both fields')
-            pass # should do something? but 
-
+        else:
+            return self.cleaned_data{
     class Meta:
         model = Reference
 
