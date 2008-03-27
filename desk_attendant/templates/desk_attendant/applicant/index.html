@@ -20,8 +20,12 @@
     <div id="reference_group">
         <h2>References</h2>
         {% for reference_form in reference_forms %}
+            {% if reference_form.errors %}<div><span class="errors">{{ reference_form.errors }}</span></div>{% endif %}
             {% for field in reference_form %}
-                <div>{{ field.label }} {{ field }}</div>
+                <div>
+                    {{ field.label }} {{ field }}
+                    {% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}
+                </div>
             {% endfor %}
         {% endfor %}
     </div>
