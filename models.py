@@ -12,7 +12,7 @@ class Job(models.Model):
     """
     title = models.CharField(max_length=255)
     description = models.TextField()
-    post_datetime = models.DateField(help_text="The date this job is to be posted online.")
+    post_datetime = models.DateTimeField(help_text="The date and time this job is to be posted online.")
     open_datetime = models.DateTimeField(help_text="The date and time this job posting opens.")
     close_datetime = models.DateTimeField(help_text="The date and time this job posting closes.")
     deadline = models.DateTimeField(help_text="The date and time applications are due.")
