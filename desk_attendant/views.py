@@ -12,12 +12,17 @@ def index(request, job):
     """
     Displays the application form for a desk attendant applicant
     """
+    # TODO: This is a job for students only, at what point should we check that attribute?
+
+
     # If the job close date has passed, display a message and exit.
     if datetime.now() > job.close_datetime:
+        #TODO
         pass
 
     # If the job deadline has passed, display a message and exit.
     if datetime.now() > job.deadline:
+        #TODO
         pass
 
     # Try to load Applicant instance for request user using jobs.Applicant.objects.get_or_create().
@@ -25,6 +30,7 @@ def index(request, job):
         applicant = jobs.Applicant.objects.get_or_create()
     except:
         #ah, crud
+        #TODO
         pass
 
     # Try to load Application instance for Applicant and Job (possibly by using jobs.Application.objects.get_or_create()).
@@ -33,6 +39,7 @@ def index(request, job):
     except:
         # If Application was not created, display message or redirect user and exit.
         #ah, crud #2
+        #TODO
         pass
 
     # If Application was created, display application forms.

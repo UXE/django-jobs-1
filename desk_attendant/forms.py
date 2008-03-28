@@ -14,7 +14,7 @@ class ReferenceForm(forms.ModelForm):
         if (len(self.cleaned_data.get('name')) > 0 and len(self.cleaned_data.get('phone')) == 0) or (len(self.cleaned_data.get('name')) == 0 and len(self.cleaned_data.get('phone')) > 0):
             raise forms.ValidationError('You must either leave both fields blank for a given reference or fill out both fields')
         else:
-            return self.cleaned_data{
+            return self.cleaned_data
     class Meta:
         model = Reference
 
