@@ -78,4 +78,4 @@ def index(request, job):
     # Add the easy one and render
     context['availability_form'] = AvailabilityForm(data)
     context['job'] = job
-    return render_to_response('desk_attendant/applicant/index.html', context, mimetype="text/plain", context_instance=RequestContext(request))
+    return render_to_response('desk_attendant/applicant/index.html', context, context_instance=RequestContext(request))
