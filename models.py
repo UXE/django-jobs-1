@@ -27,6 +27,14 @@ class Job(models.Model):
         list_display = ('title', 'open_datetime', 'close_datetime', 'description', 'post_datetime')
         list_filter = ('open_datetime', 'close_datetime')
 
+    def is_active(self):
+        """Returns whether the job posting is currently active."""
+        return self.open_datetime <= datetime.datetime.now() < self.close_datetime
+
+    def is_open(self):
+        """Returns whether the application deadline has passed or not."""
+        return self.open_datetime <= datetime.datetime.now() < self.deadline
+
 
 class Applicant(models.Model):
     """A user with contact information and data specific to being an applicant to a job."""
@@ -75,6 +83,20 @@ class Application(models.Model):
         if not self.id:
             self.start_timestamp = datetime.datetime.now()
         super(Application, self).save(*args, **kwargs) 
+
+#     def load_existing_application(self):
+#         # Find components for the job.
+#         components = self.job.component_set.all()
+        
+#         # Build a dictionary of lists of components.
+#         application = {}
+#         for component in components:
+#             try:
+#                 component_attribute = "%_set" % component.name.lower()
+#                 if hasattr(self, component_attribute):
+#                     application[component.name] = eval(self.component_attribute.all())
+#             except:
+#                 pass
 
 
 class Date(models.Model):
@@ -125,6 +147,9 @@ class Component(models.Model):
                             help_text="The name of any Django model available in the job's model namespace.")
     sequence_number = models.IntegerField(core=True)
     required = models.BooleanField(default=True, core=True)
+
+    class Meta:
+        ordering = ['sequence_number']
 
     class Admin:
         pass
