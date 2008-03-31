@@ -6,4 +6,5 @@ view_dict = {'job': Job.objects.filter(title='Desk Attendant').latest('open_date
 
 urlpatterns = patterns('',
     (r'^$', index, view_dict),
+    (r'^apply/$', apply, view_dict),
 )

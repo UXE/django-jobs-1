@@ -7,6 +7,12 @@
 <h1>{{ job.title }} Application</h1>
 <p>{{ job.description}}</p>
 
+{% comment %}TODO: remove 'or 1' when done testing{% endcomment %}
+{% if job.is_open or 1 %}
+{% comment %}TODO: Need something more here...{% endcomment%}
+<p><a href="apply/">Apply!</a></p>
+{% endif %}
+
 <h2>Important Dates</h2>
 <ul>
     <li>Application Opens: {{ job.open_datetime }}</li>
