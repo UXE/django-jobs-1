@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response
 from django.template import Template, RequestContext, Context, loader
 from django.http import HttpResponse
-#from wwu_housing.jobs.models import Job
+from wwu_housing.jobs.models import Applicant, Application
 from wwu_housing.keymanager.models import Community
 from forms import AvailabilityForm, ReferenceForm, PlacementPreferenceForm, EssayResponseForm
 from models import EssayQuestion, PlacementPreference
@@ -39,18 +39,20 @@ def apply(request, job):
         #TODO
         pass
 
-    # Try to load Applicant instance for request user using jobs.Applicant.objects.get_or_create().
+    # Try to load Applicant instance for request user using Applicant.objects.get_or_create().
     try:
-        applicant = jobs.Applicant.objects.get_or_create()
+        applicant = Applicant.objects.get_or_create(user=request.user)
     except:
-        #ah, crud
+        #raise Exception(help("crap"))
         #TODO
         pass
 
-    # Try to load Application instance for Applicant and Job (possibly by using jobs.Application.objects.get_or_create()).
+    # Try to load Application instance for Applicant and Job (possibly by using Application.objects.get_or_create()).
     try:
-        application = jobs.Application.objects.get_or_create()
+        pass
+        #application = Application.objects.get_or_create(applicant=applicant, job=job, start_datetime=datetime.datetime.now())
     except:
+        raise Exception("Oops")
         # If Application was not created, display message or redirect user and exit.
         #ah, crud #2
         #TODO
