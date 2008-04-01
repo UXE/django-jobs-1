@@ -2,7 +2,8 @@ import datetime
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response
 from django.template import Template, RequestContext, Context, loader
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.core.urlresolvers import reverse
 from wwu_housing.jobs.models import Applicant, Application
 from wwu_housing.keymanager.models import Community
 from forms import AvailabilityForm, ReferenceForm, PlacementPreferenceForm, EssayResponseForm
@@ -34,20 +35,12 @@ def apply(request, job):
     # TODO: This is a job for students only, at what point should we check that attribute?
 
 
-    # If the job is not yet opened, display a message and exit.
-    if datetime.datetime.now() < job.open_datetime:
-        #TODO
-        pass
-
-    # If the job close date has passed, display a message and exit.
-    if datetime.datetime.now() > job.close_datetime:
-        #TODO
-        pass
-
-    # If the job deadline has passed, display a message and exit.
-    if datetime.datetime.now() > job.deadline:
-        #TODO
-        pass
+    # If the job is not open, forward to the index page
+    #raise Exception("Job is open == %s" % job.is_open())
+    #TODO: Remove "and False" when ready to be live
+    if not job.is_open() and False:
+        request.user.message_set.create(message="You cannot access the application site when the application is closed.")
+        return HttpResponseRedirect(reverse('wwu_housing.jobs.desk_attendant.views.index'))
 
     # Try to load Applicant instance for request user using Applicant.objects.get_or_create().
     try:
@@ -123,7 +116,6 @@ def apply(request, job):
 
     # Check whether forms can be saved.
     if save_forms:
-        #raise Exception("Saving forms!")
         for form in forms:
             if isinstance(form, PlacementPreferenceForm):
                 if form.cleaned_data['rank']:
@@ -136,6 +128,8 @@ def apply(request, job):
                 instance.save()
             else:
                 form.save()
+        request.user.message_set.create(message="Application submitted successfully!")
+        return HttpResponseRedirect(reverse('wwu_housing.jobs.desk_attendant.views.index'))
 
     # TODO: If forms were saved successfully, let the user know
 
