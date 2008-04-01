@@ -111,18 +111,21 @@ def apply(request, job):
 
     # Check whether forms can be saved.
     if save_forms:
-        raise Exception("Saving forms!")
+        #raise Exception("Saving forms!")
         for form in forms:
             if isinstance(form, PlacementPreferenceForm):
-                instance = form.save(commit=False)
-                instance.community = form.community
-                instance.save()
+                if form.cleaned_data['rank']:
+                    instance = form.save(commit=False)
+                    instance.community = form.community
+                    instance.save()
             elif isinstance(form, EssayResponseForm):
                 instance = form.save(commit=False)
                 instance.question = form.question
                 instance.save()
             else:
                 form.save()
+
+    # TODO: If forms were saved successfully, let the user know
 
     context['job'] = job
     return render_to_response('desk_attendant/apply.html', context, context_instance=RequestContext(request))
