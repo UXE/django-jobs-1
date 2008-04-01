@@ -9,6 +9,7 @@
     <form action="" method="post">
     <div id="availability">
         <h2>General Information</h2>
+        <p>The General Information section helps us determine how available you will be for the job.  Please answer all questions to the best of your ability and estimate your hours available from 1 to 19.</p>
         {% for field in availability_form %}
             <div>
                 {{ field.label }} {{ field }}
@@ -19,6 +20,7 @@
     </div>
     <div id="reference_group">
         <h2>References</h2>
+        <p>The References section is optional and is for you to list one or more people who can vouch for you.  If you include a person's name, please include a contact phone number for that person.</p>
         {% for reference_form in reference_forms %}
             <div style="margin-bottom: .5em;">
             {% if reference_form.non_field_errors %}
@@ -38,6 +40,7 @@
     </div>
     <div id="placement_preference">
         <h2>Placement Preference</h2>
+        <p>Please rank the places you would like to work, using <strong>1</strong> for the place you most want (e.g., 1 Edens/Higginson, 2 Beta/Gamma, etc.).  If you do not wish to apply for a community, simply leave it blank.</p>
         {% for field in placement_preference_form %}
             <div>
                 {{ field.rank}} {{ field.community.name }}
@@ -52,6 +55,7 @@
     </div>
     <div id="essay_response">
         <h2>Essay Questions</h2>
+        <p>These optional Essay Questions give us a better understanding of what kind of person you are and what you can bring to the Desk Attendant position.</p>
         {% for essay_response_form in essay_response_forms %}
             <p style="font-weight: strong;">{{ essay_response_form.question }}</p>
             {{ essay_response_form.answer }}
