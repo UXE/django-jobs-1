@@ -13,10 +13,14 @@
 <p><a href="apply/">Apply!</a></p>
 {% endif %}
 
+{% if application.end_datetime %}
+<p>You submitted your application on {{ application.end_datetime|date:"l, F jS" }}</p>
+{% endif %}
+
 <h2>Important Dates</h2>
 <ul>
-    <li>Application Opens: {{ job.open_datetime }}</li>
-    <li>Application Deadline: {{ job.deadline }}</li>
+    <li>Application Opens: {{ job.open_datetime|date:"l, F jS" }}</li>
+    <li>Application Deadline: {{ job.deadline|date:"l, F jS" }}</li>
 </ul>
 {% endblock %}
 

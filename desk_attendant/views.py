@@ -14,6 +14,16 @@ def index(request, job):
     """
     # TODO: This could probably use a generic view.
     context = {'job': job}
+    try:
+        applicant = Applicant.objects.get_or_create(user=request.user)
+    except:
+        applicant = False
+
+    try:
+        application = Application.objects.get(applicant=applicant)
+    except:
+        application = False
+
     return render_to_response('desk_attendant/index.html', context, context_instance=RequestContext(request))
 
 @login_required
