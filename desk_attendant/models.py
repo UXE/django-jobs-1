@@ -5,7 +5,7 @@ from wwu_housing.keymanager.models import Building, Community
 
 class Availability(models.Model):
     """Questions related to applicant's availability."""
-    #application = models.ForeignKey(Application, unique=True)
+    application = models.ForeignKey(Application, unique=True)
     on_campus = models.BooleanField(verbose_name="Will you be living on campus next year?")
     on_campus_where = models.ForeignKey(Building, verbose_name="If yes, where?", blank=True)
     work_study = models.NullBooleanField(verbose_name="Do you anticipate having federal work study next year?")
@@ -16,7 +16,7 @@ class Availability(models.Model):
 
 class Reference(models.Model):
     """This describes people who can vouch for an applicant."""
-    #application = models.ForeignKey(Application)
+    application = models.ForeignKey(Application)
     name = models.CharField(max_length=255, verbose_name="Reference's Name", blank=True)
     phone = models.CharField(max_length=20, verbose_name="Reference's Phone Number", blank=True)
     class Admin:
@@ -25,7 +25,7 @@ class Reference(models.Model):
 
 class PlacementPreference(models.Model):
     """This allows applicants to select which communities they would like to work in the most."""
-    #application = models.ForeignKey(Application)
+    application = models.ForeignKey(Application)
     community = models.ForeignKey(Community, blank=True)
     rank = models.PositiveSmallIntegerField(blank=True)
     class Admin:
@@ -44,7 +44,7 @@ class EssayQuestion(models.Model):
 
 class EssayResponse(models.Model):
     """Applicant responses to the essay questions."""
-    #application = models.ForeignKey(Application)
+    application = models.ForeignKey(Application)
     question = models.ForeignKey(EssayQuestion)
     answer = models.TextField(blank=True)
     class Admin:
