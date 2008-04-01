@@ -21,9 +21,17 @@
         <h2>References</h2>
         {% for reference_form in reference_forms %}
             <div style="margin-bottom: .5em;">
-            {% if reference_form.non_field_errors %}<div><span class="errors">{{ reference_form.non_field_errors }}</span></div>{% endif %}
+            {% if reference_form.non_field_errors %}
+                <div><span class="errors">{{ reference_form.non_field_errors }}</span></div>
+            {% endif %}
             {% for field in reference_form %}
-                    {{ field.label }} {{ field }}
+                {{ field.label }} {{ field }}
+                {% if field.help_text %}
+                    <span>{{ field.help_text }}</span>
+                {% endif %}
+                {% if field.errors %}
+                    <span class="errors">{{ field.errors }}</span>
+                {% endif %}
             {% endfor %}
             </div>
         {% endfor %}
@@ -31,14 +39,28 @@
     <div id="placement_preference">
         <h2>Placement Preference</h2>
         {% for field in placement_preference_form %}
-            <div>{{ field.rank}} {{ field.name }}</div>
+            <div>
+                {{ field.rank}} {{ field.community.name }}
+                {% if field.help_text %}
+                    <span>{{ field.help_text }}</span>
+                {% endif %}
+                {% if field.errors %}
+                    <span class="errors">{{ field.errors }}</span>
+                {% endif %}
+            </div>
         {% endfor %}
     </div>
     <div id="essay_response">
         <h2>Essay Questions</h2>
-        {% for essay_response in essay_response_form %}
-            <p style="font-weight: strong;">{{ essay_response.prompt }}</p>
-            {{ essay_response.answer }}
+        {% for essay_response_form in essay_response_forms %}
+            <p style="font-weight: strong;">{{ essay_response_form.question }}</p>
+            {{ essay_response_form.answer }}
+            {% if essay_response_form.answer.help_text %}
+                <span>{{ essay_response_form.answer.help_text }}</span>
+            {% endif %}
+            {% if essay_response_form.answer.errors %}
+                <span class="errors">{{ essay_response_form.answer.errors }}</span>
+            {% endif %}
         {% endfor %}
     </div>
     <div><input type="submit" value="Submit Application" /></div>

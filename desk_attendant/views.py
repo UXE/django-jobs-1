@@ -1,3 +1,4 @@
+import datetime
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response
 from django.template import Template, RequestContext, Context, loader
@@ -6,15 +7,14 @@ from django.http import HttpResponse
 from wwu_housing.keymanager.models import Community
 from forms import AvailabilityForm, ReferenceForm, PlacementPreferenceForm, EssayResponseForm
 from models import EssayQuestion, PlacementPreference
-from datetime import datetime
 
 def index(request, job):
     """
     Basic info page that tells about the desk attendant application
     """
-    t = loader.get_template('desk_attendant/index.html')
-    c = Context({'job': job})
-    return HttpResponse(t.render(c))
+    # TODO: This could probably use a generic view.
+    context = {'job': job}
+    return render_to_response('desk_attendant/index.html', context, context_instance=RequestContext(request))
 
 @login_required
 def apply(request, job):
@@ -25,17 +25,17 @@ def apply(request, job):
 
 
     # If the job is not yet opened, display a message and exit.
-    if datetime.now() < job.open_datetime:
+    if datetime.datetime.now() < job.open_datetime:
         #TODO
         pass
 
     # If the job close date has passed, display a message and exit.
-    if datetime.now() > job.close_datetime:
+    if datetime.datetime.now() > job.close_datetime:
         #TODO
         pass
 
     # If the job deadline has passed, display a message and exit.
-    if datetime.now() > job.deadline:
+    if datetime.datetime.now() > job.deadline:
         #TODO
         pass
 
@@ -62,38 +62,67 @@ def apply(request, job):
     data = request.POST or None
     context = {}
 
+    if request.method == "POST":
+        save_forms = True
+        forms = []
+    else:
+        save_forms = False
+
     # Generate a form for each essay question
     questions = EssayQuestion.objects.all()
-    context['essay_response_form'] = []
+    context['essay_response_forms'] = []
     for question in questions:
-        essay_response_subform = EssayResponseForm(data, initial={'question': question.question}, prefix=question.id)
+        essay_response_subform = EssayResponseForm(data, prefix=question.id)
         if request.method == 'POST' and essay_response_subform.is_valid():
-            essay_response_subform.save()
-        essay_response_subform.prompt = question
-        context['essay_response_form'].append(essay_response_subform)
+            forms.append(essay_response_subform)
+        elif essay_response_subform.errors:
+            save_forms = False
+        essay_response_subform.question = question
+        context['essay_response_forms'].append(essay_response_subform)
 
-    # Generate a form for each placement preference (community)
+    # Generate a form for each placement preference (community).
     context['placement_preference_form'] = []
     for community in Community.objects.all():
-        placement_preference_subform = PlacementPreferenceForm(data, initial={'community': community.name}, prefix=community.id)
+        placement_preference_subform = PlacementPreferenceForm(data, prefix=community.id)
         if request.method == 'POST' and placement_preference_subform.is_valid():
-            placement_preference_subform.save()
-        placement_preference_subform.name = community.name
+            forms.append(placement_preference_subform)
+        elif placement_preference_subform.errors:
+            save_forms = False
+        placement_preference_subform.community = community
         context['placement_preference_form'].append(placement_preference_subform)
 
     # Generate each reference form
     context['reference_forms'] = []
-    for i in xrange(1, NUMBER_OF_REFERENCE_FORMS+1):
+    for i in xrange(NUMBER_OF_REFERENCE_FORMS):
         reference_subform = ReferenceForm(data, prefix=i)
         if request == 'POST' and reference_subform.is_valid():
-            reference_subform.save()
+            forms.append(reference_subform)
+        elif reference_subform.errors:
+            save_forms = False
         context['reference_forms'].append(reference_subform)
 
     # Check availability form for validity and save if needed
-    if request == 'POST' and AvailabilityForm(data).is_valid():
-        AvailabilityForm(data).save();
+    availability_form = AvailabilityForm(data)
+    if request == 'POST' and availability_form.is_valid():
+        forms.append(availability_form)
+    elif availability_form.errors:
+        save_forms = False
+    context['availability_form'] = availability_form
 
-    # Add the easy one and render
-    context['availability_form'] = AvailabilityForm(data)
+    # Check whether forms can be saved.
+    if save_forms:
+        raise Exception("Saving forms!")
+        for form in forms:
+            if isinstance(form, PlacementPreferenceForm):
+                instance = form.save(commit=False)
+                instance.community = form.community
+                instance.save()
+            elif isinstance(form, EssayResponseForm):
+                instance = form.save(commit=False)
+                instance.question = form.question
+                instance.save()
+            else:
+                form.save()
+
     context['job'] = job
-    return render_to_response('desk_attendant/applicant/index.html', context, context_instance=RequestContext(request))
+    return render_to_response('desk_attendant/apply.html', context, context_instance=RequestContext(request))

@@ -22,8 +22,10 @@ class ReferenceForm(forms.ModelForm):
 class PlacementPreferenceForm(forms.ModelForm):
     class Meta:
         model = PlacementPreference
+        fields = ('rank',)
 
 
 class EssayResponseForm(forms.ModelForm):
     class Meta:
         model = EssayResponse
+        fields = ('answer',)

@@ -26,8 +26,8 @@ class Reference(models.Model):
 class PlacementPreference(models.Model):
     """This allows applicants to select which communities they would like to work in the most."""
     #application = models.ForeignKey(Application)
-    community = models.ForeignKey(Community)
-    rank = models.PositiveSmallIntegerField()
+    community = models.ForeignKey(Community, blank=True)
+    rank = models.PositiveSmallIntegerField(blank=True)
     class Admin:
         pass
 
@@ -53,6 +53,7 @@ class EssayResponse(models.Model):
 
 class ApplicantStatus(models.Model):
     """This tracks the status of the application in each hall (e.g., "applied," "hired," etc.)."""
+    # TODO: This might go into the admin section?  It's unclear how we'll handle admin though.
     #application = models.ForeignKey(Application)
     name = models.CharField(max_length=50)
     value = models.CharField(max_length=50)
