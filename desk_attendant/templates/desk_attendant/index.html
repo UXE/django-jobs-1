@@ -14,13 +14,13 @@
 {% endif %}
 
 {% if application.end_datetime %}
-<p>You submitted your application on {{ application.end_datetime|date:"l, F jS" }}</p>
+<p>You submitted your application on {{ application.end_datetime|date:"l, F jS \a\t P" }}</p>
 {% endif %}
 
 <h2>Important Dates</h2>
 <ul>
-    <li>Application Opens: {{ job.open_datetime|date:"l, F jS" }}</li>
-    <li>Application Deadline: {{ job.deadline|date:"l, F jS" }}</li>
+    <li>Application Opens: {{ job.open_datetime|date:"l, F jS \a\t P" }}</li>
+    <li>Application Deadline: {{ job.deadline|date:"l, F jS \a\t P" }}</li>
 </ul>
 {% endblock %}
 
