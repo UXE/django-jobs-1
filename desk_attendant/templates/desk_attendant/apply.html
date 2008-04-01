@@ -24,7 +24,7 @@
         {% for reference_form in reference_forms %}
             <div style="margin-bottom: .5em;">
             {% if reference_form.non_field_errors %}
-                <div><span class="errors">{{ reference_form.non_field_errors }}</span></div>
+                {{ reference_form.non_field_errors }}
             {% endif %}
             {% for field in reference_form %}
                 {{ field.label }} {{ field }}
@@ -32,7 +32,7 @@
                     <span>{{ field.help_text }}</span>
                 {% endif %}
                 {% if field.errors %}
-                    <span class="errors">{{ field.errors }}</span>
+                    {{ field.errors }}
                 {% endif %}
             {% endfor %}
             </div>
@@ -41,14 +41,16 @@
     <div id="placement_preference">
         <h2>Placement Preference</h2>
         <p>Please rank the places you would like to work, using <strong>1</strong> for the place you most want (e.g., 1 Edens/Higginson, 2 Beta/Gamma, etc.).  If you do not wish to apply for a community, simply leave it blank.</p>
-        {% for field in placement_preference_form %}
+        {% for placement_preference_form in placement_preference_forms %}
             <div>
-                {{ field.rank}} {{ field.community.name }}
-                {% if field.help_text %}
-                    <span>{{ field.help_text }}</span>
+                {{ placement_preference_form.rank}} {{ placement_preference_form.community.name }}
+                {% if placement_preference_form.help_text %}
+                    <span>{{ placement_preference_form.help_text }}</span>
                 {% endif %}
-                {% if field.errors %}
-                    <span class="errors">{{ field.errors }}</span>
+                {% if placement_preference_form.errors %}
+                    {% for field in placement_preference_form %}
+                        {{ field.errors }}
+                    {% endfor %}
                 {% endif %}
             </div>
         {% endfor %}

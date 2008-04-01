@@ -79,36 +79,40 @@ def apply(request, job):
     for question in questions:
         essay_response_subform = EssayResponseForm(data, prefix=question.id)
         if request.method == 'POST' and essay_response_subform.is_valid():
-            forms.append(essay_response_subform)
+            if essay_response_subform.cleaned_data['answer']:
+                forms.append(essay_response_subform)
         elif essay_response_subform.errors:
             save_forms = False
         essay_response_subform.question = question
         context['essay_response_forms'].append(essay_response_subform)
 
     # Generate a form for each placement preference (community).
-    context['placement_preference_form'] = []
+    context['placement_preference_forms'] = []
     for community in Community.objects.all():
         placement_preference_subform = PlacementPreferenceForm(data, prefix=community.id)
         if request.method == 'POST' and placement_preference_subform.is_valid():
-            forms.append(placement_preference_subform)
+            # The form may be valid, but we only want to save forms with ranks.
+            if placement_preference_subform.cleaned_data['rank']:
+                forms.append(placement_preference_subform)
         elif placement_preference_subform.errors:
             save_forms = False
         placement_preference_subform.community = community
-        context['placement_preference_form'].append(placement_preference_subform)
+        context['placement_preference_forms'].append(placement_preference_subform)
 
     # Generate each reference form
     context['reference_forms'] = []
     for i in xrange(NUMBER_OF_REFERENCE_FORMS):
         reference_subform = ReferenceForm(data, prefix=i)
-        if request == 'POST' and reference_subform.is_valid():
-            forms.append(reference_subform)
+        if request.method == 'POST' and reference_subform.is_valid():
+            if len([field for field in reference_subform.cleaned_data.values() if i is not None]) > 0:
+                forms.append(reference_subform)
         elif reference_subform.errors:
             save_forms = False
         context['reference_forms'].append(reference_subform)
 
     # Check availability form for validity and save if needed
     availability_form = AvailabilityForm(data)
-    if request == 'POST' and availability_form.is_valid():
+    if request.method == 'POST' and availability_form.is_valid():
         forms.append(availability_form)
     elif availability_form.errors:
         save_forms = False
@@ -118,10 +122,9 @@ def apply(request, job):
     if save_forms:
         for form in forms:
             if isinstance(form, PlacementPreferenceForm):
-                if form.cleaned_data['rank']:
-                    instance = form.save(commit=False)
-                    instance.community = form.community
-                    instance.save()
+                instance = form.save(commit=False)
+                instance.community = form.community
+                instance.save()
             elif isinstance(form, EssayResponseForm):
                 instance = form.save(commit=False)
                 instance.question = form.question
@@ -130,8 +133,6 @@ def apply(request, job):
                 form.save()
         request.user.message_set.create(message="Application submitted successfully!")
         return HttpResponseRedirect(reverse('wwu_housing.jobs.desk_attendant.views.index'))
-
-    # TODO: If forms were saved successfully, let the user know
 
     context['job'] = job
     return render_to_response('desk_attendant/apply.html', context, context_instance=RequestContext(request))
