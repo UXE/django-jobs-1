@@ -6,6 +6,7 @@ class AvailabilityForm(forms.ModelForm):
     hours_available = forms.IntegerField(min_value=1, max_value=19)
     class Meta:
         model = Availability
+        exclude = ('application',)
 
 
 class ReferenceForm(forms.ModelForm):
@@ -17,6 +18,7 @@ class ReferenceForm(forms.ModelForm):
             return self.cleaned_data
     class Meta:
         model = Reference
+        exclude = ('application',)
 
 
 class PlacementPreferenceForm(forms.ModelForm):

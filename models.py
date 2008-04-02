@@ -58,9 +58,10 @@ class Application(models.Model):
 
     # Create an application.
     >>> from wwu_housing.jobs.models import *
+    >>> import datetime
     >>> applicant = Applicant.objects.all()[0]
     >>> job = Job.objects.all()[0]
-    >>> application = Application.objects.create(job=job, applicant=applicant)
+    >>> application = Application.objects.create(job=job, applicant=applicant, start_datetime=datetime.datetime.now())
     >>> application.save()
     >>>
     # Make sure start timestamp was created.
@@ -69,7 +70,7 @@ class Application(models.Model):
     """
     applicant = models.ForeignKey(Applicant)
     job = models.ForeignKey(Job)
-    start_datetime = models.DateTimeField(editable=False, help_text="The time when the applicant started the application.")
+    start_datetime = models.DateTimeField(blank=True, editable=False, help_text="The time when the applicant started the application.")
     end_datetime = models.DateTimeField(blank=True, null=True, 
                                          help_text="The time when the applicant submitted the application.")
 
