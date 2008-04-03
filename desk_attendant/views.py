@@ -45,21 +45,13 @@ def apply(request, job):
     # Try to load Applicant instance for request user using Applicant.objects.get_or_create().
     try:
         applicant = Applicant.objects.get_or_create(user=request.user)
-    except:
-        #raise Exception(help("crap"))
+    except Exception, e:
+        raise Exception("couldn't create applicant: %s" % e)
         #TODO
         pass
 
     # Try to load Application instance for Applicant and Job (possibly by using Application.objects.get_or_create()).
-    try:
-        pass
-        #application = Application.objects.get_or_create(applicant=applicant, job=job, start_datetime=datetime.datetime.now())
-    except:
-        raise Exception("Oops")
-        # If Application was not created, display message or redirect user and exit.
-        #ah, crud #2
-        #TODO
-        pass
+    application, created = Application.objects.get_or_create(applicant=applicant, job=job)
 
     # If Application was created, display application forms.
 
@@ -121,17 +113,16 @@ def apply(request, job):
     # Check whether forms can be saved.
     if save_forms:
         for form in forms:
+            # Before saving the forms, the application must be set for each form instance
+            # and any required elements must also be set.
+            instance = form.save(commit=False)
+            instance.application = application
             if isinstance(form, PlacementPreferenceForm):
-                instance = form.save(commit=False)
                 instance.community = form.community
-                instance.save()
             elif isinstance(form, EssayResponseForm):
-                instance = form.save(commit=False)
                 instance.question = form.question
-                instance.save()
-            else:
-                form.save()
-        request.user.message_set.create(message="Application submitted successfully!")
+            instance.save()
+        request.user.message_set.create(message="Your application was submitted successfully!")
         return HttpResponseRedirect(reverse('wwu_housing.jobs.desk_attendant.views.index'))
 
     context['job'] = job

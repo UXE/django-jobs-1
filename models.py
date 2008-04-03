@@ -82,7 +82,7 @@ class Application(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.id:
-            self.start_timestamp = datetime.datetime.now()
+            self.start_datetime = datetime.datetime.now()
         super(Application, self).save(*args, **kwargs) 
 
 #     def load_existing_application(self):
