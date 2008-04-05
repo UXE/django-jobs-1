@@ -6,9 +6,9 @@ from wwu_housing.library.models import Address
 
 
 class Job(models.Model):
-    """
-    A set of information used to describe an available job as specified by one of the job
+    """A set of information used to describe an available job as specified by one of the job
     administrators.
+    
     """
     title = models.CharField(max_length=255)
     description = models.TextField()
@@ -53,8 +53,7 @@ class Applicant(models.Model):
 
 
 class Application(models.Model):
-    """
-    A relationship between an applicant and a job that represents the applicant's interest in the job.
+    """A relationship between an applicant and a job that represents the applicant's interest in the job.
 
     # Create an application.
     >>> from wwu_housing.jobs.models import *
@@ -67,6 +66,7 @@ class Application(models.Model):
     # Make sure start timestamp was created.
     >>> assert application.start_timestamp is not None
     >>> 
+
     """
     applicant = models.ForeignKey(Applicant)
     job = models.ForeignKey(Job)
@@ -138,10 +138,10 @@ class File(models.Model):
 
 
 class Component(models.Model):
-    """
-    A reference to a Django model used by the job application and information about how
+    """A reference to a Django model used by the job application and information about how
     the model's data should be displayed in the application as specified by the job's
     administrators.
+
     """
     job = models.ForeignKey(Job)
     name = models.CharField(max_length=255, core=True, 
@@ -157,12 +157,13 @@ class Component(models.Model):
 
 
 class Requirement(models.Model):
-    """
-    A reference to a function which can be used to determine whether an applicant is qualified
+    """A reference to a function which can be used to determine whether an applicant is qualified
     to apply for the job.
+
     """
     job = models.ForeignKey(Job)
-    function_name = models.CharField(max_length=255, help_text="The name of a function in the job's requirements.py which returns true or false when given an Applicant object.")
+    function_name = models.CharField(max_length=255, 
+                                     help_text="The name of a function in the job's requirements.py which returns true or false when given an Applicant object.")
 
     class Admin:
         pass

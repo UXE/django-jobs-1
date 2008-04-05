@@ -1,13 +1,17 @@
 import datetime
+
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response
 from django.template import Template, RequestContext, Context, loader
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
+
 from wwu_housing.jobs.models import Applicant, Application
+from wwu_housing.jobs.forms import AddressForm
 from wwu_housing.keymanager.models import Community
 from forms import AvailabilityForm, ReferenceForm, PlacementPreferenceForm, EssayResponseForm
 from models import EssayQuestion, PlacementPreference
+
 
 def index(request, job):
     """
@@ -27,6 +31,7 @@ def index(request, job):
 
     return render_to_response('desk_attendant/index.html', context, context_instance=RequestContext(request))
 
+
 @login_required
 def apply(request, job):
     """
@@ -44,7 +49,7 @@ def apply(request, job):
 
     # Try to load Applicant instance for request user using Applicant.objects.get_or_create().
     try:
-        applicant = Applicant.objects.get_or_create(user=request.user)
+        applicant, created = Applicant.objects.get_or_create(user=request.user)
     except Exception, e:
         raise Exception("couldn't create applicant: %s" % e)
         #TODO
@@ -125,5 +130,8 @@ def apply(request, job):
         request.user.message_set.create(message="Your application was submitted successfully!")
         return HttpResponseRedirect(reverse('wwu_housing.jobs.desk_attendant.views.index'))
 
+    address_form = AddressForm()
+    context['address_form'] = address_form
+    context['application'] = application
     context['job'] = job
     return render_to_response('desk_attendant/apply.html', context, context_instance=RequestContext(request))

@@ -7,27 +7,41 @@
     <h1>{{ job.title }} Application</h1>
 
     <form action="" method="post">
-    <div id="availability">
-        <h2>General Information</h2>
+    <fieldset id="availability">
+        <legend>General Information</legend>
         <p>The General Information section helps us determine how available you will be for the job.  Please answer all questions to the best of your ability and estimate your hours available from 1 to 19.</p>
+        <p>Name: {{ application.applicant.user.first_name }} {{ application.applicant.user.last_name }}</p>
+        <p>Email: {{ application.applicant.user.email }}</p>
+
+        <fieldset>
+            <legend>Current Mailing Address</legend>
+            {{ address_form.as_p }}
+        </fieldset>
+
+        <fieldset>
+          <legend>Summer Mailing Address</legend>
+            {{ address_form.as_p }}
+        </fieldset>
+
         {% for field in availability_form %}
-            <div>
-                {{ field.label }} {{ field }}
+            <p>
+                {{ field.label_tag }} {{ field }}
                 {% if field.help_text %}<span>{{ field.help_text }}</span>{% endif %}
                 {% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}
-            </div>
+            </p>
         {% endfor %}
-    </div>
-    <div id="reference_group">
-        <h2>References</h2>
+    </fieldset>
+
+    <fieldset id="reference_group">
+        <legend>References</legend>
         <p>The References section is optional and is for you to list one or more people who can vouch for you.  If you include a person's name, please include a contact phone number for that person.</p>
         {% for reference_form in reference_forms %}
-            <div style="margin-bottom: .5em;">
+            <p style="margin-bottom: .5em;">
             {% if reference_form.non_field_errors %}
                 {{ reference_form.non_field_errors }}
             {% endif %}
             {% for field in reference_form %}
-                {{ field.label }} {{ field }}
+                {{ field.label_tag }} {{ field }}
                 {% if field.help_text %}
                     <span>{{ field.help_text }}</span>
                 {% endif %}
@@ -35,31 +49,32 @@
                     {{ field.errors }}
                 {% endif %}
             {% endfor %}
-            </div>
+            </p>
         {% endfor %}
-    </div>
-    <div id="placement_preference">
-        <h2>Placement Preference</h2>
+    </fieldset>
+
+    <fieldset id="placement_preference">
+        <legend>Placement Preference</legend>
         <p>Please rank the places you would like to work, using <strong>1</strong> for the place you most want (e.g., 1 Edens/Higginson, 2 Beta/Gamma, etc.).  If you do not wish to apply for a community, simply leave it blank.</p>
         {% for placement_preference_form in placement_preference_forms %}
-            <div>
-                {{ placement_preference_form.rank}} {{ placement_preference_form.community.name }}
+            <p>
+                {{ placement_preference_form.rank}} <label for="id_{{ placement_preference_form.rank.html_name }}">{{ placement_preference_form.community.name }}</label>
                 {% if placement_preference_form.help_text %}
                     <span>{{ placement_preference_form.help_text }}</span>
                 {% endif %}
-                {% if placement_preference_form.errors %}
-                    {% for field in placement_preference_form %}
-                        {{ field.errors }}
-                    {% endfor %}
+                {% if placement_preference_form.rank.errors %}
+                    {{ placement_preference_form.rank.errors }}
                 {% endif %}
-            </div>
+            </p>
         {% endfor %}
-    </div>
-    <div id="essay_response">
-        <h2>Essay Questions</h2>
+    </fieldset>
+
+    <fieldset id="essay_response">
+        <legend>Essay Questions</legend>
         <p>These optional Essay Questions give us a better understanding of what kind of person you are and what you can bring to the Desk Attendant position.</p>
         {% for essay_response_form in essay_response_forms %}
-            <p style="font-weight: strong;">{{ essay_response_form.question }}</p>
+            <p>
+            <label for="id_{{ essay_response_form.answer.html_name }}" style="font-weight: strong;">{{ essay_response_form.question }}</label>
             {{ essay_response_form.answer }}
             {% if essay_response_form.answer.help_text %}
                 <span>{{ essay_response_form.answer.help_text }}</span>
@@ -67,8 +82,10 @@
             {% if essay_response_form.answer.errors %}
                 <span class="errors">{{ essay_response_form.answer.errors }}</span>
             {% endif %}
+            </p>
         {% endfor %}
-    </div>
+    </fieldset>
+
     <div><input type="submit" value="Submit Application" /></div>
     </form>
 {% endblock %}
