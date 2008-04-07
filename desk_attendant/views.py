@@ -49,18 +49,12 @@ def apply(request, job):
         return HttpResponseRedirect(reverse('wwu_housing.jobs.desk_attendant.views.index'))
 
     # Try to load Applicant instance for request user using Applicant.objects.get_or_create().
-    try:
-        applicant, created = Applicant.objects.get_or_create(user=request.user)
-    except Exception, e:
-        raise Exception("couldn't create applicant: %s" % e)
-        #TODO
-        pass
+    applicant, created = Applicant.objects.get_or_create(user=request.user)
 
     # Try to load Application instance for Applicant and Job (possibly by using Application.objects.get_or_create()).
     application, created = Application.objects.get_or_create(applicant=applicant, job=job)
 
     # If Application was created, display application forms.
-
     NUMBER_OF_REFERENCE_FORMS = 3
     data = request.POST or None
     context = {}
@@ -71,36 +65,31 @@ def apply(request, job):
     else:
         save_forms = False
 
-    # Create address forms
-    try:
-        current_address_type = AddressType.objects.get(type='current')
-        current_address, created = Address.objects.get_or_create(address_type=current_address_type, user=request.user)
-    except Exception, e:
-        raise Exception("Failed to create address: %s" % e)
-    try:
-        summer_address_type = AddressType.objects.get(type='summer')
-        summer_address, created = Address.objects.get_or_create(address_type=summer_address_type, user=request.user)
-    except Exception, e:
-        raise Exception("Failed to create address: %s" % e)
+    # Generate a form for each address type.
+    address_types = ('current', 'summer')
+    for address_type in address_types:
+        address_type_instance = AddressType.objects.get(type=address_type)
+        address, created = Address.objects.get_or_create(address_type=address_type_instance, user=request.user)
+        address_form = AddressForm(data, instance=address)
+        if address_form.is_valid():
+            forms.append(address_form)
+        elif address_form.errors:
+            save_forms = False
+        context['%s_address_form' % address_type] = address_form
 
-    # Create phone forms
-    try:
-        current_phone_type = PhoneType.objects.get(type='current')
-        current_phone, created = Phone.objects.get_or_create(phone_type=current_phone_type, user=request.user)
-    except Exception, e:
-        raise Exception("Failed to create phone: %s" % e)
-    try:
-        summer_phone_type = PhoneType.objects.get(type='summer')
-        summer_phone, created = Phone.objects.get_or_create(phone_type=summer_phone_type, user=request.user)
-    except Exception, e:
-        raise Exception("Failed to create phone: %s" % e)
-    try:
-        cell_phone_type = PhoneType.objects.get(type='cell')
-        cell_phone, created = Phone.objects.get_or_create(phone_type=cell_phone_type, user=request.user)
-    except Exception, e:
-        raise Exception("Failed to create phone: %s" % e)
+    # Generate a form for each phone type.
+    phone_types = ('current', 'summer', 'cell')
+    for phone_type in phone_types:
+        phone_type_instance = PhoneType.objects.get(type=phone_type)
+        phone, created = Phone.objects.get_or_create(phone_type=phone_type_instance, user=request.user)
+        phone_form = PhoneForm(data, instance=phone)
+        if phone_form.is_valid():
+            forms.append(phone_form)
+        elif phone_form.errors:
+            save_forms = False
+        context['%s_phone_form' % phone_type] = phone_form
 
-    # Generate a form for each essay question
+    # Generate a form for each essay question.
     questions = EssayQuestion.objects.all()
     context['essay_response_forms'] = []
     for question in questions:
@@ -126,7 +115,7 @@ def apply(request, job):
         placement_preference_subform.community = community
         context['placement_preference_forms'].append(placement_preference_subform)
 
-    # Generate each reference form
+    # Generate each reference form.
     context['reference_forms'] = []
     for i in xrange(NUMBER_OF_REFERENCE_FORMS):
         reference_subform = ReferenceForm(data, prefix=i)
@@ -137,7 +126,7 @@ def apply(request, job):
             save_forms = False
         context['reference_forms'].append(reference_subform)
 
-    # Check availability form for validity and save if needed
+    # Check availability form for validity and save if needed.
     availability_form = AvailabilityForm(data)
     if request.method == 'POST' and availability_form.is_valid():
         forms.append(availability_form)
@@ -160,11 +149,6 @@ def apply(request, job):
         request.user.message_set.create(message="Your application was submitted successfully!")
         return HttpResponseRedirect(reverse('wwu_housing.jobs.desk_attendant.views.index'))
 
-    context['current_address_form'] = AddressForm(instance=current_address)
-    context['summer_address_form'] = AddressForm(instance=summer_address)
-    context['current_phone_form'] = PhoneForm(instance=current_phone)
-    context['summer_phone_form'] = PhoneForm(instance=summer_phone)
-    context['cell_phone_form'] = PhoneForm(instance=cell_phone)
     context['application'] = application
     context['job'] = job
     return render_to_response('desk_attendant/apply.html', context, context_instance=RequestContext(request))
