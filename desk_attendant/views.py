@@ -7,6 +7,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 
 from wwu_housing.jobs.models import Applicant, Application
+from wwu_housing.library.models import Address, AddressType
 from wwu_housing.library.forms import AddressForm
 from wwu_housing.keymanager.models import Community
 from forms import AvailabilityForm, ReferenceForm, PlacementPreferenceForm, EssayResponseForm
@@ -20,12 +21,12 @@ def index(request, job):
     # TODO: This could probably use a generic view.
     context = {'job': job}
     try:
-        applicant = Applicant.objects.get_or_create(user=request.user)
+        applicant, created = Applicant.objects.get_or_create(user=request.user)
     except:
         applicant = False
 
     try:
-        application = Application.objects.get(applicant=applicant)
+        application, created = Application.objects.get(applicant=applicant)
     except:
         application = False
 
@@ -69,6 +70,18 @@ def apply(request, job):
         forms = []
     else:
         save_forms = False
+
+    # Create address forms
+    try:
+        current_address_type = AddressType.objects.get(type='current')
+        current_address, created = Address.objects.get_or_create(address_type=current_address_type, user=request.user)
+    except Exception, e:
+        raise Exception("Failed to create address: %s" % e)
+    try:
+        summer_address_type = AddressType.objects.get(type='summer')
+        summer_address, created = Address.objects.get_or_create(address_type=summer_address_type, user=request.user)
+    except Exception, e:
+        raise Exception("Failed to create address: %s" % e)
 
     # Generate a form for each essay question
     questions = EssayQuestion.objects.all()
@@ -130,8 +143,8 @@ def apply(request, job):
         request.user.message_set.create(message="Your application was submitted successfully!")
         return HttpResponseRedirect(reverse('wwu_housing.jobs.desk_attendant.views.index'))
 
-    address_form = AddressForm()
-    context['address_form'] = address_form
+    context['current_address_form'] = AddressForm(instance=current_address)
+    context['summer_address_form'] = AddressForm(instance=summer_address)
     context['application'] = application
     context['job'] = job
     return render_to_response('desk_attendant/apply.html', context, context_instance=RequestContext(request))
