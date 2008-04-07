@@ -23,6 +23,13 @@
             {{ summer_address_form.as_p }}
         </fieldset>
 
+        <fieldset>
+            <legend>Phone Numbers</legend>
+            {{ current_phone_form.as_p }}
+            {{ summer_phone_form.as_p }}
+            {{ cell_phone_form.as_p }}
+        </fieldset>
+
         {% for field in availability_form %}
             <p>
                 {{ field.label_tag }} {{ field }}

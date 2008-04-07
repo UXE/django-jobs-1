@@ -7,8 +7,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 
 from wwu_housing.jobs.models import Applicant, Application
-from wwu_housing.library.models import Address, AddressType
-from wwu_housing.library.forms import AddressForm
+from wwu_housing.library.models import Address, AddressType, Phone, PhoneType
+from wwu_housing.library.forms import AddressForm, PhoneForm
 from wwu_housing.keymanager.models import Community
 from forms import AvailabilityForm, ReferenceForm, PlacementPreferenceForm, EssayResponseForm
 from models import EssayQuestion, PlacementPreference
@@ -83,6 +83,23 @@ def apply(request, job):
     except Exception, e:
         raise Exception("Failed to create address: %s" % e)
 
+    # Create phone forms
+    try:
+        current_phone_type = PhoneType.objects.get(type='current')
+        current_phone, created = Phone.objects.get_or_create(phone_type=current_phone_type, user=request.user)
+    except Exception, e:
+        raise Exception("Failed to create phone: %s" % e)
+    try:
+        summer_phone_type = PhoneType.objects.get(type='summer')
+        summer_phone, created = Phone.objects.get_or_create(phone_type=summer_phone_type, user=request.user)
+    except Exception, e:
+        raise Exception("Failed to create phone: %s" % e)
+    try:
+        cell_phone_type = PhoneType.objects.get(type='cell')
+        cell_phone, created = Phone.objects.get_or_create(phone_type=cell_phone_type, user=request.user)
+    except Exception, e:
+        raise Exception("Failed to create phone: %s" % e)
+
     # Generate a form for each essay question
     questions = EssayQuestion.objects.all()
     context['essay_response_forms'] = []
@@ -145,6 +162,9 @@ def apply(request, job):
 
     context['current_address_form'] = AddressForm(instance=current_address)
     context['summer_address_form'] = AddressForm(instance=summer_address)
+    context['current_phone_form'] = PhoneForm(instance=current_phone)
+    context['summer_phone_form'] = PhoneForm(instance=summer_phone)
+    context['cell_phone_form'] = PhoneForm(instance=cell_phone)
     context['application'] = application
     context['job'] = job
     return render_to_response('desk_attendant/apply.html', context, context_instance=RequestContext(request))
