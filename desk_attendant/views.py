@@ -7,7 +7,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 
 from wwu_housing.jobs.models import Applicant, Application
-from wwu_housing.jobs.forms import AddressForm
+from wwu_housing.library.forms import AddressForm
 from wwu_housing.keymanager.models import Community
 from forms import AvailabilityForm, ReferenceForm, PlacementPreferenceForm, EssayResponseForm
 from models import EssayQuestion, PlacementPreference
