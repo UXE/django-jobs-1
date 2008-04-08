@@ -13,23 +13,6 @@
         <p>Name: {{ application.applicant.user.first_name }} {{ application.applicant.user.last_name }}</p>
         <p>Email: {{ application.applicant.user.email }}</p>
 
-        <fieldset>
-            <legend>Current Mailing Address</legend>
-            {{ current_address_form.as_p }}
-        </fieldset>
-
-        <fieldset>
-          <legend>Summer Mailing Address</legend>
-            {{ summer_address_form.as_p }}
-        </fieldset>
-
-        <fieldset>
-            <legend>Phone Numbers</legend>
-            {{ current_phone_form.as_p }}
-            {{ summer_phone_form.as_p }}
-            {{ cell_phone_form.as_p }}
-        </fieldset>
-
         {% for field in availability_form %}
             <p>
                 {{ field.label_tag }} {{ field }}
@@ -37,6 +20,61 @@
                 {% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}
             </p>
         {% endfor %}
+
+        <fieldset>
+            <legend>Current Mailing Address</legend>
+            {% for field in current_address_form %}
+                <p>
+                    {{ field.label_tag }} {{ field }}
+                    {% if field.help_text %}<span>{{ field.help_text }}</span>{% endif %}
+                    {% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}
+                </p>
+            {% endfor %}
+        </fieldset>
+
+        <fieldset>
+            <legend>Summer Mailing Address</legend>
+            {% for field in summer_address_form %}
+                <p>
+                    {{ field.label_tag }} {{ field }}
+                    {% if field.help_text %}<span>{{ field.help_text }}</span>{% endif %}
+                    {% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}
+                </p>
+            {% endfor %}
+        </fieldset>
+
+        <fieldset>
+            <legend>Current Phone</legend>
+            {% for field in current_phone_form %}
+                <p>
+                    {{ field.label_tag }} {{ field }}
+                    {% if field.help_text %}<span>{{ field.help_text }}</span>{% endif %}
+                    {% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}
+                </p>
+            {% endfor %}
+        </fieldset>
+
+        <fieldset>
+            <legend>Summer Phone</legend>
+            {% for field in summer_phone_form %}
+                <p>
+                    {{ field.label_tag }} {{ field }}
+                    {% if field.help_text %}<span>{{ field.help_text }}</span>{% endif %}
+                    {% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}
+                </p>
+            {% endfor %}
+        </fieldset>
+
+        <fieldset>
+            <legend>Cell Phone</legend>
+            {% for field in cell_phone_form %}
+                <p>
+                    {{ field.label_tag }} {{ field }}
+                    {% if field.help_text %}<span>{{ field.help_text }}</span>{% endif %}
+                    {% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}
+                </p>
+            {% endfor %}
+        </fieldset>
     </fieldset>
 
     <fieldset id="reference_group">

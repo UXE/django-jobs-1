@@ -70,7 +70,7 @@ def apply(request, job):
     for address_type in address_types:
         address_type_instance = AddressType.objects.get(type=address_type)
         address, created = Address.objects.get_or_create(address_type=address_type_instance, user=request.user)
-        address_form = AddressForm(data, instance=address)
+        address_form = AddressForm(data, instance=address, prefix="%s-address" % address_type)
         if address_form.is_valid():
             forms.append(address_form)
         elif address_form.errors:
@@ -82,7 +82,7 @@ def apply(request, job):
     for phone_type in phone_types:
         phone_type_instance = PhoneType.objects.get(type=phone_type)
         phone, created = Phone.objects.get_or_create(phone_type=phone_type_instance, user=request.user)
-        phone_form = PhoneForm(data, instance=phone)
+        phone_form = PhoneForm(data, instance=phone, prefix="%s-phone" % phone_type)
         if phone_form.is_valid():
             forms.append(phone_form)
         elif phone_form.errors:
