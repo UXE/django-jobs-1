@@ -10,6 +10,7 @@ class Availability(models.Model):
     on_campus_where = models.ForeignKey(Building, verbose_name="If yes, where?", blank=True, null=True)
     work_study = models.NullBooleanField(verbose_name="Do you anticipate having federal work study next year?")
     hours_available = models.PositiveSmallIntegerField(verbose_name="How many hours will you be available per week?", help_text="Please use a whole number from one to nineteen.")
+    prior_desk_attendant = models.BooleanField(verbose_name="Are you a returning Desk Attendant?")
     class Admin:
         pass
 
