@@ -7,13 +7,13 @@
 <h1>{{ job.title }} Application</h1>
 
 {% if da_message %}
-<p>{{ da_message }}</p>
+<p class="review">{{ da_message }}</p>
 {% endif %}
 
 <p>{{ job.description}}</p>
 
 {% if application.end_datetime %}
-<p class="review">You submitted your application on {{ application.end_datetime|date:"l, F jS \a\t P" }}</p>
+<p>You submitted your application on {{ application.end_datetime|date:"l, F jS \a\t P" }}</p>
 {% else %}{% if job.is_open or 1 %}
 {% comment %}TODO: remove 'or 1' when done testing{% endcomment %}
 <p><a href="apply/">Apply!</a></p>
