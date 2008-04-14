@@ -3,20 +3,23 @@
 {% block title %}{{ job.title }}{% endblock %}
 {% block stylesheets %}<link rel="stylesheet" href="/media/css/desk-attendant.css" type="text/css" />{% endblock %}
 
-{% block body %}
+{% block content %}
 <h1>{{ job.title }} Application</h1>
+
+{% if da_message %}
+<p>{{ da_message }}</p>
+{% endif %}
 
 <p>{{ job.description}}</p>
 
+{% if application.end_datetime %}
+<p class="review">You submitted your application on {{ application.end_datetime|date:"l, F jS \a\t P" }}</p>
+{% else %}{% if job.is_open or 1 %}
 {% comment %}TODO: remove 'or 1' when done testing{% endcomment %}
-{% if job.is_open or 1 %}
-{% comment %}TODO: Need something more here...{% endcomment%}
 <p><a href="apply/">Apply!</a></p>
 {% endif %}
-
-{% if application.end_datetime %}
-<p>You submitted your application on {{ application.end_datetime|date:"l, F jS \a\t P" }}</p>
 {% endif %}
+
 
 <h2>Important Dates</h2>
 <ul>
