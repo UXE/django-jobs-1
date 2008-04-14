@@ -47,7 +47,7 @@ class EssayResponse(models.Model):
     """Applicant responses to the essay questions."""
     application = models.ForeignKey(Application)
     question = models.ForeignKey(EssayQuestion)
-    answer = models.TextField(blank=True)
+    answer = models.TextField()
     class Admin:
         pass
 
