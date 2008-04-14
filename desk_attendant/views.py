@@ -30,6 +30,13 @@ def index(request, job):
     except:
         application = False
 
+    # Handle application messages from the session
+    try:
+        context['da_message'] = request.session['da_message']
+        del request.session['da_message']
+    except:
+        pass
+
     return render_to_response('desk_attendant/index.html', context, context_instance=RequestContext(request))
 
 
@@ -45,7 +52,7 @@ def apply(request, job):
     #raise Exception("Job is open == %s" % job.is_open())
     #TODO: Remove "and False" when ready to be live
     if not job.is_open() and False:
-        request.user.message_set.create(message="You cannot access the application site when the application is closed.")
+        request.session['da_message'] = 'You cannot access the application site when the application is closed.'
         return HttpResponseRedirect(reverse('wwu_housing.jobs.desk_attendant.views.index'))
 
     # Try to load Applicant instance for request user using Applicant.objects.get_or_create().
@@ -146,9 +153,13 @@ def apply(request, job):
             elif isinstance(form, EssayResponseForm):
                 instance.question = form.question
             instance.save()
-        request.user.message_set.create(message="Your application was submitted successfully!")
+        # Close out the application by adding an end datetime
+        application.end_datetime = datetime.datetime.now()
+        application.save()
+        request.session['da_message'] = 'Your application was submitted successfully!'
         return HttpResponseRedirect(reverse('wwu_housing.jobs.desk_attendant.views.index'))
 
     context['application'] = application
     context['job'] = job
+
     return render_to_response('desk_attendant/apply.html', context, context_instance=RequestContext(request))
