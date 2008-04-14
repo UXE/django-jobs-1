@@ -11,7 +11,7 @@
 {% endif %}
 
 <p><img src="/deskattendant/images/da-app.png" alt="Desk Attendant" /></p>
-<p>{{ job.description}}</p>
+{{ job.description|safe }}
 
 {% if application.end_datetime %}
 <p>You submitted your application on {{ application.end_datetime|date:"l, F jS \a\t P" }}</p>
