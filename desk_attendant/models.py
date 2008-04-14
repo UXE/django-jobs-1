@@ -18,8 +18,8 @@ class Availability(models.Model):
 class Reference(models.Model):
     """This describes people who can vouch for an applicant."""
     application = models.ForeignKey(Application)
-    name = models.CharField(max_length=255, verbose_name="Reference's Name", blank=True)
-    phone = models.CharField(max_length=20, verbose_name="Reference's Phone Number", blank=True)
+    name = models.CharField(max_length=255, verbose_name="Reference Name", blank=True)
+    phone = models.CharField(max_length=20, verbose_name="Reference Phone Number", blank=True)
     class Admin:
         pass
 
