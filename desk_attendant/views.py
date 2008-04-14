@@ -127,7 +127,7 @@ def apply(request, job):
     for i in xrange(NUMBER_OF_REFERENCE_FORMS):
         reference_subform = ReferenceForm(data, prefix=i)
         if request.method == 'POST' and reference_subform.is_valid():
-            if len([field for field in reference_subform.cleaned_data.values() if i is not None]) > 0:
+            if len([field for field in reference_subform.cleaned_data.values() if field]) > 0:
                 forms.append(reference_subform)
         elif reference_subform.errors:
             save_forms = False
