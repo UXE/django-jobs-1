@@ -104,7 +104,7 @@
 
     <fieldset id="placement_preference">
         <legend>Placement Preference</legend>
-        <p>Please rank the places you would like to work, using <strong>1</strong> for the place you most want (e.g., 1 Edens/Higginson, 2 Beta/Gamma, etc.).  If you do not wish to apply for a community, simply leave it blank.</p>
+        <p>Please rank the places you would like to work, using <strong>1</strong> for the place you are most interested in (e.g., 1 Edens/Higginson, 2 Beta/Gamma, etc.).  If you do not wish to apply for a specific community, simply leave it blank.</p>
         {% for placement_preference_form in placement_preference_forms %}
             <p>
                 {{ placement_preference_form.rank}} <label for="id_{{ placement_preference_form.rank.html_name }}">{{ placement_preference_form.community.name }}</label>
@@ -135,6 +135,7 @@
         {% endfor %}
     </fieldset>
 
+    <p>Applicants will be screened for significant misconduct on-campus.  Minor policy violations (e.g. quiet hours, candles, etc.) will likely not affect your application.</p>
     <p><input type="submit" value="Submit Application" /></p>
     </form>
 {% endblock %}
