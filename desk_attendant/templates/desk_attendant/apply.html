@@ -89,25 +89,6 @@
             {% endif %}
             {% for field in reference_form %}
                 <p>
-                {{ field.label_tag }}{% if field.field.required %}*{% endif %} {{ field }}
-                {% if field.help_text %}
-                    <span>{{ field.help_text }}</span>
-                {% endif %}
-                {% if field.errors %}
-                    {{ field.errors }}
-                {% endif %}
-                </p>
-            {% endfor %}
-            </fieldset>
-        {% endfor %}
-        {% for reference_form in reference_forms %}
-            <fieldset>
-            <legend>Reference</legend>
-            {% if reference_form.non_field_errors %}
-                {{ reference_form.non_field_errors }}
-            {% endif %}
-            {% for field in reference_form %}
-                <p>
                 {{ field }} {{ field.label_tag }}{% if field.field.required %}*{% endif %}
                 {% if field.help_text %}
                     <span>{{ field.help_text }}</span>
