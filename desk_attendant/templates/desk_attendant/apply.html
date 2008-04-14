@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 
 {% block title %}{{ job.title }} Application{% endblock %}
-{% block stylesheets %}<link rel="stylesheet" href="/media/css/desk-attendant.css" type="text/css" />{% endblock %}
+{% block stylesheets %}
+{% endblock %}
 
 {% block body %}
     <h1>{{ job.title }} Application</h1>
@@ -9,13 +10,13 @@
     <form action="" method="post">
     <fieldset id="availability">
         <legend>General Information</legend>
-        <p>The General Information section helps us determine how available you will be for the job.  Please answer all questions to the best of your ability and estimate your hours available from 1 to 19.</p>
-        <p>Name: {{ application.applicant.user.first_name }} {{ application.applicant.user.last_name }}</p>
-        <p>Email: {{ application.applicant.user.email }}</p>
+        <p>The General Information section helps us determine how available you will be for the job.  Please answer all questions to the best of your ability and estimate your hours available from 1 to 19.  Items with an asterisk (*) are required to submit your application.</p>
+        <p>Name: <strong>{{ application.applicant.user.first_name }} {{ application.applicant.user.last_name }}</strong></p>
+        <p>Email: <strong>{{ application.applicant.user.email }}</strong></p>
 
         {% for field in availability_form %}
             <p>
-                {{ field.label_tag }} {{ field }}
+                {{ field.label_tag }}{% if field.field.required %}*{% endif %} {{ field }}
                 {% if field.help_text %}<span>{{ field.help_text }}</span>{% endif %}
                 {% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}
             </p>
@@ -25,7 +26,7 @@
             <legend>Current Mailing Address</legend>
             {% for field in current_address_form %}
                 <p>
-                    {{ field.label_tag }} {{ field }}
+                    {{ field.label_tag }}{% if field.field.required %}*{% endif %} {{ field }}
                     {% if field.help_text %}<span>{{ field.help_text }}</span>{% endif %}
                     {% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}
                 </p>
@@ -36,7 +37,7 @@
             <legend>Summer Mailing Address</legend>
             {% for field in summer_address_form %}
                 <p>
-                    {{ field.label_tag }} {{ field }}
+                    {{ field.label_tag }}{% if field.field.required %}*{% endif %} {{ field }}
                     {% if field.help_text %}<span>{{ field.help_text }}</span>{% endif %}
                     {% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}
                 </p>
@@ -47,7 +48,7 @@
             <legend>Current Phone</legend>
             {% for field in current_phone_form %}
                 <p>
-                    {{ field.label_tag }} {{ field }}
+                    {{ field.label_tag }}{% if field.field.required %}*{% endif %} {{ field }}
                     {% if field.help_text %}<span>{{ field.help_text }}</span>{% endif %}
                     {% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}
                 </p>
@@ -58,7 +59,7 @@
             <legend>Summer Phone</legend>
             {% for field in summer_phone_form %}
                 <p>
-                    {{ field.label_tag }} {{ field }}
+                    {{ field.label_tag }}{% if field.field.required %}*{% endif %} {{ field }}
                     {% if field.help_text %}<span>{{ field.help_text }}</span>{% endif %}
                     {% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}
                 </p>
@@ -69,7 +70,7 @@
             <legend>Cell Phone</legend>
             {% for field in cell_phone_form %}
                 <p>
-                    {{ field.label_tag }} {{ field }}
+                    {{ field.label_tag }}{% if field.field.required %}*{% endif %} {{ field }}
                     {% if field.help_text %}<span>{{ field.help_text }}</span>{% endif %}
                     {% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}
                 </p>
@@ -81,20 +82,42 @@
         <legend>References</legend>
         <p>The References section is optional and is for you to list one or more people who can vouch for you.  If you include a person's name, please include a contact phone number for that person.</p>
         {% for reference_form in reference_forms %}
-            <p style="margin-bottom: .5em;">
+            <fieldset>
+            <legend>Reference</legend>
             {% if reference_form.non_field_errors %}
                 {{ reference_form.non_field_errors }}
             {% endif %}
             {% for field in reference_form %}
-                {{ field.label_tag }} {{ field }}
+                <p>
+                {{ field.label_tag }}{% if field.field.required %}*{% endif %} {{ field }}
                 {% if field.help_text %}
                     <span>{{ field.help_text }}</span>
                 {% endif %}
                 {% if field.errors %}
                     {{ field.errors }}
                 {% endif %}
+                </p>
             {% endfor %}
-            </p>
+            </fieldset>
+        {% endfor %}
+        {% for reference_form in reference_forms %}
+            <fieldset>
+            <legend>Reference</legend>
+            {% if reference_form.non_field_errors %}
+                {{ reference_form.non_field_errors }}
+            {% endif %}
+            {% for field in reference_form %}
+                <p>
+                {{ field }} {{ field.label_tag }}{% if field.field.required %}*{% endif %}
+                {% if field.help_text %}
+                    <span>{{ field.help_text }}</span>
+                {% endif %}
+                {% if field.errors %}
+                    {{ field.errors }}
+                {% endif %}
+                </p>
+            {% endfor %}
+            </fieldset>
         {% endfor %}
     </fieldset>
 
@@ -131,7 +154,7 @@
         {% endfor %}
     </fieldset>
 
-    <div><input type="submit" value="Submit Application" /></div>
+    <p><input type="submit" value="Submit Application" /></p>
     </form>
 {% endblock %}
 
