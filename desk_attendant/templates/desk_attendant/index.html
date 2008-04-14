@@ -15,8 +15,7 @@
 
 {% if application.end_datetime %}
 <p>You submitted your application on {{ application.end_datetime|date:"l, F jS \a\t P" }}</p>
-{% else %}{% if job.is_open or 1 %}
-{% comment %}TODO: remove 'or 1' when done testing{% endcomment %}
+{% else %}{% if job.is_open %}
 <p><a href="apply/">Apply!</a></p>
 {% endif %}
 {% endif %}

@@ -47,11 +47,8 @@ def apply(request, job):
     """
     # TODO: This is a job for students only, at what point should we check that attribute?
 
-
     # If the job is not open, forward to the index page
-    #raise Exception("Job is open == %s" % job.is_open())
-    #TODO: Remove "and False" when ready to be live
-    if not job.is_open() and False:
+    if not job.is_open():
         request.session['da_message'] = 'You cannot access the application site when the application is closed.'
         return HttpResponseRedirect(reverse('wwu_housing.jobs.desk_attendant.views.index'))
 
@@ -60,6 +57,11 @@ def apply(request, job):
 
     # Try to load Application instance for Applicant and Job (possibly by using Application.objects.get_or_create()).
     application, created = Application.objects.get_or_create(applicant=applicant, job=job)
+
+    # If the applicant has already submitted their application, redirect them to the index.
+    if application.end_datetime:
+        request.session['da_message'] = "You have already submitted your application.  Please contact Residence Life at 650-2960 or by email at reslife@wwu.edu if you have any questions about your application."
+        return HttpResponseRedirect(reverse('wwu_housing.jobs.desk_attendant.views.index'))
 
     # If Application was created, display application forms.
     NUMBER_OF_REFERENCE_FORMS = 3
@@ -72,11 +74,27 @@ def apply(request, job):
     else:
         save_forms = False
 
+    address_defaults = {}
+    phone_defaults = {}
+    if hasattr(request.user, 'student'):
+        address = request.user.student.mailing_address
+        if address:
+            address_defaults['current'] = {'street_line_1': address.street_line1,
+                                           'street_line_2': address.street_line2,
+                                           'street_line_3': address.street_line3,
+                                           'city': address.city,
+                                           'district': address.state,
+                                           'zip': address.zip}
+            phone_defaults['current'] = {'phone': "%s-%s-%s" % (address.area_code, 
+                                                                address.phone_number[:3],
+                                                                address.phone_number[3:])}
+
     # Generate a form for each address type.
     address_types = ('current', 'summer')
     for address_type in address_types:
         address_type_instance = AddressType.objects.get(type=address_type)
-        address, created = Address.objects.get_or_create(address_type=address_type_instance, user=request.user)
+        address, created = Address.objects.get_or_create(address_type=address_type_instance, user=request.user,
+                                                         defaults=address_defaults.get(address_type, {}))
         address_form = AddressForm(data, instance=address, prefix="%s-address" % address_type)
         if address_form.is_valid():
             forms.append(address_form)
@@ -88,8 +106,14 @@ def apply(request, job):
     phone_types = ('current', 'summer', 'cell')
     for phone_type in phone_types:
         phone_type_instance = PhoneType.objects.get(type=phone_type)
-        phone, created = Phone.objects.get_or_create(phone_type=phone_type_instance, user=request.user)
+        phone, created = Phone.objects.get_or_create(phone_type=phone_type_instance, user=request.user,
+                                                     defaults=phone_defaults.get(phone_type, {}))
         phone_form = PhoneForm(data, instance=phone, prefix="%s-phone" % phone_type)
+
+        # Make cell phone unrequired.
+        if phone_type == 'cell':
+            phone_form.fields['phone'].required = False
+
         if phone_form.is_valid():
             forms.append(phone_form)
         elif phone_form.errors:
@@ -126,6 +150,13 @@ def apply(request, job):
     context['reference_forms'] = []
     for i in xrange(NUMBER_OF_REFERENCE_FORMS):
         reference_subform = ReferenceForm(data, prefix=i)
+
+        # Make the first reference required.  
+        # TODO: How would we specify this dynamically for app^2?
+        if i == 0:
+            reference_subform.fields['name'].required = True
+            reference_subform.fields['phone'].required = True
+
         if request.method == 'POST' and reference_subform.is_valid():
             if len([field for field in reference_subform.cleaned_data.values() if field]) > 0:
                 forms.append(reference_subform)
@@ -152,7 +183,10 @@ def apply(request, job):
                 instance.community = form.community
             elif isinstance(form, EssayResponseForm):
                 instance.question = form.question
+            elif isinstance(form, AddressForm) or isinstance(form, PhoneForm):
+                instance.user = applicant.user
             instance.save()
+
         # Close out the application by adding an end datetime
         application.end_datetime = datetime.datetime.now()
         application.save()

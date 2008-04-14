@@ -17,7 +17,7 @@
         {% for field in availability_form %}
             <p>
                 {{ field.label_tag }}{% if field.field.required %}*{% endif %} {{ field }}
-                {% if field.help_text %}<span>{{ field.help_text }}</span>{% endif %}
+                {% if field.help_text %}<span class="help">{{ field.help_text }}</span>{% endif %}
                 {% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}
             </p>
         {% endfor %}
@@ -27,7 +27,7 @@
             {% for field in current_address_form %}
                 <p>
                     {{ field.label_tag }}{% if field.field.required %}*{% endif %} {{ field }}
-                    {% if field.help_text %}<span>{{ field.help_text }}</span>{% endif %}
+                    {% if field.help_text %}<span class="help">{{ field.help_text }}</span>{% endif %}
                     {% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}
                 </p>
             {% endfor %}
@@ -38,7 +38,7 @@
             {% for field in summer_address_form %}
                 <p>
                     {{ field.label_tag }}{% if field.field.required %}*{% endif %} {{ field }}
-                    {% if field.help_text %}<span>{{ field.help_text }}</span>{% endif %}
+                    {% if field.help_text %}<span class="help">{{ field.help_text }}</span>{% endif %}
                     {% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}
                 </p>
             {% endfor %}
@@ -49,7 +49,7 @@
             {% for field in current_phone_form %}
                 <p>
                     {{ field.label_tag }}{% if field.field.required %}*{% endif %} {{ field }}
-                    {% if field.help_text %}<span>{{ field.help_text }}</span>{% endif %}
+                    {% if field.help_text %}<span class="help">{{ field.help_text }}</span>{% endif %}
                     {% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}
                 </p>
             {% endfor %}
@@ -60,7 +60,7 @@
             {% for field in summer_phone_form %}
                 <p>
                     {{ field.label_tag }}{% if field.field.required %}*{% endif %} {{ field }}
-                    {% if field.help_text %}<span>{{ field.help_text }}</span>{% endif %}
+                    {% if field.help_text %}<span class="help">{{ field.help_text }}</span>{% endif %}
                     {% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}
                 </p>
             {% endfor %}
@@ -71,7 +71,7 @@
             {% for field in cell_phone_form %}
                 <p>
                     {{ field.label_tag }}{% if field.field.required %}*{% endif %} {{ field }}
-                    {% if field.help_text %}<span>{{ field.help_text }}</span>{% endif %}
+                    {% if field.help_text %}<span class="help">{{ field.help_text }}</span>{% endif %}
                     {% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}
                 </p>
             {% endfor %}

@@ -11,8 +11,12 @@ class Availability(models.Model):
     work_study = models.NullBooleanField(verbose_name="Do you anticipate having federal work study next year?")
     hours_available = models.PositiveSmallIntegerField(verbose_name="How many hours will you be available per week?", help_text="Please use a whole number from one to nineteen.")
     prior_desk_attendant = models.BooleanField(verbose_name="Are you a returning Desk Attendant?")
+
+    class Meta:
+        verbose_name_plural = 'availability'
+
     class Admin:
-        pass
+        list_display = ('application', 'on_campus', 'on_campus_where', 'hours_available', 'prior_desk_attendant')
 
 
 class Reference(models.Model):
@@ -20,8 +24,9 @@ class Reference(models.Model):
     application = models.ForeignKey(Application)
     name = models.CharField(max_length=255, verbose_name="Reference Name", blank=True)
     phone = models.CharField(max_length=20, verbose_name="Reference Phone Number", blank=True)
+
     class Admin:
-        pass
+        list_display = ('application', 'name', 'phone')
 
 
 class PlacementPreference(models.Model):
@@ -29,6 +34,7 @@ class PlacementPreference(models.Model):
     application = models.ForeignKey(Application)
     community = models.ForeignKey(Community, blank=True)
     rank = models.PositiveSmallIntegerField(blank=True)
+
     class Admin:
         pass
 
@@ -36,6 +42,7 @@ class PlacementPreference(models.Model):
 class EssayQuestion(models.Model):
     """Essay questions."""
     question = models.CharField(max_length=255)
+
     class Admin:
         pass
 
@@ -48,8 +55,9 @@ class EssayResponse(models.Model):
     application = models.ForeignKey(Application)
     question = models.ForeignKey(EssayQuestion)
     answer = models.TextField()
+
     class Admin:
-        pass
+        list_display = ('application', 'question', 'answer')
 
 
 class ApplicantStatus(models.Model):
@@ -58,5 +66,9 @@ class ApplicantStatus(models.Model):
     #application = models.ForeignKey(Application)
     name = models.CharField(max_length=50)
     value = models.CharField(max_length=50)
+
+    class Meta:
+        verbose_name_plural = 'applicant statuses'
+
     class Admin:
         pass
