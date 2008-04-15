@@ -7,19 +7,20 @@
 <h1>{{ job.title }} Application</h1>
 
 {% if da_message %}
-<p class="review">{{ da_message }}</p>
+    <p class="review">{{ da_message }}</p>
 {% endif %}
 
 <p><img src="/media/img/da-app.png" alt="Desk Attendant" /></p>
-{{ job.description|safe }}
 
 {% if application.end_datetime %}
-<p>You submitted your application on {{ application.end_datetime|date:"l, F jS \a\t P" }}</p>
-{% else %}{% if job.is_open %}
-<p><a href="apply/">Apply!</a></p>
-{% endif %}
+    <p>You submitted your application on {{ application.end_datetime|date:"l, F jS \a\t P" }}</p>
+{% else %}
+    {% if job.is_open %}
+        <p><a href="apply/">Apply!</a></p>
+    {% endif %}
 {% endif %}
 
+{{ job.description|safe }}
 
 <h2>Important Dates</h2>
 <ul>
