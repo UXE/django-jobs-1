@@ -17,6 +17,7 @@ class Availability(models.Model):
 
     class Admin:
         list_display = ('application', 'on_campus', 'on_campus_where', 'hours_available', 'prior_desk_attendant')
+        list_filter = ('on_campus', 'on_campus_where', 'work_study', 'hours_available', 'prior_desk_attendant')
 
 
 class Reference(models.Model):
