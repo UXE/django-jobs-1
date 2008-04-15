@@ -35,8 +35,14 @@ class PlacementPreference(models.Model):
     community = models.ForeignKey(Community, blank=True)
     rank = models.PositiveSmallIntegerField(blank=True)
 
+    class Meta:
+        ordering = ('rank',)
+
     class Admin:
-        pass
+        list_display = ('application', 'community', 'rank')
+
+    def __unicode__(self):
+        return u"%i. %s" % (self.rank, self.community)
 
 
 class EssayQuestion(models.Model):
