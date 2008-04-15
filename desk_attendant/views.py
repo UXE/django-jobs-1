@@ -48,7 +48,7 @@ def apply(request, job):
     # TODO: This is a job for students only, at what point should we check that attribute?
 
     # If the job is not open, forward to the index page
-    if not job.is_open() and request.user.username != 'huddlej':
+    if not job.is_open() and request.user.username != 'obrienm5':
         request.session['da_message'] = 'You cannot access the application site when the application is closed.'
         return HttpResponseRedirect(reverse('wwu_housing.jobs.desk_attendant.views.index'))
 
