@@ -85,9 +85,10 @@ def apply(request, job):
                                            'city': address.city,
                                            'district': address.state,
                                            'zip': address.zip}
-            phone_defaults['current'] = {'phone': "%s-%s-%s" % (address.area_code, 
-                                                                address.phone_number[:3],
-                                                                address.phone_number[3:])}
+            if address.phone_number:
+                phone_defaults['current'] = {'phone': "%s-%s-%s" % (address.area_code, 
+                                                                    address.phone_number[:3],
+                                                                    address.phone_number[3:])}
 
     # Generate a form for each address type.
     address_types = ('current', 'summer')
