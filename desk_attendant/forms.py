@@ -37,3 +37,9 @@ class EssayResponseForm(forms.ModelForm):
     class Meta:
         model = EssayResponse
         fields = ('answer',)
+
+    def clean_answer(self):
+        cleaned_answer = self.cleaned_data['answer'].strip()
+        if not cleaned_answer:
+            raise forms.ValidationError('This field is required.')
+        return cleaned_answer
