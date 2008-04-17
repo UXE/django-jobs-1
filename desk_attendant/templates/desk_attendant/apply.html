@@ -7,7 +7,7 @@
 {% block content %}
     <h1>{{ job.title }} Application</h1>
 
-    <form action="" method="post">
+    <form enctype="multipart/form-data" action="" method="post">
     <fieldset id="availability">
         <legend>General Information</legend>
         <p>The General Information section helps us determine how available you will be for the job.  Please answer all questions to the best of your ability and estimate your hours available from 1 to 19.  Items with an asterisk (*) are required to submit your application.</p>
@@ -133,6 +133,20 @@
             {% endif %}
             </p>
         {% endfor %}
+    </fieldset>
+
+    <fieldset id="essay_response">
+        <legend>Resume</legend>
+        <p>You may optionally upload a resume as a PDF or Microsoft Word document.</p>
+        <p>
+            {{ resume_form.resume.label_tag }} {{ resume_form.resume }}
+            {% if resume_form.resume.help_text %}
+                <span>{{ resume_form.resume.help_text }}</span>
+            {% endif %}
+            {% if resume_form.resume.errors %}
+                <span class="errors">{{ resume_form.resume.errors }}</span>
+            {% endif %}
+        </p>
     </fieldset>
 
     <p>Applicants will be screened for significant misconduct on-campus.  Minor policy violations (e.g. quiet hours, candles, etc.) will likely not affect your application.</p>

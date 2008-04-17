@@ -10,7 +10,7 @@ from wwu_housing.jobs.models import Applicant, Application
 from wwu_housing.library.models import Address, AddressType, Phone, PhoneType
 from wwu_housing.library.forms import AddressForm, PhoneForm
 from wwu_housing.keymanager.models import Community
-from forms import AvailabilityForm, ReferenceForm, PlacementPreferenceForm, EssayResponseForm
+from forms import AvailabilityForm, ReferenceForm, PlacementPreferenceForm, EssayResponseForm, ResumeForm
 from models import EssayQuestion, PlacementPreference
 
 
@@ -66,6 +66,7 @@ def apply(request, job):
     # If Application was created, display application forms.
     NUMBER_OF_REFERENCE_FORMS = 3
     data = request.POST or None
+    files = request.FILES or None
     context = {}
 
     if request.method == "POST":
@@ -173,9 +174,29 @@ def apply(request, job):
         save_forms = False
     context['availability_form'] = availability_form
 
+    resume_form = ResumeForm(data, files)
+    resume_form.fields['resume'].required = False
+    if request.method == 'POST' and resume_form.is_valid():
+        forms.append(resume_form)
+    elif resume_form.errors:
+        save_forms = False
+    context['resume_form'] = resume_form
+
     # Check whether forms can be saved.
     if save_forms:
         for form in forms:
+            # Resumes need pre-processing: each resume needs a unique filename per application.
+            if isinstance(form, ResumeForm):
+                # Try to get a file extension and use the application id as the new filename.
+                filename_pieces = form.cleaned_data['resume'].filename.split('.')
+                if len(filename_pieces) > 1:
+                    extension = filename_pieces[-1]
+                    filename = "%i.%s" % (application.id, extension)
+                else:
+                    filename = "%i.txt" % application.id
+                # Use the application id to uniquely identify the resume file.
+                form.cleaned_data['resume'].filename = filename
+
             # Before saving the forms, the application must be set for each form instance
             # and any required elements must also be set.
             instance = form.save(commit=False)

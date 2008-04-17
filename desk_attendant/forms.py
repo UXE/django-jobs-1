@@ -1,6 +1,6 @@
 from django import newforms as forms
 
-from models import Availability, Reference, PlacementPreference, EssayResponse
+from models import Availability, Reference, PlacementPreference, EssayResponse, Resume
 
 
 class AvailabilityForm(forms.ModelForm):
@@ -43,3 +43,9 @@ class EssayResponseForm(forms.ModelForm):
         if not cleaned_answer:
             raise forms.ValidationError('This field is required.')
         return cleaned_answer
+
+
+class ResumeForm(forms.ModelForm):
+    class Meta:
+        model = Resume
+        fields = ('resume',)
