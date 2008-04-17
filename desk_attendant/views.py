@@ -188,6 +188,8 @@ def apply(request, job):
             # Resumes need pre-processing: each resume needs a unique filename per application.
             if isinstance(form, ResumeForm):
                 # Try to get a file extension and use the application id as the new filename.
+                if not form.cleaned_data['resume']:
+                    continue
                 filename_pieces = form.cleaned_data['resume'].filename.split('.')
                 if len(filename_pieces) > 1:
                     extension = filename_pieces[-1]
