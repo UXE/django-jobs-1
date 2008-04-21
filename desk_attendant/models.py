@@ -25,6 +25,16 @@ class Availability(models.Model):
         list_display = ('application', 'on_campus', 'on_campus_where', 'hours_available', 'prior_desk_attendant')
         list_filter = ('on_campus', 'on_campus_where', 'work_study', 'hours_available', 'prior_desk_attendant')
 
+    def __unicode__(self):
+        return u"%s" % self.application
+
+    def get_community_rank(self, community):
+        community_preferences = PlacementPreference.objects.filter(application=self.application).filter(community=community)
+        try:
+            rank = community_preferences[0].rank
+        except:
+            return None
+        return rank
 
 class Reference(models.Model):
     """This describes people who can vouch for an applicant."""
