@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ job.title }} Application{% endblock %}
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+    <h1>{{ job.title }} Application</h1>
+
+    <p><strong>Applicant Name:</strong> {{ applicant }}</p>
+
+    <h2>Availability</h2>
+    <p>
+    {% if availability.on_campus %}
+        Student will live on campus next year
+        {% if availability.on_campus_where %}
+            ({{ availability.on_campus_where }}).
+        {% else %}
+            (Unknown Location).
+        {% endif %}
+    {% else %}
+        Student will not live on campus next year.
+    {% endif %}
+    <br />
+    Student will be available {{ availability.hours_available }} hours.<br />
+    Student {{ availability.work_study|yesno:"is,is not, might be" }} elligible for work study.<br />
+    Student {{ availability.prior_desk_attendant|yesno:"was, was not" }} a Desk Attendant previously.
+    </p>
+
+    <h2>Addresses</h2>
+    {% for address in addresses %}
+        <p>{{ address.street_line_1 }}<br />
+        {% if address.street_line_2 %}
+            {{ address.street_line_2 }}<br />
+        {% endif %}
+        {% if address.street_line_3 %}
+            {{ address.street_line_3 }}<br />
+        {% endif %}
+        {{ address.city}}, {{ address.district }} {{ address.zip }}
+        </p>
+    {% endfor %}
+
+    <h2>Phone Numbers</h2>
+    {% for phone in phones %}
+        <p>
+        {{ phone.phone_type|title }} Phone: {{ phone.phone }} 
+        {% if phone.extension %}
+            Ext. {{ phone.extension }}
+        {% endif %}
+        </p>
+    {% endfor %}
+
+    <h2>References</h2>
+    {% for reference in references %}
+        <p>{{ reference.name }} - {{ reference.phone }}</p>
+    {% endfor %}
+
+    <h2>Placement Preferences</h2>
+    {% for pref in placement_preferences %}
+        <p>{{ pref.rank }} - {{ pref.community }}</p>
+    {% endfor %}
+
+    <h2>Essay Responses</h2>
+    {% for response in essay_responses reversed %}
+        <p><strong>{{ response.question }}</strong><br />
+        {{ response.answer }}</p>
+    {% endfor %}
+
+{% endblock %}
+
+

@@ -1,7 +1,7 @@
 import datetime
 
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 from django.template import Template, RequestContext, Context, loader
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
@@ -221,3 +221,25 @@ def apply(request, job):
     context['job'] = job
 
     return render_to_response('desk_attendant/apply.html', context, context_instance=RequestContext(request))
+
+@login_required
+def admin(request, job, id):
+    """Allows RDs to view individual applications for their communities and
+    set statuses"""
+    # TODO: Is user authorized to view admin page?
+    # if request.user.has_perm('view_da_stuff')
+
+    app = get_object_or_404(Application, pk=id)
+
+    # Build context
+    context = {}
+    context['job'] = job
+    context['applicant'] = app.applicant.user.get_full_name()
+    context['availability'] = app.availability_set.all()[0]
+    context['addresses'] = app.applicant.user.address_set.all()
+    context['phones'] = app.applicant.user.phone_set.all()
+    context['references'] = app.reference_set.all()
+    context['placement_preferences'] = app.placementpreference_set.all()
+    context['essay_responses'] = app.essayresponse_set.all()
+
+    return render_to_response('desk_attendant/admin.html', context, context_instance=RequestContext(request))
