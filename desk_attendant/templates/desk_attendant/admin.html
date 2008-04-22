@@ -10,61 +10,85 @@
     <p><strong>Applicant Name:</strong> {{ applicant }}</p>
 
     <h2>Availability</h2>
-    <p>
-    {% if availability.on_campus %}
-        Student will live on campus next year
-        {% if availability.on_campus_where %}
-            ({{ availability.on_campus_where }}).
+    {% if availability %}
+        <p>
+        {% if availability.on_campus %}
+            Student will live on campus next year
+            {% if availability.on_campus_where %}
+                ({{ availability.on_campus_where }}).
+            {% else %}
+                (Unknown Location).
+            {% endif %}
         {% else %}
-            (Unknown Location).
+            Student will not live on campus next year.
         {% endif %}
+        <br />
+        Student will be available {{ availability.hours_available }} hours.<br />
+        Student {{ availability.work_study|yesno:"is,is not, might be" }} elligible for work study.<br />
+        Student {{ availability.prior_desk_attendant|yesno:"was, was not" }} a Desk Attendant previously.
+        </p>
     {% else %}
-        Student will not live on campus next year.
+    <p>Applicant does not have availability information.</p>
     {% endif %}
-    <br />
-    Student will be available {{ availability.hours_available }} hours.<br />
-    Student {{ availability.work_study|yesno:"is,is not, might be" }} elligible for work study.<br />
-    Student {{ availability.prior_desk_attendant|yesno:"was, was not" }} a Desk Attendant previously.
-    </p>
 
     <h2>Addresses</h2>
-    {% for address in addresses %}
-        <p>{{ address.street_line_1 }}<br />
-        {% if address.street_line_2 %}
-            {{ address.street_line_2 }}<br />
-        {% endif %}
-        {% if address.street_line_3 %}
-            {{ address.street_line_3 }}<br />
-        {% endif %}
-        {{ address.city}}, {{ address.district }} {{ address.zip }}
-        </p>
-    {% endfor %}
+    {% if addresses %}
+        {% for address in addresses %}
+            <p>{{ address.street_line_1 }}<br />
+            {% if address.street_line_2 %}
+                {{ address.street_line_2 }}<br />
+            {% endif %}
+            {% if address.street_line_3 %}
+                {{ address.street_line_3 }}<br />
+            {% endif %}
+            {{ address.city}}, {{ address.district }} {{ address.zip }}
+            </p>
+        {% endfor %}
+    {% else %}
+    <p>Applicant does not have any addresses listed.</p>
+    {% endif %}
 
     <h2>Phone Numbers</h2>
-    {% for phone in phones %}
-        <p>
-        {{ phone.phone_type|title }} Phone: {{ phone.phone }} 
-        {% if phone.extension %}
-            Ext. {{ phone.extension }}
-        {% endif %}
-        </p>
-    {% endfor %}
+    {% if phones %}
+        {% for phone in phones %}
+            <p>
+            {{ phone.phone_type|title }} Phone: {{ phone.phone }} 
+            {% if phone.extension %}
+                Ext. {{ phone.extension }}
+            {% endif %}
+            </p>
+        {% endfor %}
+    {% else %}
+        <p>Applicant does not have any phone numbers listed.</p>
+    {% endif %}
 
     <h2>References</h2>
-    {% for reference in references %}
-        <p>{{ reference.name }} - {{ reference.phone }}</p>
-    {% endfor %}
+    {% if references %}
+        {% for reference in references %}
+            <p>{{ reference.name }} - {{ reference.phone }}</p>
+        {% endfor %}
+    {% else %}
+        <p>Applicant did not list any references.</p>
+    {% endif %}
 
     <h2>Placement Preferences</h2>
-    {% for pref in placement_preferences %}
-        <p>{{ pref.rank }} - {{ pref.community }}</p>
-    {% endfor %}
+    {% if placement_preferences %}
+        {% for pref in placement_preferences %}
+            <p>{{ pref.rank }} - {{ pref.community }}</p>
+        {% endfor %}
+    {% else %}
+        <p>Applicant did not list any placement preferences.</p>
+    {% endif %}
 
     <h2>Essay Responses</h2>
-    {% for response in essay_responses reversed %}
-        <p><strong>{{ response.question }}</strong><br />
-        {{ response.answer }}</p>
-    {% endfor %}
+    {% if essay_responses %}
+        {% for response in essay_responses reversed %}
+            <p><strong>{{ response.question }}</strong><br />
+            {{ response.answer }}</p>
+        {% endfor %}
+    {% else %}
+        <p>Applicant did not respond to the essay questions.</p>
+    {% endif %}
 
 {% endblock %}
 

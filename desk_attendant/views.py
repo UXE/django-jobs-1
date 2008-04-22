@@ -235,11 +235,16 @@ def admin(request, job, id):
     context = {}
     context['job'] = job
     context['applicant'] = app.applicant.user.get_full_name()
-    context['availability'] = app.availability_set.all()[0]
+    #context['availability'] = app.availability_set.all()
     context['addresses'] = app.applicant.user.address_set.all()
     context['phones'] = app.applicant.user.phone_set.all()
     context['references'] = app.reference_set.all()
     context['placement_preferences'] = app.placementpreference_set.all()
     context['essay_responses'] = app.essayresponse_set.all()
+
+    try:
+        context['availability'] = app.availability_set.all()[0]
+    except:
+        context['availability'] = False
 
     return render_to_response('desk_attendant/admin.html', context, context_instance=RequestContext(request))
