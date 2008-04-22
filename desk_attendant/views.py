@@ -234,8 +234,8 @@ def admin(request, job, id):
     # Build context
     context = {}
     context['job'] = job
+    context['application'] = app
     context['applicant'] = app.applicant.user.get_full_name()
-    #context['availability'] = app.availability_set.all()
     context['addresses'] = app.applicant.user.address_set.all()
     context['phones'] = app.applicant.user.phone_set.all()
     context['references'] = app.reference_set.all()

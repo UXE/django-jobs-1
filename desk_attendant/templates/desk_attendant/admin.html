@@ -8,6 +8,11 @@
     <h1>{{ job.title }} Application</h1>
 
     <p><strong>Applicant Name:</strong> {{ applicant }}</p>
+    {% if application.end_datetime %}
+        <p>Application completed on {{ application.end_datetime|date:"F j, Y \a\t P" }}</p>
+    {% else %}
+        <p>Application is <strong>incomplete</strong>!</p>
+    {% endif %}
 
     <h2>Availability</h2>
     {% if availability %}
