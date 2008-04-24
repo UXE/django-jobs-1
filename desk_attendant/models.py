@@ -45,6 +45,9 @@ class Reference(models.Model):
     class Admin:
         list_display = ('application', 'name', 'phone')
 
+    def __unicode__(self):
+        return u"Name: %s\nPhone: %s" % (self.name, self.phone)
+
 
 class PlacementPreference(models.Model):
     """This allows applicants to select which communities they would like to work in the most."""
@@ -82,6 +85,8 @@ class EssayResponse(models.Model):
     class Admin:
         list_display = ('application', 'question', 'answer')
 
+    def __unicode__(self):
+        return self.answer
 
 class ApplicantStatus(models.Model):
     """This tracks the status of the application in each hall (e.g., "applied," "hired," etc.)."""
@@ -160,3 +165,6 @@ class Resume(models.Model):
 
     class Admin:
         pass
+
+    def __unicode__(self):
+        return u'Resume for %s' % self.application.applicant 
