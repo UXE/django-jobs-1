@@ -279,6 +279,10 @@ def admin_list(request, job):
         #for k, v in availability_fields.items():
             #apps[a.application_id][k] = a.v
 
+    for s in status:
+        apps[s.application_id][s.community]['name'] = s.name
+        apps[s.application_id][s.community]['name'] = s.value
+
     # Below way won't work without 80 billion queries
     # Build exactly what we need from apps to pass to view
     # TODO: Make beautiful....
