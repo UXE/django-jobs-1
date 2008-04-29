@@ -8,7 +8,6 @@ from wwu_housing import models as custom_models
 from wwu_housing.jobs.models import Application
 from wwu_housing.keymanager.models import Building, Community
 
-
 class Availability(models.Model):
     """Questions related to applicant's availability."""
     application = models.ForeignKey(Application, unique=True)
@@ -90,12 +89,13 @@ class EssayResponse(models.Model):
 
 class ApplicantStatus(models.Model):
     """This tracks the status of the application in each hall (e.g., "applied," "hired," etc.)."""
-    # TODO: This might go into the admin section?  It's unclear how we'll handle admin though.
     application = models.ForeignKey(Application)
+    community = models.ForeignKey(Community)
     name = models.CharField(max_length=50)
     value = models.CharField(max_length=50)
 
     class Meta:
+        unique_together = (("application", "community"),)
         verbose_name_plural = 'applicant statuses'
 
     class Admin:

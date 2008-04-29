@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ job.title }} Applications{% endblock %}
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+    <h1>{{ job.title }} Applications</h1>
+
+<p><a href="24/">Individual Test App</a></p>
+
+<h2>Dynamic</h2>
+<table>
+{% for app in applications %}
+    {% if forloop.first %}
+        <tr>
+        {% for key, value in app.items %}
+            <th>{{ key }}</th>
+        {% endfor %}
+        </tr>
+    {% endif %}
+    <tr>
+    {% for key, value in app.items %}
+        <td>{{ value }}</td>
+    {% endfor %}
+    </tr>
+{% endfor %}
+</table>
+{% endblock %}

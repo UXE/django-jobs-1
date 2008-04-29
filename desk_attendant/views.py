@@ -11,7 +11,7 @@ from wwu_housing.library.models import Address, AddressType, Phone, PhoneType
 from wwu_housing.library.forms import AddressForm, PhoneForm
 from wwu_housing.keymanager.models import Community
 from forms import AvailabilityForm, ReferenceForm, PlacementPreferenceForm, EssayResponseForm, ResumeForm
-from models import EssayQuestion, PlacementPreference
+from models import EssayQuestion, PlacementPreference, ApplicantStatus, Availability
 
 
 def index(request, job):
@@ -223,12 +223,22 @@ def apply(request, job):
     return render_to_response('desk_attendant/apply.html', context, context_instance=RequestContext(request))
 
 @login_required
-def admin(request, job, id):
-    """Allows RDs to view individual applications for their communities and
-    set statuses"""
+def admin(request, job, id=None):
+    """Routes admin to list or individual views"""
     # TODO: Is user authorized to view admin page?
     # if request.user.has_perm('view_da_stuff')
+    # if staff or if in group rd
+    if request.user.is_staff:
+        pass
 
+    if (id is None):
+        return admin_list(request, job)
+    else:
+        return admin_individual(request, job, id)
+
+def admin_individual(request, job, id):
+    """Allows RDs to view individual applications for their communities and
+    set statuses"""
     app = get_object_or_404(Application, pk=id)
 
     # Build context
@@ -248,3 +258,46 @@ def admin(request, job, id):
         context['availability'] = False
 
     return render_to_response('desk_attendant/admin.html', context, context_instance=RequestContext(request))
+
+def admin_list(request, job):
+    """Allows RDs to list the applications for easy viewing and sorting"""
+    app_ids = Application.objects.filter(end_datetime__isnull=False).values('id')[0].values()
+    availability = Availability.objects.filter(application__in=app_ids)
+    # TODO add filter(community=123) to status obj
+    status = ApplicantStatus.objects.filter(application__in=app_ids)
+    apps = {}
+    application = {}
+    #availability_fields = {'Prior DA':'prior_desk_attendant', 'Hours Available':'hours_available'}
+
+    for a in availability:
+        apps[a.application_id] = {}
+        apps[a.application_id]['Prior DA'] = a.prior_desk_attendant
+        apps[a.application_id]['Hours Available'] = a.hours_available
+        apps[a.application_id]['On Campus'] = a.on_campus
+        apps[a.application_id]['Where on Campus'] = a.on_campus_where
+        # Why can't I do the below?
+        #for k, v in availability_fields.items():
+            #apps[a.application_id][k] = a.v
+
+    # Below way won't work without 80 billion queries
+    # Build exactly what we need from apps to pass to view
+    # TODO: Make beautiful....
+    #for app in app_ids:
+        #application['Prior DA'] = availability.filter(application=app).
+
+        #application['name'] = app.applicant
+        # The next line is ugly; what's a better way?
+        #application['prior desk attendant'] = app.availability_set.values('prior_desk_attendant')[0]['prior_desk_attendant']
+        #application['hours available'] = app.availability_set.values('hours_available')[0]['hours_available']
+        #application['will live on campus'] = app.availability_set.values('on_campus')[0]['on_campus']
+        #application['living next year'] = app.availability_set.values('on_campus_where')[0]['on_campus_where']
+        #apps_modified.append(application)
+        #del application
+
+    #raise Exception(apps)
+    context = {}
+    context['applications'] = apps
+    context['job'] = job
+    context['total_applications'] = len(apps)
+
+    return render_to_response('desk_attendant/adminlist.html', context, context_instance=RequestContext(request))
