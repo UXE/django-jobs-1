@@ -1,6 +1,12 @@
 from django import newforms as forms
 
-from models import Availability, Reference, PlacementPreference, EssayResponse, Resume
+from models import Availability, Reference, PlacementPreference, EssayResponse, Resume, ApplicantStatus
+
+
+class ApplicantStatusForm(forms.ModelForm):
+    class Meta:
+        exclude = ('application','community')
+        model = ApplicantStatus
 
 
 class AvailabilityForm(forms.ModelForm):

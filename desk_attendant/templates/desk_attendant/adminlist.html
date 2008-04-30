@@ -6,24 +6,34 @@
 
 {% block content %}
     <h1>{{ job.title }} Applications</h1>
+<p>Viewing {{ total_applications }} applications.</p>
 
-<p><a href="24/">Individual Test App</a></p>
-
-<h2>Dynamic</h2>
-<table>
-{% for app in applications %}
+<h2>Hard Coded Because I'm Getting Annoyed</h2>
+<table border='1' style="width: 100%;">
+{% for id,app in applications.items %}
     {% if forloop.first %}
         <tr>
-        {% for key, value in app.items %}
-            <th>{{ key }}</th>
-        {% endfor %}
+            <th>Name</th>
+            <th>Prior DA</th>
+            <th>Hours Available</th>
+            <th>Will Live On Campus</th>
+            {% for hall,rank in app.PlacementPreferences.items %}
+                <th>{{ hall }}</th>
+            {% endfor %}
+            <th>Status</th>
         </tr>
     {% endif %}
     <tr>
-    {% for key, value in app.items %}
-        <td>{{ value }}</td>
-    {% endfor %}
+        <td><a href="{{ id }}/">Blah</a></td>
+        <td>{{ app.PriorDA|yesno:"yes,no" }}</td>
+        <td>{{ app.HoursAvailable }}</td>
+        <td>{{ app.OnCampus|yesno:"yes ,no" }}{{ app.WhereOnCampus }}</td>
+        {% for hall,rank in app.PlacementPreferences.items %}
+            <td>{{ rank }}</td>
+        {% endfor %}
+        <td>{{ app.status }}</td>
     </tr>
 {% endfor %}
 </table>
+
 {% endblock %}

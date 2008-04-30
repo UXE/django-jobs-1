@@ -5,12 +5,13 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import Template, RequestContext, Context, loader
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
+from django.utils.datastructures import SortedDict
 
 from wwu_housing.jobs.models import Applicant, Application
 from wwu_housing.library.models import Address, AddressType, Phone, PhoneType
 from wwu_housing.library.forms import AddressForm, PhoneForm
 from wwu_housing.keymanager.models import Community
-from forms import AvailabilityForm, ReferenceForm, PlacementPreferenceForm, EssayResponseForm, ResumeForm
+from forms import AvailabilityForm, ReferenceForm, PlacementPreferenceForm, EssayResponseForm, ResumeForm, ApplicantStatusForm
 from models import EssayQuestion, PlacementPreference, ApplicantStatus, Availability
 
 
@@ -240,8 +241,19 @@ def admin_individual(request, job, id):
     """Allows RDs to view individual applications for their communities and
     set statuses"""
     app = get_object_or_404(Application, pk=id)
+    comm = 4 # TODO Load comm dynamically
+    data = request.POST or None
+    status, created = ApplicantStatus.objects.get_or_create(application=id, community=comm)
+    status_form = ApplicantStatusForm(data, instance=status)
+
+
+    if request.method == "POST" and status_form.is_valid():
+        status_form.save()
+
+    statuses = ApplicantStatus.objects.filter(application=id)
 
     # Build context
+    # Is this terribly inefficient as far as queries go...?
     context = {}
     context['job'] = job
     context['application'] = app
@@ -251,6 +263,8 @@ def admin_individual(request, job, id):
     context['references'] = app.reference_set.all()
     context['placement_preferences'] = app.placementpreference_set.all()
     context['essay_responses'] = app.essayresponse_set.all()
+    context['status_form'] = status_form
+    context['statuses'] = statuses
 
     try:
         context['availability'] = app.availability_set.all()[0]
@@ -261,42 +275,53 @@ def admin_individual(request, job, id):
 
 def admin_list(request, job):
     """Allows RDs to list the applications for easy viewing and sorting"""
+    # TODO: Fetch IDs and applicant IDs in one query
+    #apps_tmp = Application.objects.filter(end_datetime__isnull=False).values('id', 'applicant_id')
     app_ids = Application.objects.filter(end_datetime__isnull=False).values('id')[0].values()
+    #applicant_ids = Application.objects.filter(end_datetime__isnull=False).values('applicant')[0].values()
+
     availability = Availability.objects.filter(application__in=app_ids)
-    # TODO add filter(community=123) to status obj
-    status = ApplicantStatus.objects.filter(application__in=app_ids)
+    comm = 4 # TODO: Needs to be dynamic, 4 = SHADO for testing
+    statuses = ApplicantStatus.objects.filter(application__in=app_ids).filter(community=comm)
+    placement_preferences = PlacementPreference.objects.filter(application__in=app_ids)
+    communities = Community.objects.all() #TODO WHERE has_desk = true
+    community_abbrevs = {'Beta/Gamma':'BG',
+                            'Birnam Wood': 'BW',
+                            'Buchanan Towers':'BT',
+                            'Edens/Higginson':'EH',
+                            'Fairhaven':'FX',
+                            'Kappa':'RK',
+                            'Mathes':'MA',
+                            'Nash':'NA',
+                            'New York Apartments':'NYA',
+                            'SHADO':'SH',
+                            }
     apps = {}
     application = {}
     #availability_fields = {'Prior DA':'prior_desk_attendant', 'Hours Available':'hours_available'}
 
     for a in availability:
         apps[a.application_id] = {}
-        apps[a.application_id]['Prior DA'] = a.prior_desk_attendant
-        apps[a.application_id]['Hours Available'] = a.hours_available
-        apps[a.application_id]['On Campus'] = a.on_campus
-        apps[a.application_id]['Where on Campus'] = a.on_campus_where
+        # All keys are named without spaces because Django templates are dumb
+        apps[a.application_id]['PriorDA'] = a.prior_desk_attendant
+        apps[a.application_id]['HoursAvailable'] = a.hours_available
+        apps[a.application_id]['OnCampus'] = a.on_campus
+        apps[a.application_id]['WhereOnCampus'] = a.on_campus_where.name
+        apps[a.application_id]['PlacementPreferences'] = SortedDict()
+        #apps[a.application_id]['Status'] = {}
+        for c in communities:
+            apps[a.application_id]['PlacementPreferences'][community_abbrevs[c.name]] = 0
+            #apps[a.application_id]['Status'][c.name] = ''
         # Why can't I do the below?
         #for k, v in availability_fields.items():
             #apps[a.application_id][k] = a.v
 
-    for s in status:
-        apps[s.application_id][s.community]['name'] = s.name
-        apps[s.application_id][s.community]['name'] = s.value
+    for s in statuses:
+        apps[s.application_id]['status'] = s.name
 
-    # Below way won't work without 80 billion queries
-    # Build exactly what we need from apps to pass to view
-    # TODO: Make beautiful....
-    #for app in app_ids:
-        #application['Prior DA'] = availability.filter(application=app).
-
-        #application['name'] = app.applicant
-        # The next line is ugly; what's a better way?
-        #application['prior desk attendant'] = app.availability_set.values('prior_desk_attendant')[0]['prior_desk_attendant']
-        #application['hours available'] = app.availability_set.values('hours_available')[0]['hours_available']
-        #application['will live on campus'] = app.availability_set.values('on_campus')[0]['on_campus']
-        #application['living next year'] = app.availability_set.values('on_campus_where')[0]['on_campus_where']
-        #apps_modified.append(application)
-        #del application
+    #raise Exception(placement_preferences)
+    for p in placement_preferences:
+        apps[p.application_id]['PlacementPreferences'][community_abbrevs[p.community.name]] = p.rank
 
     #raise Exception(apps)
     context = {}

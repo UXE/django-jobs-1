@@ -87,12 +87,13 @@ class EssayResponse(models.Model):
     def __unicode__(self):
         return self.answer
 
+# Shouldn't this be applicaTIONstatus?
 class ApplicantStatus(models.Model):
     """This tracks the status of the application in each hall (e.g., "applied," "hired," etc.)."""
     application = models.ForeignKey(Application)
     community = models.ForeignKey(Community)
     name = models.CharField(max_length=50)
-    value = models.CharField(max_length=50)
+    value = models.CharField(max_length=50, blank=True, null=True)
 
     class Meta:
         unique_together = (("application", "community"),)
@@ -100,6 +101,9 @@ class ApplicantStatus(models.Model):
 
     class Admin:
         pass
+
+    def __unicode__(self):
+        return "%s: %s %s" % (self.community, self.name, self.value)
 
 
 class Resume(models.Model):

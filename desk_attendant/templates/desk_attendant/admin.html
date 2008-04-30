@@ -7,6 +7,8 @@
 {% block content %}
     <h1>{{ job.title }} Application</h1>
 
+    <p><a href="../">Back to list view</a></p>
+
     <p><strong>Applicant Name:</strong> {{ applicant }}</p>
     {% if application.end_datetime %}
         <p>Application completed on {{ application.end_datetime|date:"F j, Y \a\t P" }}</p>
@@ -95,6 +97,18 @@
         <p>Applicant did not respond to the essay questions.</p>
     {% endif %}
 
+    <h2>Status</h2>
+    {% for status in statuses %}
+    <p>{{ status.community.name }} - {{ status.name }} {{ status.value }}</p>
+    {% endfor %}
+
+    <div>
+    <form method="post" action="">
+    {{ status_form.as_p }}
+    <input type="submit" />
+    </form>
+    </div>
+
+    <p><a href="../">Back to list view</a></p>
+
 {% endblock %}
-
-
