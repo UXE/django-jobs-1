@@ -8,6 +8,7 @@ from wwu_housing import models as custom_models
 from wwu_housing.jobs.models import Application
 from wwu_housing.keymanager.models import Building, Community
 
+
 class Availability(models.Model):
     """Questions related to applicant's availability."""
     application = models.ForeignKey(Application, unique=True)
@@ -34,6 +35,7 @@ class Availability(models.Model):
         except:
             return None
         return rank
+
 
 class Reference(models.Model):
     """This describes people who can vouch for an applicant."""
@@ -86,6 +88,7 @@ class EssayResponse(models.Model):
 
     def __unicode__(self):
         return self.answer
+
 
 # Shouldn't this be applicaTIONstatus?
 class ApplicantStatus(models.Model):

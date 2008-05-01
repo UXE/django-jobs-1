@@ -1,6 +1,7 @@
 import datetime
 
 from django.conf import settings
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
@@ -225,7 +226,7 @@ def apply(request, job):
     return render_to_response('desk_attendant/apply.html', context, context_instance=RequestContext(request))
 
 
-@login_required
+@staff_member_required
 def application(request, id):
     application = get_object_or_404(Application, pk=id)
     fields = [field.name for field in application._meta.fields if field.name != 'id']
@@ -243,7 +244,7 @@ def application(request, id):
     return render_to_response('desk_attendant/application.html', context)
 
 
-@login_required
+@staff_member_required
 def admin(request, job, id=None):
     """Routes admin to list or individual views"""
     # TODO: Is user authorized to view admin page?
@@ -258,6 +259,7 @@ def admin(request, job, id=None):
         return admin_individual(request, job, id)
 
 
+@staff_member_required
 def admin_individual(request, job, id):
     """Allows RDs to view individual applications for their communities and
     set statuses"""
@@ -313,9 +315,20 @@ def admin_individual(request, job, id):
 
     return render_to_response('desk_attendant/admin.html', context, context_instance=RequestContext(request))
 
+
+@staff_member_required
 def admin_list(request, job):
     """Allows RDs to list the applications for easy viewing and sorting"""
     applications = Application.objects.select_related().filter(job=job).filter(end_datetime__isnull=False)
+
+    # Process filters if there are any.
+    if len(request.GET) > 0:
+        params = dict(request.GET.items())
+        #raise Exception(params)
+
+    filters = {'Prior DA': (('All', None),
+                            ('Yes', 'availability__prior_desk_attendant'))}
+
     app_ids = [app.id for app in applications]
 
     availability = Availability.objects.filter(application__in=app_ids)
