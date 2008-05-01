@@ -223,6 +223,25 @@ def apply(request, job):
 
     return render_to_response('desk_attendant/apply.html', context, context_instance=RequestContext(request))
 
+
+@login_required
+def application(request, id):
+    application = get_object_or_404(Application, pk=id)
+    fields = [field.name for field in application._meta.fields if field.name != 'id']
+    related_fields = [field.name.split(":")[1] for field in application._meta._all_related_objects if field.name.startswith('desk_attendant')]
+
+    data = {}
+    for field in fields:
+        data[field] = eval("application.%s" % field)
+    for field in related_fields:
+        data[field] = eval("application.%s_set.all()" % field)
+
+    context = {'data': data,
+               'fields': fields,
+               'related_fields': related_fields}
+    return render_to_response('desk_attendant/application.html', context)
+
+
 @login_required
 def admin(request, job, id=None):
     """Routes admin to list or individual views"""
@@ -237,13 +256,20 @@ def admin(request, job, id=None):
     else:
         return admin_individual(request, job, id)
 
+
 def admin_individual(request, job, id):
     """Allows RDs to view individual applications for their communities and
     set statuses"""
     app = get_object_or_404(Application, pk=id)
-    comm = 4 # TODO Load comm dynamically
+
+    # Load the communities that the current user administers.
+    admin_communities = request.user.community_set.all()
+    if len(admin_communities) == 0:
+        raise Exception("Our records reflect that you are not currently administering any communities.  Please contact the web team with the name of the community you should be administering.")
+    admin_community = admin_communities[0]
+
     data = request.POST or None
-    status, created = ApplicantStatus.objects.get_or_create(application=id, community=comm)
+    status, created = ApplicantStatus.objects.get_or_create(application=app, community=admin_community)
     status_form = ApplicantStatusForm(data, instance=status)
 
 
@@ -277,31 +303,40 @@ def admin_list(request, job):
     """Allows RDs to list the applications for easy viewing and sorting"""
     # TODO: Fetch IDs and applicant IDs in one query
     #apps_tmp = Application.objects.filter(end_datetime__isnull=False).values('id', 'applicant_id')
-    app_ids = Application.objects.filter(end_datetime__isnull=False).values('id')[0].values()
+    #app_ids = Application.objects.filter(end_datetime__isnull=False).values('id')[0].values()
+    applications = Application.objects.select_related().filter(job=job).filter(end_datetime__isnull=False)
+    app_ids = [app.id for app in applications]
     #applicant_ids = Application.objects.filter(end_datetime__isnull=False).values('applicant')[0].values()
 
     availability = Availability.objects.filter(application__in=app_ids)
-    comm = 4 # TODO: Needs to be dynamic, 4 = SHADO for testing
-    statuses = ApplicantStatus.objects.filter(application__in=app_ids).filter(community=comm)
+
+    # Load the communities that the current user administers.
+    admin_communities = request.user.community_set.all()
+    if len(admin_communities) == 0:
+        raise Exception("Our records reflect that you are not currently administering any communities.  Please contact the web team with the name of the community you should be administering.")
+    admin_community = admin_communities[0]
+
+    statuses = ApplicantStatus.objects.filter(application__in=app_ids).filter(community=admin_community)
     placement_preferences = PlacementPreference.objects.filter(application__in=app_ids)
     communities = Community.objects.all() #TODO WHERE has_desk = true
     community_abbrevs = {'Beta/Gamma':'BG',
-                            'Birnam Wood': 'BW',
-                            'Buchanan Towers':'BT',
-                            'Edens/Higginson':'EH',
-                            'Fairhaven':'FX',
-                            'Kappa':'RK',
-                            'Mathes':'MA',
-                            'Nash':'NA',
-                            'New York Apartments':'NYA',
-                            'SHADO':'SH',
-                            }
+                         'Birnam Wood': 'BW',
+                         'Buchanan Towers':'BT',
+                         'Edens/Higginson':'EH',
+                         'Fairhaven':'FX',
+                         'Kappa':'RK',
+                         'Mathes':'MA',
+                         'Nash':'NA',
+                         'New York Apartments':'NYA',
+                         'SHADO':'SH',}
     apps = {}
     application = {}
     #availability_fields = {'Prior DA':'prior_desk_attendant', 'Hours Available':'hours_available'}
 
+    for application in applications:
+        apps[application.id] = {'name': str(application.applicant)}
+
     for a in availability:
-        apps[a.application_id] = {}
         # All keys are named without spaces because Django templates are dumb
         apps[a.application_id]['PriorDA'] = a.prior_desk_attendant
         apps[a.application_id]['HoursAvailable'] = a.hours_available

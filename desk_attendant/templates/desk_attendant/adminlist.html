@@ -8,30 +8,40 @@
     <h1>{{ job.title }} Applications</h1>
 <p>Viewing {{ total_applications }} applications.</p>
 
-<h2>Hard Coded Because I'm Getting Annoyed</h2>
+<h2>Applications</h2>
+
+<h3>Filters</h3>
+<ul style="margin-bottom: 1em;">
+    <li>Prior DA: <a href="">All</a> | <a href="">Yes</a> | <a href="">No</a></li>
+    <li>Will live on campus: <a href="">All</a> | <a href="">Yes</a> | <a href="">No</a></li>
+    <li>Community is ranked: <a href="">All</a> | <a href="">Yes</a> | <a href="">No</a></li>
+    <li>Hours available: <a href="">All</a> | <a href="">Less than 5</a> | <a href="">5-10</a> | <a href="">11-15</a> | <a href="">15-19</a></li>
+    <li>Status: <a href="">All</a> | <a href="">Hired</a> | <a href="">Interviewed</a> | <a href="">Reviewed</a> | <a href="">Unreviewed</a>
+</ul>
+
 <table border='1' style="width: 100%;">
-{% for id,app in applications.items %}
+{% for id, application in applications.items %}
     {% if forloop.first %}
         <tr>
             <th>Name</th>
             <th>Prior DA</th>
             <th>Hours Available</th>
             <th>Will Live On Campus</th>
-            {% for hall,rank in app.PlacementPreferences.items %}
+            {% for hall,rank in application.PlacementPreferences.items %}
                 <th>{{ hall }}</th>
             {% endfor %}
             <th>Status</th>
         </tr>
     {% endif %}
     <tr>
-        <td><a href="{{ id }}/">Blah</a></td>
-        <td>{{ app.PriorDA|yesno:"yes,no" }}</td>
-        <td>{{ app.HoursAvailable }}</td>
-        <td>{{ app.OnCampus|yesno:"yes ,no" }}{{ app.WhereOnCampus }}</td>
-        {% for hall,rank in app.PlacementPreferences.items %}
+        <td><a href="{{ id }}/">{{ application.name }}</a></td>
+        <td>{{ application.PriorDA|yesno:"yes,no" }}</td>
+        <td>{{ application.HoursAvailable }}</td>
+        <td>{{ application.OnCampus|yesno:"yes ,no" }}{{ application.WhereOnCampus }}</td>
+        {% for hall,rank in application.PlacementPreferences.items %}
             <td>{{ rank }}</td>
         {% endfor %}
-        <td>{{ app.status }}</td>
+        <td>{{ application.status }}</td>
     </tr>
 {% endfor %}
 </table>
