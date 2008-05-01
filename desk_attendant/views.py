@@ -276,7 +276,7 @@ def admin_individual(request, job, id):
     process_status, created = ApplicantStatus.objects.get_or_create(application=app, community=admin_community, name='process_status')
     process_status_form = ProcessStatusForm(data, instance=process_status, prefix='process_status')
 
-    if request.method == "POST":
+    if data:
         if process_status_form.is_valid():
             process_status_form.save()
         if hours_hired_for_form.is_valid():

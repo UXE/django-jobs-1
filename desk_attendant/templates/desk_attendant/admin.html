@@ -82,6 +82,8 @@
     <h2>Resume</h2>
     {% if resume %}
         <p><a href="{{ resume.get_resume_url }}">Download Resume</a></p>
+    {% else %}
+        <p>Applicant did not submit a resume</p>
     {% endif %}
 
     <h2>Placement Preferences</h2>
@@ -105,7 +107,15 @@
 
     <h2>Status</h2>
     {% for status in statuses %}
-    <p>{{ status.community.name }} - {{ status.name }} {{ status.value }}</p>
+        {% ifnotequal status.value '0' %}
+            <p>{{ status.community.name }} - 
+                {% ifequal status.name 'process_status' %}
+                    Application Status: {{ status.value }}</p>
+                {% endifequal %}
+                {% ifequal status.name 'hours_hired_for' %}
+                    Hired for {{ status.value }} hour{{ status.value|pluralize }}</p>
+                {% endifequal %}
+        {% endifnotequal %}
     {% endfor %}
 
     <div>
