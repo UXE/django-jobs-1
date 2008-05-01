@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Hello world</h1>
+
+<h2>General</h2>
+{% for field in fields %}
+    {% for key, value in data.items %}
+        {% ifequal key field %}
+            <p>{{ key }}: {{ value }}</p>
+        {% endifequal %} 
+    {% endfor %}
+{% endfor %}
+
+{% for field in related_fields %}
+    {% for key, values in data.items %}
+        {% ifequal key field %}
+            <h2>{{ key|capfirst }}</h2>
+            {% for value in values %}
+                <p>{{ value|linebreaksbr }}</p>
+            {% endfor %}
+        {% endifequal %} 
+    {% endfor %}
+{% endfor %}
+
+{% endblock %}
