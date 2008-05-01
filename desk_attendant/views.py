@@ -1,10 +1,11 @@
 import datetime
 
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.core.urlresolvers import reverse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import Template, RequestContext, Context, loader
-from django.http import HttpResponse, HttpResponseRedirect
-from django.core.urlresolvers import reverse
 from django.utils.datastructures import SortedDict
 
 from wwu_housing.jobs.models import Applicant, Application
@@ -285,6 +286,12 @@ def admin_individual(request, job, id):
 
     statuses = ApplicantStatus.objects.filter(application=id)
 
+    resumes = app.resume_set.all()
+    if len(resumes) > 0:
+        resume = resumes[0]
+    else:
+        resume = None
+
     # Build context
     # Is this terribly inefficient as far as queries go...?
     context = {}
@@ -294,6 +301,7 @@ def admin_individual(request, job, id):
     context['addresses'] = app.applicant.user.address_set.all()
     context['phones'] = app.applicant.user.phone_set.all()
     context['references'] = app.reference_set.all()
+    context['resume'] = resume
     context['placement_preferences'] = app.placementpreference_set.all()
     context['essay_responses'] = app.essayresponse_set.all()
     context['process_status_form'] = process_status_form

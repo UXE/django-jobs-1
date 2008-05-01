@@ -76,6 +76,7 @@ class Application(models.Model):
 
     class Admin:
         list_display = ('applicant', 'job', 'start_datetime', 'end_datetime')
+        list_filter = ('job', 'start_datetime', 'end_datetime')
 
     def __unicode__(self):
         return u"%s for %s" % (self.applicant, self.job)
