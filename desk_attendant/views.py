@@ -11,7 +11,7 @@ from wwu_housing.jobs.models import Applicant, Application
 from wwu_housing.library.models import Address, AddressType, Phone, PhoneType
 from wwu_housing.library.forms import AddressForm, PhoneForm
 from wwu_housing.keymanager.models import Community
-from forms import AvailabilityForm, ReferenceForm, PlacementPreferenceForm, EssayResponseForm, ResumeForm, ApplicantStatusForm
+from forms import AvailabilityForm, ReferenceForm, PlacementPreferenceForm, EssayResponseForm, ResumeForm, ProcessStatusForm, HoursHiredForForm
 from models import EssayQuestion, PlacementPreference, ApplicantStatus, Availability
 
 
@@ -269,12 +269,19 @@ def admin_individual(request, job, id):
     admin_community = admin_communities[0]
 
     data = request.POST or None
-    status, created = ApplicantStatus.objects.get_or_create(application=app, community=admin_community)
-    status_form = ApplicantStatusForm(data, instance=status)
+    hours_hired_for, created = ApplicantStatus.objects.get_or_create(application=app, community=admin_community, name='hours_hired_for', defaults={'value':0})
+    hours_hired_for_form = HoursHiredForForm(data, instance=hours_hired_for, prefix='hours_hired_for')
 
+    process_status, created = ApplicantStatus.objects.get_or_create(application=app, community=admin_community, name='process_status')
+    process_status_form = ProcessStatusForm(data, instance=process_status, prefix='process_status')
 
-    if request.method == "POST" and status_form.is_valid():
-        status_form.save()
+    # UPDATE TODO
+    if request.method == "POST":
+        if process_status_form.is_valid():
+            #raise Exception('Should save psf')
+            process_status_form.save()
+        if hours_hired_for_form.is_valid():
+            hours_hired_for_form.save()
 
     statuses = ApplicantStatus.objects.filter(application=id)
 
@@ -289,7 +296,8 @@ def admin_individual(request, job, id):
     context['references'] = app.reference_set.all()
     context['placement_preferences'] = app.placementpreference_set.all()
     context['essay_responses'] = app.essayresponse_set.all()
-    context['status_form'] = status_form
+    context['process_status_form'] = process_status_form
+    context['hours_hired_for_form'] = hours_hired_for_form
     context['statuses'] = statuses
 
     try:
@@ -301,12 +309,8 @@ def admin_individual(request, job, id):
 
 def admin_list(request, job):
     """Allows RDs to list the applications for easy viewing and sorting"""
-    # TODO: Fetch IDs and applicant IDs in one query
-    #apps_tmp = Application.objects.filter(end_datetime__isnull=False).values('id', 'applicant_id')
-    #app_ids = Application.objects.filter(end_datetime__isnull=False).values('id')[0].values()
     applications = Application.objects.select_related().filter(job=job).filter(end_datetime__isnull=False)
     app_ids = [app.id for app in applications]
-    #applicant_ids = Application.objects.filter(end_datetime__isnull=False).values('applicant')[0].values()
 
     availability = Availability.objects.filter(application__in=app_ids)
 
@@ -352,7 +356,7 @@ def admin_list(request, job):
             #apps[a.application_id][k] = a.v
 
     for s in statuses:
-        apps[s.application_id]['status'] = s.name
+        apps[s.application_id][s.name] = s.value
 
     #raise Exception(placement_preferences)
     for p in placement_preferences:

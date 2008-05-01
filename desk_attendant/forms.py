@@ -3,11 +3,29 @@ from django import newforms as forms
 from models import Availability, Reference, PlacementPreference, EssayResponse, Resume, ApplicantStatus
 
 
-class ApplicantStatusForm(forms.ModelForm):
+class HoursHiredForForm(forms.ModelForm):
+    name = 'hours_hired_for'
+    value = forms.IntegerField(max_value=19, min_value=0, initial=0)
+
     class Meta:
-        exclude = ('application','community')
+        fields = ('value',)
         model = ApplicantStatus
 
+class ProcessStatusForm(forms.ModelForm):
+    STATUS_CHOICES = (
+        ('unreviewed', 'Unreviewed'),
+        ('reviewed', 'Reviewed'),
+        ('interviewed', 'Interviewed'),
+        ('hired', 'Hired'),
+        ('not_considered', 'Not Considered'),
+    )
+    name='process_status'
+    value = forms.CharField(max_length=50,
+                    widget=forms.Select(choices=STATUS_CHOICES))
+
+    class Meta:
+        fields = ('value',)
+        model = ApplicantStatus
 
 class AvailabilityForm(forms.ModelForm):
     hours_available = forms.IntegerField(min_value=1, max_value=19, help_text='Please use a whole number from one to nineteen.')

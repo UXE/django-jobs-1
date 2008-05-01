@@ -96,7 +96,7 @@ class ApplicantStatus(models.Model):
     value = models.CharField(max_length=50, blank=True, null=True)
 
     class Meta:
-        unique_together = (("application", "community"),)
+        unique_together = (("application", "community", "name"),)
         verbose_name_plural = 'applicant statuses'
 
     class Admin:
