@@ -269,7 +269,8 @@ def admin_individual(request, job, id):
     # Load the communities that the current user administers.
     admin_communities = request.user.community_set.all()
     if len(admin_communities) == 0:
-        raise Exception("Our records reflect that you are not currently administering any communities.  Please contact the web team with the name of the community you should be administering.")
+        request.user.message_set.create(message="Our records reflect that you are not currently administering any communities.  Please contact the web team with the name of the community you should be administering.")
+        return HttpResponseRedirect(reverse('wwu_housing.jobs.desk_attendant.views.index'))
     admin_community = admin_communities[0]
 
     data = request.POST or None
@@ -335,7 +336,8 @@ def admin_list(request, job):
     # Load the communities that the current user administers.
     admin_communities = request.user.community_set.all()
     if len(admin_communities) == 0:
-        raise Exception("Our records reflect that you are not currently administering any communities.  Please contact the web team with the name of the community you should be administering.")
+        request.user.message_set.create(message="Our records reflect that you are not currently administering any communities.  Please contact the web team with the name of the community you should be administering.")
+        return HttpResponseRedirect(reverse('wwu_housing.jobs.desk_attendant.views.index'))
     admin_community = admin_communities[0]
 
     statuses = ApplicantStatus.objects.filter(application__in=app_ids).filter(community=admin_community)
