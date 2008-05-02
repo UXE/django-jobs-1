@@ -1,4 +1,5 @@
 import datetime
+import operator
 
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
@@ -320,14 +321,12 @@ def admin_individual(request, job, id):
 def admin_list(request, job):
     """Allows RDs to list the applications for easy viewing and sorting"""
     applications = Application.objects.select_related().filter(job=job).filter(end_datetime__isnull=False)
+    filter = FilterObject(request, applications)
+    filter_html = filter.output()
 
     # Process filters if there are any.
     if len(request.GET) > 0:
-        params = dict(request.GET.items())
-        #raise Exception(params)
-
-    filters = {'Prior DA': (('All', None),
-                            ('Yes', 'availability__prior_desk_attendant'))}
+        applications = filter.filter()
 
     app_ids = [app.id for app in applications]
 
@@ -356,19 +355,21 @@ def admin_list(request, job):
     application = {}
     #availability_fields = {'Prior DA':'prior_desk_attendant', 'Hours Available':'hours_available'}
 
+    applicants = []
     for application in applications:
         apps[application.id] = {'name': str(application.applicant)}
+        applicants.append((application.id, apps[application.id]['name']))
+    applicants = sorted(applicants, key=operator.itemgetter(1))
 
     for a in availability:
-        # All keys are named without spaces because Django templates are dumb
-        apps[a.application_id]['PriorDA'] = a.prior_desk_attendant
-        apps[a.application_id]['HoursAvailable'] = a.hours_available
-        apps[a.application_id]['OnCampus'] = a.on_campus
-        apps[a.application_id]['WhereOnCampus'] = a.on_campus_where.name
-        apps[a.application_id]['PlacementPreferences'] = SortedDict()
+        apps[a.application_id]['prior_da'] = a.prior_desk_attendant
+        apps[a.application_id]['hours_available'] = a.hours_available
+        apps[a.application_id]['on_campus'] = a.on_campus
+        apps[a.application_id]['on_campus_where'] = a.on_campus_where and a.on_campus_where.name or ''
+        apps[a.application_id]['placement_preferences'] = SortedDict()
         #apps[a.application_id]['Status'] = {}
         for c in communities:
-            apps[a.application_id]['PlacementPreferences'][community_abbrevs[c.name]] = 0
+            apps[a.application_id]['placement_preferences'][community_abbrevs[c.name]] = 0
             #apps[a.application_id]['Status'][c.name] = ''
         # Why can't I do the below?
         #for k, v in availability_fields.items():
@@ -377,14 +378,89 @@ def admin_list(request, job):
     for s in statuses:
         apps[s.application_id][s.name] = s.value
 
-    #raise Exception(placement_preferences)
     for p in placement_preferences:
-        apps[p.application_id]['PlacementPreferences'][community_abbrevs[p.community.name]] = p.rank
+        apps[p.application_id]['placement_preferences'][community_abbrevs[p.community.name]] = p.rank
+
+    sorted_apps = SortedDict()
+    for id, name in applicants:
+        sorted_apps[id] = apps[id]
+    apps = sorted_apps
 
     #raise Exception(apps)
-    context = {}
-    context['applications'] = apps
-    context['job'] = job
-    context['total_applications'] = len(apps)
+    context = {'applications': apps,
+               'applicants': applicants,
+               'job': job,
+               'total_applications': len(apps),
+               'filter_html': filter_html}
 
     return render_to_response('desk_attendant/adminlist.html', context, context_instance=RequestContext(request))
+
+
+class FilterObject(object):
+    def __init__(self, request, query_set):
+        self.filters = {'availability__prior_desk_attendant': {'name': 'Prior DA',
+                                                               'values': ((None, 'All'),
+                                                                          ('1', 'Yes'),
+                                                                          ('0', 'No'),)},
+                        'availability__on_campus': {'name': 'Will live on campus',
+                                                    'values': ((None, 'All'),
+                                                               ('1', 'Yes'),
+                                                               ('0', 'No'))},
+                        'availability__hours_available__range': {'name': 'Hours available',
+                                                                 'values': ((None, 'All'),
+                                                                            ('0,4', 'Less than 5'),
+                                                                            ('5,10', '5-10'),
+                                                                            ('11,15', '11-15'),
+                                                                            ('16,19', '16-19'))},
+                        }
+        self.params = dict(request.GET.items())
+        self.query_set = query_set
+        self.clean_params()
+        
+    def clean_params(self):
+        params = {}
+        for key, value in self.params.items():
+            # Remove all keys not in filters or all filters with invalid values.
+            if key not in self.filters or self.params[key] not in [v[0] for v in self.filters[key]['values']]:
+                continue
+            params[str(key)] = value
+        self.params = params
+
+    def get_query_string(self, new_params=None, remove=None):
+        if new_params is None:
+            new_params = {}
+        if remove is None:
+            remove = []
+        p = self.params.copy()
+        for r in remove:
+            if r in p:
+                del p[r]
+        for k, v in new_params.items():
+            if k in p and v is None:
+                del p[k]
+            elif v is not None:
+                p[k] = v
+        return "?%s" % "&amp;".join(['%s=%s' % (k, v) for k, v in p.items()]).replace(' ', '%20')
+
+    def filter(self):
+        if len(self.params) > 0:
+            params = self.params.copy()
+            for k, v in self.params.items():
+                if 'range' in k:
+                    params[k] = v.split(',')
+            self.query_set = self.query_set.filter(**params)
+        return self.query_set
+
+    def output(self):
+        output = []
+        for filter, values in self.filters.items():
+            options = []
+            for value in values['values']:
+                if self.params.get(filter) == value[0]:
+                    options.append("%s" % (value[1]))
+                else:
+                    query_string = self.get_query_string({filter: value[0]}, (filter,))
+                    options.append("<a href=\"%s\">%s</a>" % (query_string, value[1]))
+            options = " | ".join(options)
+            output.append("<li>%s: %s</li>" % (values['name'], options))
+        return "\n".join(output)
