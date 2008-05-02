@@ -13,8 +13,6 @@
 <h3>Filters</h3>
 <ul style="margin-bottom: 1em;">
     {{ filter_html|safe }}
-    <li>Community is ranked: <a href="">All</a> | <a href="">Yes</a> | <a href="">No</a></li>
-    <li>Status: <a href="">All</a> | <a href="">Hired</a> | <a href="">Interviewed</a> | <a href="">Reviewed</a> | <a href="">Unreviewed</a>
 </ul>
 
 <table border='1' style="width: 100%;">
@@ -33,9 +31,9 @@
     {% endif %}
     <tr>
         <td><a href="{{ id }}/">{{ application.name }}</a></td>
-        <td>{{ application.prior_da|yesno:"yes,no" }}</td>
+        <td><img src="/media/admin/img/admin/icon-{{ application.prior_da|yesno:"yes,no" }}.gif" /></td>
         <td>{{ application.hours_available }}</td>
-        <td>{{ application.on_campus|yesno:"yes ,no" }}{{ application.on_campus_where }}</td>
+        <td><img src="/media/admin/img/admin/icon-{{ application.on_campus|yesno:"yes,no" }}.gif" /> {{ application.on_campus_where }}</td>
         {% for hall,rank in application.placement_preferences.items %}
             <td>{{ rank }}</td>
         {% endfor %}
