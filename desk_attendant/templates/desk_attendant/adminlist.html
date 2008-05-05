@@ -37,7 +37,13 @@
         {% for hall,rank in application.placement_preferences.items %}
             <td>{{ rank }}</td>
         {% endfor %}
-        <td>{{ application.process_status }} {% ifequal application.process_status 'hired' %}{{ application.hours_hired_for }}{% endifequal %}</td>
+        <td>
+            {% if application.process_status %}
+                {% ifnotequal application.process_status 'Unreviewed' %}
+                    {{ application.process_status }} {% ifequal application.process_status 'Hired' %}({{ application.hours_hired_for }} hours){% endifequal %}
+                {% endifnotequal %}
+            {% endif %}
+        </td>
     </tr>
 {% endfor %}
 </table>

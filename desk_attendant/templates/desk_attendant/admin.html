@@ -130,7 +130,7 @@
     <div style="margin-top: 1em;">
         <form method="post" action="">
         <fieldset>
-            <legend>Application's Status in Your Community</legend>
+            <legend>Application's Status in {{ community }}</legend>
             <p>{% if process_status_form.value.errors %}<span class="errors">{{ process_status_form.value.errors }}</span>{% endif %}Process Status: {{ process_status_form.value }}</p>
             <p>{% if hours_hired_for_form.value.errors %}<span class="errors">{{ hours_hired_for_form.value.errors }}</span>{% endif %}Hours Hired For: {{ hours_hired_for_form.value }}</p>
             <p><input type="submit" value="Update Status" /></p>

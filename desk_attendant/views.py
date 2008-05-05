@@ -319,6 +319,7 @@ def admin_individual(request, job, id):
     context['process_status_form'] = process_status_form
     context['hours_hired_for_form'] = hours_hired_for_form
     context['status_by_community'] = status_by_community
+    context['community'] = admin_community
 
     try:
         context['availability'] = app.availability_set.all()[0]
@@ -387,8 +388,12 @@ def admin_list(request, job):
         #for k, v in availability_fields.items():
             #apps[a.application_id][k] = a.v
 
+    status_choices = dict(ProcessStatusForm.STATUS_CHOICES)
     for s in statuses:
-        apps[s.application_id][s.name] = s.value
+        if s.name == 'process_status':
+            apps[s.application_id][s.name] = status_choices[s.value]
+        else:
+            apps[s.application_id][s.name] = s.value
 
     for p in placement_preferences:
         apps[p.application_id]['placement_preferences'][community_abbrevs[p.community.name]] = p.rank
