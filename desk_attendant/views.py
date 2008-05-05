@@ -278,6 +278,9 @@ def admin_individual(request, job, id):
     hours_hired_for_form = HoursHiredForForm(data, instance=hours_hired_for, prefix='hours_hired_for')
 
     process_status, created = ApplicantStatus.objects.get_or_create(application=app, community=admin_community, name='process_status')
+    if created:
+        process_status.value = 'unreviewed'
+        process_status.save()
     process_status_form = ProcessStatusForm(data, instance=process_status, prefix='process_status')
 
     if data:
