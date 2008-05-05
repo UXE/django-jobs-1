@@ -289,7 +289,14 @@ def admin_individual(request, job, id):
         if hours_hired_for_form.is_valid():
             hours_hired_for_form.save()
 
-    statuses = ApplicantStatus.objects.filter(application=id)
+    status_by_community = SortedDict()
+    status_choices = dict(ProcessStatusForm.STATUS_CHOICES)
+    statuses = ApplicantStatus.objects.exclude(community=admin_community).filter(application=id)
+    for status in statuses:
+        if not status_by_community.has_key(status.community.name):
+            status_by_community[status.community.name] = []
+        status.value = status_choices[status.value]
+        status_by_community[status.community.name].append(status)
 
     resumes = app.resume_set.all()
     if len(resumes) > 0:
@@ -311,7 +318,7 @@ def admin_individual(request, job, id):
     context['essay_responses'] = app.essayresponse_set.all()
     context['process_status_form'] = process_status_form
     context['hours_hired_for_form'] = hours_hired_for_form
-    context['statuses'] = statuses
+    context['status_by_community'] = status_by_community
 
     try:
         context['availability'] = app.availability_set.all()[0]

@@ -106,24 +106,36 @@
     {% endif %}
 
     <h2>Status</h2>
-    {% for status in statuses %}
-        {% ifnotequal status.value '0' %}
-            <p>{{ status.community.name }} - 
+    <p>The following are the statuses of this application in all other communities that have opened this application and the status of the application in your community.</p>
+
+    <ul style="margin-top: 1em;">
+    {% for community, statuses in status_by_community.items %}
+        <li>{{ community }}
+        {% for status in statuses %}
+            {% ifnotequal status.value '0' %}
+                <ul>
                 {% ifequal status.name 'process_status' %}
-                    Application Status: {{ status.value }}</p>
+                    <li>Application Status: {{ status.value }}</li>
                 {% endifequal %}
                 {% ifequal status.name 'hours_hired_for' %}
-                    Hired for {{ status.value }} hour{{ status.value|pluralize }}</p>
+                    <li>Hired for {{ status.value }} hour{{ status.value|pluralize }}</li>
                 {% endifequal %}
-        {% endifnotequal %}
+                </ul>
+            {% endifnotequal %}
+        {% endfor %}
+        </li>
     {% endfor %}
+    </ul>
 
-    <div>
-    <form method="post" action="">
-    <p>{% if process_status_form.value.errors %}<span class="errors">{{ process_status_form.value.errors }}</span>{% endif %}Process Status: {{ process_status_form.value }}</p>
-    <p>{% if hours_hired_for_form.value.errors %}<span class="errors">{{ hours_hired_for_form.value.errors }}</span>{% endif %}Hours Hired For: {{ hours_hired_for_form.value }}</p>
-    <input type="submit" />
-    </form>
+    <div style="margin-top: 1em;">
+        <form method="post" action="">
+        <fieldset>
+            <legend>Application's Status in Your Community</legend>
+            <p>{% if process_status_form.value.errors %}<span class="errors">{{ process_status_form.value.errors }}</span>{% endif %}Process Status: {{ process_status_form.value }}</p>
+            <p>{% if hours_hired_for_form.value.errors %}<span class="errors">{{ hours_hired_for_form.value.errors }}</span>{% endif %}Hours Hired For: {{ hours_hired_for_form.value }}</p>
+            <p><input type="submit" value="Update Status" /></p>
+        </fieldset>
+        </form>
     </div>
 
     <p><a href="{% url wwu_housing.jobs.desk_attendant.views.admin %}">Back to list view</a></p>
