@@ -295,7 +295,7 @@ def admin_individual(request, job, id):
     for status in statuses:
         if not status_by_community.has_key(status.community.name):
             status_by_community[status.community.name] = []
-        status.value = status_choices[status.value]
+        status.value = status_choices.get(status.value, status.value)
         status_by_community[status.community.name].append(status)
 
     resumes = app.resume_set.all()
@@ -391,7 +391,7 @@ def admin_list(request, job):
     status_choices = dict(ProcessStatusForm.STATUS_CHOICES)
     for s in statuses:
         if s.name == 'process_status':
-            apps[s.application_id][s.name] = status_choices[s.value]
+            apps[s.application_id][s.name] = status_choices.get(s.value, s.value)
         else:
             apps[s.application_id][s.name] = s.value
 
