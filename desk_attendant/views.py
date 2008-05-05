@@ -332,7 +332,15 @@ def admin_individual(request, job, id):
 @staff_member_required
 def admin_list(request, job):
     """Allows RDs to list the applications for easy viewing and sorting"""
+    # Load the communities that the current user administers.
+    admin_communities = request.user.community_set.all()
+    if len(admin_communities) == 0:
+        request.user.message_set.create(message="Our records reflect that you are not currently administering any communities.  Please contact the web team with the name of the community you should be administering.")
+        return HttpResponseRedirect(reverse('wwu_housing.jobs.desk_attendant.views.index'))
+    admin_community = admin_communities[0]
+
     applications = Application.objects.select_related().filter(job=job).filter(end_datetime__isnull=False)
+    applications = applications.filter(placementpreference__community=admin_community, placementpreference__rank__gt=0)
     filter = FilterObject(request, applications)
     filter_html = filter.output()
 
@@ -343,13 +351,6 @@ def admin_list(request, job):
     app_ids = [app.id for app in applications]
 
     availability = Availability.objects.filter(application__in=app_ids)
-
-    # Load the communities that the current user administers.
-    admin_communities = request.user.community_set.all()
-    if len(admin_communities) == 0:
-        request.user.message_set.create(message="Our records reflect that you are not currently administering any communities.  Please contact the web team with the name of the community you should be administering.")
-        return HttpResponseRedirect(reverse('wwu_housing.jobs.desk_attendant.views.index'))
-    admin_community = admin_communities[0]
 
     statuses = ApplicantStatus.objects.filter(application__in=app_ids).filter(community=admin_community)
     placement_preferences = PlacementPreference.objects.filter(application__in=app_ids)

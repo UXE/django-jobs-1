@@ -35,7 +35,7 @@
         <td>{{ application.hours_available }}</td>
         <td><img src="/media/admin/img/admin/icon-{{ application.on_campus|yesno:"yes,no" }}.gif" /> {{ application.on_campus_where }}</td>
         {% for hall,rank in application.placement_preferences.items %}
-            <td>{{ rank }}</td>
+            <td>{% ifnotequal rank 0 %}{{ rank }}{% endifnotequal %}</td>
         {% endfor %}
         <td>
             {% if application.process_status %}
