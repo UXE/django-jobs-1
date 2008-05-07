@@ -353,8 +353,8 @@ def admin_list(request, job):
     availability = Availability.objects.filter(application__in=app_ids)
 
     statuses = ApplicantStatus.objects.filter(application__in=app_ids).filter(community=admin_community)
-    placement_preferences = PlacementPreference.objects.filter(application__in=app_ids)
-    communities = Community.objects.all() #TODO WHERE has_desk = true
+    placement_preferences = PlacementPreference.objects.filter(application__in=app_ids).exclude(community__name='New York Apartments')
+    communities = Community.objects.exclude(name='New York Apartments') #TODO WHERE has_desk = true
     community_abbrevs = {'Beta/Gamma':'BG',
                          'Birnam Wood': 'BW',
                          'Buchanan Towers':'BT',
@@ -363,7 +363,6 @@ def admin_list(request, job):
                          'Kappa':'RK',
                          'Mathes':'MA',
                          'Nash':'NA',
-                         'New York Apartments':'NYA',
                          'SHADO':'SH',}
     apps = {}
     application = {}
