@@ -2,11 +2,12 @@
 
 {% block title %}{{ job.title }} Applications{% endblock %}
 {% block stylesheets %}
+<link rel="stylesheet" href="/media/css/desk-attendant.css" type="text/css">
 {% endblock %}
 
 {% block content %}
     <h1>{{ job.title }} Applications</h1>
-<p>Viewing {{ total_applications }} applications.</p>
+<p>Viewing {{ total_applications }} applications for {{ community }}.</p>
 
 <h2>Applications</h2>
 
@@ -29,7 +30,7 @@
             <th>Status</th>
         </tr>
     {% endif %}
-    <tr>
+    <tr class="{% cycle 'row1' 'row2' %}">
         <td><a href="{{ id }}/">{{ application.name }}</a></td>
         <td><img src="/media/admin/img/admin/icon-{{ application.prior_da|yesno:"yes,no" }}.gif" /></td>
         <td>{{ application.hours_available }}</td>

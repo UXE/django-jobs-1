@@ -341,7 +341,7 @@ def admin_list(request, job):
 
     applications = Application.objects.select_related().filter(job=job).filter(end_datetime__isnull=False)
     applications = applications.filter(placementpreference__community=admin_community, placementpreference__rank__gt=0)
-    filter = FilterObject(request, applications)
+    filter = FilterObject(request, applications, admin_community)
     filter_html = filter.output()
 
     # Process filters if there are any.
@@ -384,7 +384,6 @@ def admin_list(request, job):
         #apps[a.application_id]['Status'] = {}
         for c in communities:
             apps[a.application_id]['placement_preferences'][community_abbrevs[c.name]] = 0
-            #apps[a.application_id]['Status'][c.name] = ''
         # Why can't I do the below?
         #for k, v in availability_fields.items():
             #apps[a.application_id][k] = a.v
@@ -408,6 +407,7 @@ def admin_list(request, job):
     context = {'applications': apps,
                'applicants': applicants,
                'job': job,
+               'community': admin_community,
                'total_applications': len(apps),
                'filter_html': filter_html}
 
@@ -415,7 +415,7 @@ def admin_list(request, job):
 
 
 class FilterObject(object):
-    def __init__(self, request, query_set):
+    def __init__(self, request, query_set, community):
         self.filters = {'availability__prior_desk_attendant': {'name': 'Prior DA',
                                                                'values': ((None, 'All'),
                                                                           ('1', 'Yes'),
@@ -430,9 +430,18 @@ class FilterObject(object):
                                                                             ('5,10', '5-10'),
                                                                             ('11,15', '11-15'),
                                                                             ('16,19', '16-19'))},
+                        'applicantstatus__value': {'name': 'Application Status',
+                                                   'values': [(None, 'All')]},
+                        'placementpreference__rank': {'name': 'Placement Preference',
+                                                      'values': [(None, 'All')]},
                         }
+        status_choices = list(ProcessStatusForm.STATUS_CHOICES)
+        status_choices = status_choices[1:]
+        self.filters['applicantstatus__value']['values'].extend(status_choices)
+        self.filters['placementpreference__rank']['values'].extend([(str(i),)*2 for i in xrange(1, 10)])
         self.params = dict(request.GET.items())
         self.query_set = query_set
+        self.community = community
         self.clean_params()
         
     def clean_params(self):
@@ -466,6 +475,9 @@ class FilterObject(object):
             for k, v in self.params.items():
                 if 'range' in k:
                     params[k] = v.split(',')
+                elif 'applicantstatus' in k:
+                    # Add an extra rule if filtering by applicant status.
+                    params['applicantstatus__community__id'] = self.community.id
             self.query_set = self.query_set.filter(**params)
         return self.query_set
 
