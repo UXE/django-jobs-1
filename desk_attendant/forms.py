@@ -15,6 +15,7 @@ class ProcessStatusForm(forms.ModelForm):
     STATUS_CHOICES = (
         ('unreviewed', 'Unreviewed'),
         ('reviewed', 'Reviewed'),
+        ('scheduled_interview', 'Scheduled Interview'),
         ('interviewed', 'Interviewed'),
         ('hired', 'Hired'),
         ('not_considered', 'Not Considered'),
