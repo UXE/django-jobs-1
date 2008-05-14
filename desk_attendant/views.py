@@ -328,6 +328,84 @@ def admin_individual(request, job, id):
 
     return render_to_response('desk_attendant/admin.html', context, context_instance=RequestContext(request))
 
+@staff_member_required
+def csv_export(request, job):
+    """Allows ResLife staff to export application data to a spreadsheet"""
+    # TODO: This needs to be generalized.  Right now it's pretty hard-coded to get the job done, but it should be generalized in a way that allows other applications to easily export to CSV.  Maybe specify models and fields that should be exported or...? Then there is the question of specifying order as well.
+    # TODO: Need to verify a user somehow...
+    admin_communities = request.user.community_set.all()
+    if len(admin_communities) == 0:
+        request.user.message_set.create(message="Our records reflect that you are not currently administering any communities.  Please contact the web team with the name of the community you should be administering.")
+        return HttpResponseRedirect(reverse('wwu_housing.jobs.desk_attendant.views.index'))
+
+    applications = Application.objects.select_related().filter(job=job).filter(end_datetime__isnull=False)
+    app_ids = [app.id for app in applications]
+    availability = Availability.objects.filter(application__in=app_ids)
+    statuses = ApplicantStatus.objects.filter(application__in=app_ids)
+    # TODO: Need to fetch addresses and phone numbers without using a thousand queries...
+    applicant_ids = [app.applicant.id for app in applications]
+    applicants = Applicant.objects.filter(id__in=applicant_ids)
+    #raise Exception(applicant_ids)
+    #raise Exception(applicants)
+    user_list = [applicant.user for applicant in applicants]
+    addresses = Address.objects.filter(user__in=user_list)
+    phones = Phone.objects.filter(user__in=user_list)
+    del applicants
+
+    communities = Community.objects.exclude(name='New York Apartments') #TODO WHERE has_desk = true
+    community_abbrevs = {'Beta/Gamma':'BG',
+                         'Birnam Wood': 'BW',
+                         'Buchanan Towers':'BT',
+                         'Edens/Higginson':'EH',
+                         'Fairhaven':'FX',
+                         'Kappa':'RK',
+                         'Mathes':'MA',
+                         'Nash':'NA',
+                         'SHADO':'SH',}
+    apps = {}
+    #application = {}
+
+    applicants = []
+    for application in applications:
+        apps[application.id] = {}
+        apps[application.id]['name'] = str(application.applicant)
+        apps[application.id]['app_completion_date'] = application.end_datetime
+        applicants.append((application.id, apps[application.id]['name']))
+    applicants = sorted(applicants, key=operator.itemgetter(1))
+
+    for a in availability:
+        apps[a.application_id]['prior_da'] = a.prior_desk_attendant
+        apps[a.application_id]['hours_available'] = a.hours_available
+        apps[a.application_id]['work_study'] = a.work_study
+        apps[a.application_id]['on_campus'] = a.on_campus
+        apps[a.application_id]['on_campus_where'] = a.on_campus_where and a.on_campus_where.name or ''
+        #apps[a.application_id]['placement_preferences'] = SortedDict()
+        apps[a.application_id]['community_status'] = {}
+        for c in communities:
+            apps[a.application_id]['community_status'][community_abbrevs[c.name]] = ''
+
+    #status_choices = dict(ProcessStatusForm.STATUS_CHOICES)
+    #for s in statuses:
+    #    if s.name == 'process_status':
+    #        #TODO???
+    #        apps[s.application_id][s.name] = status_choices.get(s.value, s.value)
+    #    else:
+    #        apps[s.application_id][s.name] = s.value
+
+    sorted_apps = SortedDict()
+    for id, name in applicants:
+        sorted_apps[id] = apps[id]
+    apps = sorted_apps
+
+    context = {'applications': apps,
+               #'job': job,
+               #'community': admin_community,
+               #'total_applications': len(apps),
+               #'filter_html': filter_html
+               }
+
+    return render_to_response('desk_attendant/csvexport.html', context, context_instance=RequestContext(request))
+
 
 @staff_member_required
 def admin_list(request, job):
