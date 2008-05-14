@@ -1,0 +1,10 @@
+<pre>
+{% for id, app in applications.items %}{% spaceless %}
+    {% if forloop.first %}
+        Name,App Completion Date,Prior DA,Hours Available,Work Study,Will Live On Campus,Location
+    {% endif %}
+    {% endspaceless %}
+{% spaceless %}
+    "{{ app.name }}",{{ app.app_completion_date }},{{ app.prior_da|yesno:"yes,no" }},{{ app.hours_available }},{{ app.work_study|yesno:"yes,no,unknown" }},{{ app.on_campus|yesno:"yes,no" }},{{ app.on_campus_where }}
+{% endspaceless %}{% endfor %}
+</pre>
