@@ -309,7 +309,7 @@ def admin_individual(request, job, id):
     context = {}
     context['job'] = job
     context['application'] = app
-    context['applicant'] = app.applicant.user.get_full_name()
+    context['applicant_name'] = app.applicant.user.get_full_name()
     context['addresses'] = app.applicant.user.address_set.all()
     context['phones'] = app.applicant.user.phone_set.all()
     context['references'] = app.reference_set.all()

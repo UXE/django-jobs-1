@@ -9,7 +9,8 @@
 
     <p><a href="{% url wwu_housing.jobs.desk_attendant.views.admin %}">Back to list view</a></p>
 
-    <p><strong>Applicant Name:</strong> {{ applicant }}</p>
+    <p><strong>Applicant Name:</strong> {{ applicant_name }}</p>
+    <p><strong>Email Address:</strong> {{ application.applicant.user.email }}
     {% if application.end_datetime %}
         <p>Application completed on {{ application.end_datetime|date:"F j, Y \a\t P" }}</p>
     {% else %}
