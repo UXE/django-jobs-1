@@ -294,9 +294,10 @@ def admin_individual(request, job, id):
     statuses = ApplicantStatus.objects.exclude(community=admin_community).filter(application=id)
     for status in statuses:
         if not status_by_community.has_key(status.community.name):
-            status_by_community[status.community.name] = []
-        status.value = status_choices.get(status.value, status.value)
-        status_by_community[status.community.name].append(status)
+            status_by_community[status.community.name] = {}
+        if status.name == 'process_status':
+            status.value = status_choices[status.value]
+        status_by_community[status.community.name][status.name] = status.value
 
     resumes = app.resume_set.all()
     if len(resumes) > 0:

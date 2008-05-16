@@ -111,19 +111,11 @@
 
     <ul style="margin-top: 1em;">
     {% for community, statuses in status_by_community.items %}
-        <li>{{ community }}
-        {% for status in statuses %}
-            {% ifnotequal status.value '0' %}
-                <ul>
-                {% ifequal status.name 'process_status' %}
-                    <li>Application Status: {{ status.value }}</li>
-                {% endifequal %}
-                {% ifequal status.name 'hours_hired_for' %}
-                    <li>Hired for {{ status.value }} hour{{ status.value|pluralize }}</li>
-                {% endifequal %}
-                </ul>
-            {% endifnotequal %}
-        {% endfor %}
+        <li>
+            {{ community }}: {{ statuses.process_status }}
+            {% ifequal statuses.process_status 'Hired' %}
+                ({{ statuses.hours_hired_for }} hour{{ statuses.hours_hired_for|pluralize }})
+            {% endifequal %}
         </li>
     {% endfor %}
     </ul>
