@@ -246,52 +246,55 @@ def application(request, id):
 
 
 @staff_member_required
-def admin(request, job, id=None):
-    """Routes admin to list or individual views"""
-    # TODO: Is user authorized to view admin page?
-    # if request.user.has_perm('view_da_stuff')
-    # if staff or if in group rd
-    if request.user.is_staff:
-        pass
-
-    if (id is None):
-        return admin_list(request, job)
-    else:
-        return admin_individual(request, job, id)
-
-
-@staff_member_required
 def admin_individual(request, job, id):
     """Allows RDs to view individual applications for their communities and
     set statuses"""
     app = get_object_or_404(Application, pk=id)
 
-    # Load the communities that the current user administers.
+    # Load the communities that the current user administers.  Search administrators see
+    # all communities.
     admin_communities = request.user.community_set.all()
+    communities = Community.objects.exclude(name='New York Apartments').order_by('name') #TODO WHERE has_desk = true
     if len(admin_communities) == 0:
-        request.user.message_set.create(message="Our records reflect that you are not currently administering any communities.  Please contact the web team with the name of the community you should be administering.")
-        return HttpResponseRedirect(reverse('wwu_housing.jobs.desk_attendant.views.index'))
-    admin_community = admin_communities[0]
+        # If user doesn't administrate any communities, find out whether they are
+        # search administrators for the application process.
+        try:
+            # If the user is a search administrator, assign them all communities.
+            request.user.groups.get(name='Desk Attendant Search Administrator')
+            admin_communities = communities
+        except:
+            request.user.message_set.create(message="Our records reflect that you are not currently administering any communities.  Please contact the web team with the name of the community you should be administering.")
+            return HttpResponseRedirect(reverse('wwu_housing.jobs.desk_attendant.views.index'))
 
     data = request.POST or None
-    hours_hired_for, created = ApplicantStatus.objects.get_or_create(application=app, community=admin_community, name='hours_hired_for', defaults={'value':0})
-    hours_hired_for_form = HoursHiredForForm(data, instance=hours_hired_for, prefix='hours_hired_for')
+    status_forms = SortedDict()
+    for community in admin_communities:
+        # Only use POST data if the current community has form data in POST.
+        if data and data['community'] == community.name:
+            form_data = data
+        else:
+            form_data = None
 
-    process_status, created = ApplicantStatus.objects.get_or_create(application=app, community=admin_community, name='process_status')
-    if created:
-        process_status.value = 'unreviewed'
-        process_status.save()
-    process_status_form = ProcessStatusForm(data, instance=process_status, prefix='process_status')
+        hours_hired_for, created = ApplicantStatus.objects.get_or_create(application=app, community=community, name='hours_hired_for', defaults={'value':0})
+        hours_hired_for_form = HoursHiredForForm(form_data, instance=hours_hired_for, prefix='%s_hours_hired_for' % community)
 
-    if data:
+        process_status, created = ApplicantStatus.objects.get_or_create(application=app, community=community, name='process_status')
+        if created:
+            process_status.value = 'unreviewed'
+            process_status.save()
+        process_status_form = ProcessStatusForm(form_data, instance=process_status, prefix='%s_process_status' % community)
+
         if process_status_form.is_valid():
             process_status_form.save()
         if hours_hired_for_form.is_valid():
             hours_hired_for_form.save()
+        
+        status_forms[community.name] = {'process_status': process_status_form,
+                                        'hours_hired_for': hours_hired_for_form}
 
     status_by_community = SortedDict()
     status_choices = dict(ProcessStatusForm.STATUS_CHOICES)
-    statuses = ApplicantStatus.objects.exclude(community=admin_community).filter(application=id)
+    statuses = ApplicantStatus.objects.exclude(community__in=admin_communities).filter(application=id)
     for status in statuses:
         if not status_by_community.has_key(status.community.name):
             status_by_community[status.community.name] = {}
@@ -317,10 +320,9 @@ def admin_individual(request, job, id):
     context['resume'] = resume
     context['placement_preferences'] = app.placementpreference_set.all()
     context['essay_responses'] = app.essayresponse_set.all()
-    context['process_status_form'] = process_status_form
-    context['hours_hired_for_form'] = hours_hired_for_form
+    context['status_forms'] = status_forms
     context['status_by_community'] = status_by_community
-    context['community'] = admin_community
+    context['communities'] = admin_communities
 
     try:
         context['availability'] = app.availability_set.all()[0]
@@ -411,16 +413,24 @@ def csv_export(request, job):
 @staff_member_required
 def admin_list(request, job):
     """Allows RDs to list the applications for easy viewing and sorting"""
-    # Load the communities that the current user administers.
+    # Load the communities that the current user administers.  Search administrators see
+    # all communities.
     admin_communities = request.user.community_set.all()
+    communities = Community.objects.exclude(name='New York Apartments') #TODO WHERE has_desk = true
     if len(admin_communities) == 0:
-        request.user.message_set.create(message="Our records reflect that you are not currently administering any communities.  Please contact the web team with the name of the community you should be administering.")
-        return HttpResponseRedirect(reverse('wwu_housing.jobs.desk_attendant.views.index'))
-    admin_community = admin_communities[0]
+        # If user doesn't administrate any communities, find out whether they are
+        # search administrators for the application process.
+        try:
+            # If the user is a search administrator, assign them all communities.
+            request.user.groups.get(name='Desk Attendant Search Administrator')
+            admin_communities = communities
+        except:
+            request.user.message_set.create(message="Our records reflect that you are not currently administering any communities.  Please contact the web team with the name of the community you should be administering.")
+            return HttpResponseRedirect(reverse('wwu_housing.jobs.desk_attendant.views.index'))
 
     applications = Application.objects.select_related().filter(job=job).filter(end_datetime__isnull=False)
-    applications = applications.filter(placementpreference__community=admin_community, placementpreference__rank__gt=0)
-    filter = FilterObject(request, applications, admin_community)
+    applications = applications.filter(placementpreference__community__in=admin_communities, placementpreference__rank__gt=0)
+    filter = FilterObject(request, applications, admin_communities)
     filter_html = filter.output()
 
     # Process filters if there are any.
@@ -431,9 +441,8 @@ def admin_list(request, job):
 
     availability = Availability.objects.filter(application__in=app_ids)
 
-    statuses = ApplicantStatus.objects.filter(application__in=app_ids).filter(community=admin_community)
+    statuses = ApplicantStatus.objects.filter(application__in=app_ids).filter(community__in=admin_communities)
     placement_preferences = PlacementPreference.objects.filter(application__in=app_ids).exclude(community__name='New York Apartments')
-    communities = Community.objects.exclude(name='New York Apartments') #TODO WHERE has_desk = true
     community_abbrevs = {'Beta/Gamma':'BG',
                          'Birnam Wood': 'BW',
                          'Buchanan Towers':'BT',
@@ -482,10 +491,11 @@ def admin_list(request, job):
     apps = sorted_apps
 
     #raise Exception(apps)
+    admin_communities = ", ".join([c.name for c in admin_communities])
     context = {'applications': apps,
                'applicants': applicants,
                'job': job,
-               'community': admin_community,
+               'communities': admin_communities,
                'total_applications': len(apps),
                'filter_html': filter_html}
 
@@ -493,7 +503,7 @@ def admin_list(request, job):
 
 
 class FilterObject(object):
-    def __init__(self, request, query_set, community):
+    def __init__(self, request, query_set, communities):
         self.filters = {'availability__prior_desk_attendant': {'name': 'Prior DA',
                                                                'values': ((None, 'All'),
                                                                           ('1', 'Yes'),
@@ -519,7 +529,7 @@ class FilterObject(object):
         self.filters['placementpreference__rank']['values'].extend([(str(i),)*2 for i in xrange(1, 10)])
         self.params = dict(request.GET.items())
         self.query_set = query_set
-        self.community = community
+        self.communities = communities
         self.clean_params()
         
     def clean_params(self):
@@ -555,7 +565,7 @@ class FilterObject(object):
                     params[k] = v.split(',')
                 elif 'applicantstatus' in k:
                     # Add an extra rule if filtering by applicant status.
-                    params['applicantstatus__community__id'] = self.community.id
+                    params['applicantstatus__community__id__in'] = [community.id for community in self.communities]
             self.query_set = self.query_set.filter(**params)
         return self.query_set
 
