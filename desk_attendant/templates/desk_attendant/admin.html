@@ -33,7 +33,11 @@
         <br />
         Student will be available {{ availability.hours_available }} hours.<br />
         Student {{ availability.work_study|yesno:"is,is not, might be" }} elligible for work study.<br />
-        Student {{ availability.prior_desk_attendant|yesno:"was, was not" }} a Desk Attendant previously.
+        {% if availability.prior_desk_attendant %}
+            <strong>Student was a Desk Attendant previously.</strong>
+        {% else %}
+            Student was not a Desk Attendant previously.
+        {% endif %}
         </p>
     {% else %}
     <p>Applicant does not have availability information.</p>
