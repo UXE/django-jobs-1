@@ -348,8 +348,6 @@ def csv_export(request, job):
     # TODO: Need to fetch addresses and phone numbers without using a thousand queries...
     applicant_ids = [app.applicant.id for app in applications]
     applicants = Applicant.objects.filter(id__in=applicant_ids)
-    #raise Exception(applicant_ids)
-    #raise Exception(applicants)
     user_list = [applicant.user for applicant in applicants]
     addresses = Address.objects.filter(user__in=user_list)
     phones = Phone.objects.filter(user__in=user_list)
@@ -490,7 +488,6 @@ def admin_list(request, job):
         sorted_apps[id] = apps[id]
     apps = sorted_apps
 
-    #raise Exception(apps)
     admin_communities = ", ".join([c.name for c in admin_communities])
     context = {'applications': apps,
                'applicants': applicants,
