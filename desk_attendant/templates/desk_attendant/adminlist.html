@@ -19,7 +19,7 @@
 <table border='1' style="width: 100%;">
 {% for id, application in applications.items %}
     {% if forloop.first %}
-        <tr>
+        <tr class='row-label'>
             <th>Name</th>
             <th>Prior DA</th>
             <th>Hours Available</th>
@@ -30,7 +30,7 @@
             <th>Status</th>
         </tr>
     {% endif %}
-    <tr class="{% cycle 'row1' 'row2' %}">
+    <tr id="applicant-{{ id }}" class="{% cycle 'row1' 'row2' %}">
         <td><a href="{{ id }}/">{{ application.name }}</a></td>
         <td><img src="/media/admin/img/admin/icon-{{ application.prior_da|yesno:"yes,no" }}.gif" /></td>
         <td>{{ application.hours_available }}</td>
@@ -49,4 +49,9 @@
 {% endfor %}
 </table>
 
+<script type="text/javascript">
+var selectedID = unescape(document.location.hash.substring(1));
+var selectedTR = document.getElementById(selectedID);
+selectedTR.className = 'selected-row';
+</script>
 {% endblock %}

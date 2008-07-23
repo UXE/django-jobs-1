@@ -7,7 +7,7 @@
 {% block content %}
     <h1>{{ job.title }} Application</h1>
 
-    <p><a href="{% url wwu_housing.jobs.desk_attendant.views.admin_list %}">Back to list view</a></p>
+    <p><a href="{% url wwu_housing.jobs.desk_attendant.views.admin_list %}#applicant-{{ application.id }}">Back to list view</a></p>
 
     <p><strong>Applicant Name:</strong> {{ applicant_name }}</p>
     <p><strong>Email Address:</strong> {{ application.applicant.user.email }}
