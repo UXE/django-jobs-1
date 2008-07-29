@@ -51,7 +51,10 @@
 
 <script type="text/javascript">
 var selectedID = unescape(document.location.hash.substring(1));
-var selectedTR = document.getElementById(selectedID);
-selectedTR.className = 'selected-row';
+var selectedTR = null;
+if (selectedID != '')
+    selectedTR = document.getElementById(selectedID);
+if (selectedTR != null)
+    selectedTR.className = 'selected-row';
 </script>
 {% endblock %}
