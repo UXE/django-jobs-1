@@ -7,10 +7,10 @@
 {% block content %}
     <h1>{{ job.title }} Application</h1>
 
-    <p><a href="{% url wwu_housing.jobs.desk_attendant.views.admin_list %}#applicant-{{ application.id }}">Back to list view</a></p>
+    <p><a href="{% url wwu_housing.jobs.desk_attendant.views.admin_list %}{{ get_string }}#applicant-{{ application.id }}">Back to list view</a></p>
 
     <p><strong>Applicant Name:</strong> {{ applicant_name }}</p>
-    <p><strong>Email Address:</strong> {{ application.applicant.user.email }}
+    <p><strong>Email Address:</strong> {{ application.applicant.user.email }}</p>
     {% if application.end_datetime %}
         <p>Application completed on {{ application.end_datetime|date:"F j, Y \a\t P" }}</p>
     {% else %}
@@ -125,8 +125,8 @@
     </ul>
 
     {% for community, forms in status_forms.items %}
+        <form method="post" action="">
         <div style="margin-top: 1em;">
-            <form method="post" action="">
             <input type="hidden" name="community" value="{{ community }}" />
             <fieldset>
                 <legend>Application's Status in {{ community }}</legend>
@@ -134,8 +134,8 @@
                 <p>{% if forms.hours_hired_for.value.errors %}<span class="errors">{{ forms.hours_hired_for.value.errors }}</span>{% endif %}Hours Hired For: {{ forms.hours_hired_for.value }}</p>
                 <p><input type="submit" value="Update Status" /></p>
             </fieldset>
-            </form>
         </div>
+        </form>
     {% endfor %}
 
     <p><a href="{% url wwu_housing.jobs.desk_attendant.views.admin_list %}">Back to list view</a></p>

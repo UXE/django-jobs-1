@@ -250,6 +250,11 @@ def admin_individual(request, job, id):
     """Allows RDs to view individual applications for their communities and
     set statuses"""
     app = get_object_or_404(Application, pk=id)
+    
+    if (request.META.has_key('QUERY_STRING')):
+        get_string = '?%s' % request.META['QUERY_STRING']
+    else:
+        get_string = ''
 
     # Load the communities that the current user administers.  Search administrators see
     # all communities.
@@ -323,6 +328,7 @@ def admin_individual(request, job, id):
     context['status_forms'] = status_forms
     context['status_by_community'] = status_by_community
     context['communities'] = admin_communities
+    context['get_string'] = get_string
 
     try:
         context['availability'] = app.availability_set.all()[0]
@@ -430,6 +436,7 @@ def admin_list(request, job):
     applications = applications.filter(placementpreference__community__in=admin_communities, placementpreference__rank__gt=0)
     filter = FilterObject(request, applications, admin_communities)
     filter_html = filter.output()
+    get_string = filter.get_query_string()
 
     # Process filters if there are any.
     if len(request.GET) > 0:
@@ -494,7 +501,8 @@ def admin_list(request, job):
                'job': job,
                'communities': admin_communities,
                'total_applications': len(apps),
-               'filter_html': filter_html}
+               'filter_html': filter_html,
+               'get_string': get_string}
 
     return render_to_response('desk_attendant/adminlist.html', context, context_instance=RequestContext(request))
 
