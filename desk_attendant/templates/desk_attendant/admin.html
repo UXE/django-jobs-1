@@ -32,7 +32,7 @@
         {% endif %}
         <br />
         Student will be available {{ availability.hours_available }} hours.<br />
-        Student {{ availability.work_study|yesno:"is,is not, might be" }} elligible for work study.<br />
+        Student {{ availability.work_study|yesno:"is,is not,might be" }} elligible for work study.<br />
         {% if availability.prior_desk_attendant %}
             <strong>Student was a Desk Attendant previously.</strong>
         {% else %}
