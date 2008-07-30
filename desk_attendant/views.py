@@ -81,19 +81,18 @@ def apply(request, job):
 
     address_defaults = {}
     phone_defaults = {}
-    if hasattr(request.user, 'student'):
-        address = request.user.student.mailing_address
-        if address:
-            address_defaults['current'] = {'street_line_1': address.street_line1,
-                                           'street_line_2': address.street_line2,
-                                           'street_line_3': address.street_line3,
-                                           'city': address.city,
-                                           'district': address.state,
-                                           'zip': address.zip}
-            if address.phone_number:
-                phone_defaults['current'] = {'phone': "%s-%s-%s" % (address.area_code, 
-                                                                    address.phone_number[:3],
-                                                                    address.phone_number[3:])}
+    address = request.session['student'].mailing_address
+    if address:
+        address_defaults['current'] = {'street_line_1': address.street_line1,
+                                       'street_line_2': address.street_line2,
+                                       'street_line_3': address.street_line3,
+                                       'city': address.city,
+                                       'district': address.state,
+                                       'zip': address.zip}
+        if address.phone_number:
+            phone_defaults['current'] = {'phone': "%s-%s-%s" % (address.area_code, 
+                                                                address.phone_number[:3],
+                                                                address.phone_number[3:])}
 
     # Generate a form for each address type.
     address_types = ('current', 'summer')
