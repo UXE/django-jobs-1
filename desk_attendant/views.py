@@ -324,7 +324,7 @@ def admin_individual(request, job, id):
     context['references'] = app.reference_set.all()
     context['resume'] = resume
     context['placement_preferences'] = app.placementpreference_set.all()
-    context['essay_responses'] = app.essayresponse_set.all()
+    context['essay_responses'] = app.essayresponse_set.all().order_by('question')
     context['status_forms'] = status_forms
     context['status_by_community'] = status_by_community
     context['communities'] = admin_communities
