@@ -18,27 +18,22 @@
     {% endif %}
 
     <h2>Availability</h2>
+
     {% if availability %}
-        <p>
-        {% if availability.on_campus %}
-            Student will live on campus next year
-            {% if availability.on_campus_where %}
-                ({{ availability.on_campus_where }}).
-            {% else %}
-                (Unknown Location).
-            {% endif %}
-        {% else %}
-            Student will not live on campus next year.
-        {% endif %}
-        <br />
-        Student will be available {{ availability.hours_available }} hours.<br />
-        Student {{ availability.work_study|yesno:"is,is not,might be" }} elligible for work study.<br />
-        {% if availability.prior_desk_attendant %}
-            <strong>Student was a Desk Attendant previously.</strong>
-        {% else %}
-            Student was not a Desk Attendant previously.
-        {% endif %}
-        </p>
+    <table border='1'>
+    <tr>
+        <th>Prior DA</th>
+        <th>Hours Available</th>
+        <th>Will Live On Campus</th>
+        <th>Work Study</th>
+    </tr>
+    <tr class="row1">
+        <td><img src="/media/admin/img/admin/icon-{{ availability.prior_da|yesno:"yes,no" }}.gif" alt="{{ availability.prior_da|yesno:"yes,no" }}" /></td>
+        <td>{{ availability.hours_available }}</td>
+        <td><img src="/media/admin/img/admin/icon-{{ availability.on_campus|yesno:"yes,no" }}.gif" alt="{{ availability.on_campus|yesno:"yes,no" }}" /> {{ availability.on_campus_where }}</td>
+        <td>{{ availability.work_study|yesno:"Yes,No,Unknown" }}</td>
+    </tr>
+    </table>
     {% else %}
     <p>Applicant does not have availability information.</p>
     {% endif %}
