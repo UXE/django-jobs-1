@@ -23,10 +23,6 @@ class Job(models.Model):
     def __unicode__(self):
         return self.title
 
-    class Admin:
-        list_display = ('title', 'open_datetime', 'close_datetime', 'description', 'post_datetime')
-        list_filter = ('open_datetime', 'close_datetime')
-
     def is_active(self):
         """Returns whether the job posting is currently active."""
         return self.open_datetime <= datetime.datetime.now() < self.close_datetime
@@ -47,9 +43,6 @@ class Applicant(models.Model):
         except:
             pass
         return unicode(self.user)
-
-    class Admin:
-        pass
 
 
 class Application(models.Model):
@@ -73,10 +66,6 @@ class Application(models.Model):
     start_datetime = models.DateTimeField(blank=True, editable=False, help_text="The time when the applicant started the application.")
     end_datetime = models.DateTimeField(blank=True, null=True, 
                                          help_text="The time when the applicant submitted the application.")
-
-    class Admin:
-        list_display = ('applicant', 'job', 'start_datetime', 'end_datetime')
-        list_filter = ('job', 'start_datetime', 'end_datetime')
 
     def __unicode__(self):
         return u"%s for %s" % (self.applicant, self.job)
@@ -108,11 +97,6 @@ class Date(models.Model):
     date = models.DateTimeField(core=True)
     description = models.TextField(blank=True, null=True)
 
-    class Admin:
-        list_display = ('job', 'name', 'date', 'description')
-        list_display_links = ('name',)
-        list_filter = ('job', 'date')
-
     def __unicode__(self):
         return u"%s: %s" % (self.job, self.name)
 
@@ -129,9 +113,6 @@ class File(models.Model):
     path = models.FileField(upload_to='/jobs/') # TODO: This needs to upload to a non-MEDIA_ROOT directory.
     last_modified = models.DateTimeField(editable=False)
     active = models.BooleanField(default=True)
-
-    class Admin:
-        pass
 
     def save(self, *args, **kwargs):
         self.last_modified = datetime.datetime.now()
@@ -153,9 +134,6 @@ class Component(models.Model):
     class Meta:
         ordering = ['sequence_number']
 
-    class Admin:
-        pass
-
 
 class Requirement(models.Model):
     """A reference to a function which can be used to determine whether an applicant is qualified
@@ -165,6 +143,3 @@ class Requirement(models.Model):
     job = models.ForeignKey(Job)
     function_name = models.CharField(max_length=255, 
                                      help_text="The name of a function in the job's requirements.py which returns true or false when given an Applicant object.")
-
-    class Admin:
-        pass

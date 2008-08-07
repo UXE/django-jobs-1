@@ -21,10 +21,6 @@ class Availability(models.Model):
     class Meta:
         verbose_name_plural = 'availability'
 
-    class Admin:
-        list_display = ('application', 'on_campus', 'on_campus_where', 'hours_available', 'prior_desk_attendant')
-        list_filter = ('on_campus', 'on_campus_where', 'work_study', 'hours_available', 'prior_desk_attendant')
-
     def __unicode__(self):
         return u"%s" % self.application
 
@@ -43,9 +39,6 @@ class Reference(models.Model):
     name = models.CharField(max_length=255, verbose_name="Reference Name", blank=True)
     phone = models.CharField(max_length=20, verbose_name="Reference Phone Number", blank=True)
 
-    class Admin:
-        list_display = ('application', 'name', 'phone')
-
     def __unicode__(self):
         return u"Name: %s\nPhone: %s" % (self.name, self.phone)
 
@@ -59,9 +52,6 @@ class PlacementPreference(models.Model):
     class Meta:
         ordering = ('rank',)
 
-    class Admin:
-        list_display = ('application', 'community', 'rank')
-
     def __unicode__(self):
         return u"%i. %s" % (self.rank, self.community)
 
@@ -69,9 +59,6 @@ class PlacementPreference(models.Model):
 class EssayQuestion(models.Model):
     """Essay questions."""
     question = models.CharField(max_length=255)
-
-    class Admin:
-        pass
 
     def __unicode__(self):
         return self.question
@@ -82,9 +69,6 @@ class EssayResponse(models.Model):
     application = models.ForeignKey(Application)
     question = models.ForeignKey(EssayQuestion)
     answer = models.TextField()
-
-    class Admin:
-        list_display = ('application', 'question', 'answer')
 
     def __unicode__(self):
         return self.answer
@@ -101,9 +85,6 @@ class ApplicantStatus(models.Model):
     class Meta:
         unique_together = (("application", "community", "name"),)
         verbose_name_plural = 'applicant statuses'
-
-    class Admin:
-        pass
 
     def __unicode__(self):
         return "%s: %s %s" % (self.community, self.name, self.value)
@@ -169,9 +150,6 @@ class Resume(models.Model):
             self.save()
 
     _save_FIELD_file.alters_data = True
-
-    class Admin:
-        pass
 
     def __unicode__(self):
         return u'Resume for %s' % self.application.applicant 
