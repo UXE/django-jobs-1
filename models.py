@@ -93,8 +93,8 @@ class Application(models.Model):
 class Date(models.Model):
     """Application-specific dates like deadlines and open and close dates."""
     job = models.ForeignKey(Job, edit_inline=models.TABULAR)
-    name = models.CharField(max_length=255, core=True)
-    date = models.DateTimeField(core=True)
+    name = models.CharField(max_length=255)
+    date = models.DateTimeField()
     description = models.TextField(blank=True, null=True)
 
     def __unicode__(self):
@@ -126,10 +126,10 @@ class Component(models.Model):
 
     """
     job = models.ForeignKey(Job)
-    name = models.CharField(max_length=255, core=True, 
+    name = models.CharField(max_length=255,
                             help_text="The name of any Django model available in the job's model namespace.")
-    sequence_number = models.IntegerField(core=True)
-    required = models.BooleanField(default=True, core=True)
+    sequence_number = models.IntegerField()
+    required = models.BooleanField(default=True)
 
     class Meta:
         ordering = ['sequence_number']

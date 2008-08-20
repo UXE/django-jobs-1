@@ -74,7 +74,7 @@ class EssayResponse(models.Model):
         return self.answer
 
 
-# Shouldn't this be applicaTIONstatus?
+# TODO: Shouldn't this be applicaTIONstatus?
 class ApplicantStatus(models.Model):
     """This tracks the status of the application in each hall (e.g., "applied," "hired," etc.)."""
     application = models.ForeignKey(Application)
@@ -92,64 +92,8 @@ class ApplicantStatus(models.Model):
 
 class Resume(models.Model):
     application = models.ForeignKey(Application)
-    resume = custom_models.SecureFileField(upload_to='deskattendant/resumes')
-
-    # Override Django's curried get_FIELD methods so they return secure paths.
-
-    def get_resume_filename(self):
-        if self.resume: # value is not blank
-            return os.path.join(settings.SECURE_MEDIA_ROOT, self.resume)
-        return ''
-
-    def get_resume_url(self):
-        if self.resume: # value is not blank
-            import urlparse
-            return urlparse.urljoin(settings.SECURE_MEDIA_URL, self.resume).replace('\\', '/')
-        return ''
-
-    def get_resume_size(self):
-        return os.path.getsize(self.get_resume_filename())
-
-    def _save_FIELD_file(self, field, filename, raw_contents, save=True):
-        directory = field.get_directory_name()
-        try: # Create the date-based directory if it doesn't exist.
-            os.makedirs(os.path.join(settings.SECURE_MEDIA_ROOT, directory))
-        except OSError: # Directory probably already exists.
-            pass
-        filename = field.get_filename(filename)
-
-        # If the filename already exists, keep adding an underscore to the name of
-        # the file until the filename doesn't exist.
-        while os.path.exists(os.path.join(settings.SECURE_MEDIA_ROOT, filename)):
-            try:
-                dot_index = filename.rindex('.')
-            except ValueError: # filename has no dot
-                filename += '_'
-            else:
-                filename = filename[:dot_index] + '_' + filename[dot_index:]
-
-        # Write the file to disk.
-        setattr(self, field.attname, filename)
-
-        full_filename = self.get_resume_filename()
-        fp = open(full_filename, 'wb')
-        fp.write(raw_contents)
-        fp.close()
-
-        # Save the width and/or height, if applicable.
-        if isinstance(field, ImageField) and (field.width_field or field.height_field):
-            from django.utils.images import get_image_dimensions
-            width, height = get_image_dimensions(full_filename)
-            if field.width_field:
-                setattr(self, field.width_field, width)
-            if field.height_field:
-                setattr(self, field.height_field, height)
-
-        # Save the object because it has changed unless save is False
-        if save:
-            self.save()
-
-    _save_FIELD_file.alters_data = True
+    # TODO: use a file field.
+    #resume = custom_models.SecureFileField(upload_to='deskattendant/resumes')
 
     def __unicode__(self):
         return u'Resume for %s' % self.application.applicant 
