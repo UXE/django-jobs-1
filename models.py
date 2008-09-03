@@ -92,7 +92,7 @@ class Application(models.Model):
 
 class Date(models.Model):
     """Application-specific dates like deadlines and open and close dates."""
-    job = models.ForeignKey(Job, edit_inline=models.TABULAR)
+    job = models.ForeignKey(Job)
     name = models.CharField(max_length=255)
     date = models.DateTimeField()
     description = models.TextField(blank=True, null=True)

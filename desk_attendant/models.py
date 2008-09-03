@@ -4,7 +4,6 @@ from django.conf import settings
 from django.db import models
 from django.db.models import ImageField
 
-from wwu_housing import models as custom_models
 from wwu_housing.jobs.models import Application
 from wwu_housing.keymanager.models import Building, Community
 
