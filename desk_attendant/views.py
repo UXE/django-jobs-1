@@ -10,7 +10,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import Template, RequestContext, Context, loader
 from django.utils.datastructures import SortedDict
 
-from wwu_housing.jobs.models import Applicant, Application
+from wwu_housing.jobs.models import Applicant, Application, Job
 from wwu_housing.library.models import Address, AddressType, Phone, PhoneType
 from wwu_housing.library.forms import AddressForm, PhoneForm
 from wwu_housing.keymanager.models import Community
@@ -18,11 +18,13 @@ from forms import AvailabilityForm, ReferenceForm, PlacementPreferenceForm, Essa
 from models import EssayQuestion, PlacementPreference, ApplicantStatus, Availability
 
 
-def index(request, job):
+def index(request):
     """
     Basic info page that tells about the desk attendant application
     """
     # TODO: This could probably use a generic view.
+    # TODO: move this queryset into the index and store the job object in the user's session.
+    job = Job.objects.filter(title='Desk Attendant').latest('open_datetime')
     context = {'job': job}
     try:
         applicant, created = Applicant.objects.get_or_create(user=request.user)
@@ -45,11 +47,12 @@ def index(request, job):
 
 
 @login_required
-def apply(request, job):
+def apply(request):
     """
     Displays the application form for a desk attendant applicant
     """
     # TODO: This is a job for students only, at what point should we check that attribute?
+    job = Job.objects.filter(title='Desk Attendant').latest('open_datetime')
 
     # If the job is not open, forward to the index page
     if not job.is_open():
@@ -245,9 +248,10 @@ def application(request, id):
 
 
 @staff_member_required
-def admin_individual(request, job, id):
+def admin_individual(request, id):
     """Allows RDs to view individual applications for their communities and
     set statuses"""
+    job = Job.objects.filter(title='Desk Attendant').latest('open_datetime')
     app = get_object_or_404(Application, pk=id)
     
     if (request.META.has_key('QUERY_STRING')):
@@ -257,7 +261,7 @@ def admin_individual(request, job, id):
 
     # Load the communities that the current user administers.  Search administrators see
     # all communities.
-    admin_communities = request.user.community_set.all()
+    admin_communities = request.user.community_admins.all()
     communities = Community.objects.exclude(name='New York Apartments').order_by('name') #TODO WHERE has_desk = true
     if len(admin_communities) == 0:
         # If user doesn't administrate any communities, find out whether they are
@@ -337,11 +341,12 @@ def admin_individual(request, job, id):
     return render_to_response('desk_attendant/admin.html', context, context_instance=RequestContext(request))
 
 @staff_member_required
-def csv_export(request, job):
+def csv_export(request):
     """Allows ResLife staff to export application data to a spreadsheet"""
     # TODO: This needs to be generalized.  Right now it's pretty hard-coded to get the job done, but it should be generalized in a way that allows other applications to easily export to CSV.  Maybe specify models and fields that should be exported or...? Then there is the question of specifying order as well.
     # TODO: Need to verify a user somehow...
-    admin_communities = request.user.community_set.all()
+    job = Job.objects.filter(title='Desk Attendant').latest('open_datetime')
+    admin_communities = request.user.community_admins.all()
     if len(admin_communities) == 0:
         request.user.message_set.create(message="Our records reflect that you are not currently administering any communities.  Please contact the web team with the name of the community you should be administering.")
         return HttpResponseRedirect(reverse('wwu_housing.jobs.desk_attendant.views.index'))
@@ -414,11 +419,12 @@ def csv_export(request, job):
 
 
 @staff_member_required
-def admin_list(request, job):
+def admin_list(request):
     """Allows RDs to list the applications for easy viewing and sorting"""
     # Load the communities that the current user administers.  Search administrators see
     # all communities.
-    admin_communities = request.user.community_set.all()
+    job = Job.objects.filter(title='Desk Attendant').latest('open_datetime')
+    admin_communities = request.user.community_admins.all()
     communities = Community.objects.exclude(name='New York Apartments') #TODO WHERE has_desk = true
     if len(admin_communities) == 0:
         # If user doesn't administrate any communities, find out whether they are
