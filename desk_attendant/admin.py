@@ -1,6 +1,6 @@
-from django.contrib import admin
 from wwu_housing.jobs.desk_attendant.models import Availability, Reference, PlacementPreference
 from wwu_housing.jobs.desk_attendant.models import EssayQuestion, EssayResponse, ApplicantStatus, Resume
+from wwu_housing.western_auth import admin
 
 class AvailabilityAdmin(admin.ModelAdmin):
     list_display = ('application', 'on_campus', 'on_campus_where', 'hours_available', 'prior_desk_attendant')

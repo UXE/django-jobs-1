@@ -1,5 +1,5 @@
-from django.contrib import admin
 from wwu_housing.jobs.models import Job, Applicant, Application, Date, File, Component, Requirement
+from wwu_housing.western_auth import admin
 
 class JobAdmin(admin.ModelAdmin):
     list_display = ('title', 'open_datetime', 'close_datetime', 'description', 'post_datetime')
