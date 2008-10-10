@@ -1,11 +1,19 @@
 from django.contrib import admin
 
-from wwu_housing.jobs.models import Job, Applicant, Application, Date, File, Component, Requirement
+from wwu_housing.jobs.models import Job, Applicant, Application, Date, File, \
+                                    Component, ApplicationComponent, \
+                                    Qualification
+
+
+class ComponentInline(admin.TabularInline):
+    model = Component
 
 
 class JobAdmin(admin.ModelAdmin):
-    list_display = ('title', 'open_datetime', 'close_datetime', 'description', 'post_datetime')
-    list_filter = ('open_datetime', 'close_datetime')
+    list_display = ("title", "open_datetime", "close_datetime", "description", 
+                    "post_datetime")
+    list_filter = ("open_datetime", "close_datetime")
+    inlines = [ComponentInline]
 admin.site.register(Job, JobAdmin)
 
 
@@ -14,16 +22,21 @@ class ApplicantAdmin(admin.ModelAdmin):
 admin.site.register(Applicant, ApplicantAdmin)
 
 
+class ApplicationComponentInline(admin.TabularInline):
+    model = ApplicationComponent
+
+
 class ApplicationAdmin(admin.ModelAdmin):
-    list_display = ('applicant', 'job', 'start_datetime', 'end_datetime')
-    list_filter = ('job', 'start_datetime', 'end_datetime')
+    list_display = ("applicant", "job", "start_datetime", "end_datetime")
+    list_filter = ("job", "start_datetime", "end_datetime")
+    inlines = [ApplicationComponentInline]
 admin.site.register(Application, ApplicationAdmin)
 
 
 class DateAdmin(admin.ModelAdmin):
-    list_display = ('job', 'name', 'date', 'description')
-    list_display_links = ('name',)
-    list_filter = ('job', 'date')
+    list_display = ("job", "name", "date", "description")
+    list_display_links = ("name",)
+    list_filter = ("job", "date")
 admin.site.register(Date, DateAdmin)
 
 
@@ -32,12 +45,7 @@ class FileAdmin(admin.ModelAdmin):
 admin.site.register(File, FileAdmin)
 
 
-class ComponentAdmin(admin.ModelAdmin):
+class QualificationAdmin(admin.ModelAdmin):
     pass
-admin.site.register(Component, ComponentAdmin)
-
-
-class RequirementAdmin(admin.ModelAdmin):
-    pass
-admin.site.register(Requirement, RequirementAdmin)
+admin.site.register(Qualification, QualificationAdmin)
 
