@@ -4,7 +4,6 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
-from django.core.files.storage import FileSystemStorage
 from django.db import models
 from django.template.defaultfilters import slugify
 
@@ -16,6 +15,7 @@ class Job(models.Model):
     A set of information used to describe an available job as specified by one
     of the job administrators.
     """
+    site_url = models.URLField(verify_exists=False)
     title = models.CharField(max_length=255)
     description = models.TextField()
     post_datetime = models.DateTimeField(help_text="The date and time this job is to be posted online.")
@@ -28,6 +28,10 @@ class Job(models.Model):
 
     def __unicode__(self):
         return self.title
+
+    def is_posted(self):
+        """Returns whether the job posting is ready to be posted on jobs pages."""
+        return self.post_datetime <= datetime.datetime.now() < self.close_datetime
 
     def is_active(self):
         """Returns whether the job posting is currently active."""
@@ -130,29 +134,6 @@ class Date(models.Model):
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
         super(Date, self).save(*args, **kwargs)
-
-
-def file_upload_to(instance, filename):
-    return "%s/%s" % (instance.applicant.id, filename)
-
-class File(models.Model):
-    """Files that can be used by an applicant for one or more applications."""
-    applicant = models.ForeignKey(Applicant)
-    name = models.CharField(max_length=255)
-    path = models.FileField(upload_to=file_upload_to,
-                            storage=FileSystemStorage(location="%s/jobs" % 
-                                                      settings.FILE_UPLOAD_ROOT,
-                                                      base_url="/django/jobs/files/"),
-                            )
-    last_modified = models.DateTimeField(editable=False)
-    is_active = models.BooleanField(default=True)
-
-    def __unicode__(self):
-        return self.name
-
-    def save(self, *args, **kwargs):
-        self.last_modified = datetime.datetime.now()
-        super(File, self).save(*args, **kwargs)
 
 
 class Qualification(models.Model):

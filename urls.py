@@ -1,9 +1,10 @@
 from django.conf.urls.defaults import *
+from django.views.generic.list_detail import object_list
 
-from wwu_housing.views import files
+from models import Job
 
 
-urlpatterns = patterns('',
-    (r'^desk-attendant/', include('wwu_housing.jobs.desk_attendant.urls')),
-    url(r'^files/(?P<path>[\-_/\.\w]+)/$', files, {"base_path": "jobs"}, name="jobs_files"),
+urlpatterns = patterns("",
+    url(r"^$", object_list, {"queryset": Job.objects.all(), "template_object_name": "job"}, name="jobs_index"),
+    (r"^desk-attendant/", include("wwu_housing.jobs.desk_attendant.urls")),
 )

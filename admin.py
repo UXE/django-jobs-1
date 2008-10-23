@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from wwu_housing.jobs.models import Job, Applicant, Application, Date, File, \
+from wwu_housing.jobs.models import Job, Applicant, Application, Date, \
                                     Component, ApplicationComponent, \
                                     Qualification
 
@@ -14,6 +14,8 @@ class JobAdmin(admin.ModelAdmin):
                     "post_datetime")
     list_filter = ("open_datetime", "close_datetime")
     inlines = [ComponentInline]
+    save_as = True
+    save_on_top = True
 admin.site.register(Job, JobAdmin)
 
 
@@ -38,11 +40,6 @@ class DateAdmin(admin.ModelAdmin):
     list_display_links = ("name",)
     list_filter = ("job", "date")
 admin.site.register(Date, DateAdmin)
-
-
-class FileAdmin(admin.ModelAdmin):
-    pass
-admin.site.register(File, FileAdmin)
 
 
 class QualificationAdmin(admin.ModelAdmin):
