@@ -50,10 +50,20 @@ class Component(models.Model):
     A component has an optional foreign key relationship to an object that
     represents the component.  For example, an "essay" component might reference
     an EssayQuestion model.
+
+    Components can be as generic as necessary for a given job.  It is not a
+    requirement for a component to map to a single instance of a model or a
+    particular form.  Rather, each job application should map each component to
+    a Django view the successful processing of which can be used to determine
+    completion of the component.
+
+    For example, a component called "Essays" would have a view named "essays"
+    and possibly a url like "ra_search/essays/".
     """
     # TODO: add custom manager to pull all required components?
     job = models.ForeignKey(Job)
     name = models.CharField(max_length=255)
+    slug = models.SlugField(blank=True, help_text="This field will be auto-generated for you if it is left blank.")
     sequence_number = models.IntegerField()
     is_required = models.BooleanField(default=True)
     content_type = models.ForeignKey(ContentType, blank=True, null=True)
@@ -65,6 +75,11 @@ class Component(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.id and not self.slug:
+            self.slug = slugify(self.name)
+        super(Component, self).save(*args, **kwargs)
 
 
 class Applicant(models.Model):
@@ -110,7 +125,7 @@ class ApplicationComponent(models.Model):
     """
     application = models.ForeignKey(Application)
     component = models.ForeignKey(Component)
-    activity_date = models.DateTimeField(editable=False)
+    activity_date = models.DateTimeField(blank=True, null=True, editable=False)
     content_type = models.ForeignKey(ContentType, blank=True, null=True)
     object_id = models.PositiveIntegerField(blank=True, null=True)
     content_object = generic.GenericForeignKey("content_type", "object_id")
