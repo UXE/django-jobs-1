@@ -91,8 +91,8 @@ class ApplicantStatus(models.Model):
 
 class Resume(models.Model):
     application = models.ForeignKey(Application)
-    # TODO: use a file field.
-    #resume = custom_models.SecureFileField(upload_to='deskattendant/resumes')
+    # TODO: use storage kwarg to specify how these files are stored.
+    resume = models.FileField(upload_to='deskattendant/resumes')
 
     def __unicode__(self):
         return u'Resume for %s' % self.application.applicant 
