@@ -453,6 +453,7 @@ def admin_list(request):
 
     statuses = ApplicantStatus.objects.filter(application__in=app_ids).filter(community__in=admin_communities)
     placement_preferences = PlacementPreference.objects.filter(application__in=app_ids).exclude(community__name='New York Apartments')
+    # TODO: see ticket #7006
     community_abbrevs = {'Beta/Gamma':'BG',
                          'Birnam Wood': 'BW',
                          'Buchanan Towers':'BT',
@@ -461,7 +462,9 @@ def admin_list(request):
                          'Kappa':'RK',
                          'Mathes':'MA',
                          'Nash':'NA',
-                         'SHADO':'SH',}
+                         'SHADO':'SH',
+                         'Guest House Inn':'GHI',
+                         'Viking Gardens':'VG'}
     apps = {}
     application = {}
     #availability_fields = {'Prior DA':'prior_desk_attendant', 'Hours Available':'hours_available'}

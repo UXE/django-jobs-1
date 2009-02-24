@@ -120,7 +120,7 @@
 
     <fieldset id="essay_response">
         <legend>Essay Questions</legend>
-        <p>These optional Essay Questions give us a better understanding of what kind of person you are and what you can bring to the Desk Attendant position.</p>
+        <p>Your answers to these questions will give us a better understanding of what kind of person you are and what you can bring to the Desk Attendant position.</p>
         {% for essay_response_form in essay_response_forms %}
             <p>
             <label for="id_{{ essay_response_form.answer.html_name }}" style="font-weight: strong;">{{ essay_response_form.question }}{% if essay_response_form.answer.field.required %}*{% endif %}</label>
