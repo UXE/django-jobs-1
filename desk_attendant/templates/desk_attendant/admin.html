@@ -38,6 +38,15 @@
     <p>Applicant does not have availability information.</p>
     {% endif %}
 
+    <h2>Placement Preferences</h2>
+    {% if placement_preferences %}
+        {% for pref in placement_preferences %}
+            <p>{{ pref.rank }} - {{ pref.community }}</p>
+        {% endfor %}
+    {% else %}
+        <p>Applicant did not list any placement preferences.</p>
+    {% endif %}
+
     <h2>Addresses</h2>
     {% if addresses %}
         {% for address in addresses %}
@@ -84,15 +93,6 @@
         <p><a href="{{ resume.get_resume_url }}">Download Resume</a></p>
     {% else %}
         <p>Applicant did not submit a resume</p>
-    {% endif %}
-
-    <h2>Placement Preferences</h2>
-    {% if placement_preferences %}
-        {% for pref in placement_preferences %}
-            <p>{{ pref.rank }} - {{ pref.community }}</p>
-        {% endfor %}
-    {% else %}
-        <p>Applicant did not list any placement preferences.</p>
     {% endif %}
 
     <h2>Essay Responses</h2>
