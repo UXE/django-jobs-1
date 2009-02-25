@@ -2,6 +2,7 @@
 
 {% block title %}{{ job.title }} Application{% endblock %}
 {% block stylesheets %}
+    <link rel="stylesheet" href="{{ media_url }}css/desk-attendant.css" type="text/css" />
 {% endblock %}
 
 {% block content %}
@@ -10,71 +11,106 @@
     <form enctype="multipart/form-data" action="" method="post">
     <fieldset id="availability">
         <legend>General Information</legend>
-        <p>The General Information section helps us determine how available you will be for the job.  Please answer all questions to the best of your ability and estimate your hours available from 1 to 19.  Items with an asterisk (*) are required to submit your application.</p>
+        <p>The General Information section helps us determine how available you will be for the job.  Please answer all questions to the best of your ability and estimate your hours available from 1 to 19.</p>
         <p>Name: <strong>{{ application.applicant.user.first_name }} {{ application.applicant.user.last_name }}</strong></p>
         <p>Email: <strong>{{ application.applicant.user.email }}</strong></p>
 
-        {% for field in availability_form %}
-            <p>
-                {{ field.label_tag }}{% if field.field.required %}*{% endif %} {{ field }}
-                {% if field.help_text %}<span class="help">{{ field.help_text }}</span>{% endif %}
-                {% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}
-            </p>
-        {% endfor %}
+        <fieldset>
+            <legend>Availability</legend>
+            <ol>
+            {% for field in availability_form %}
+                <li>
+                    <dl>
+                        <dt class="label">{{ field.label_tag }}{% if field.field.required %}<span class="required">(required)</span>{% endif %}</dt>
+                        <dd class="field">{{ field }}</dd>
+                        <dd class="field">{% if field.help_text %}<span class="help">{{ field.help_text }}</span>{% endif %}</dd>
+                        <dd class="field">{% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}</dd>
+                    </dl>
+                </li>
+            {% endfor %}
+            <ol>
+        </fieldset>
 
         <fieldset>
             <legend>Current Mailing Address</legend>
+            <ol>
             {% for field in current_address_form %}
-                <p>
-                    {{ field.label_tag }}{% if field.field.required %}*{% endif %} {{ field }}
-                    {% if field.help_text %}<span class="help">{{ field.help_text }}</span>{% endif %}
-                    {% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}
-                </p>
+                <li>
+                    <dl>
+                        <dt class="label">{{ field.label_tag }}{% if field.field.required %}<span class="required">(required)</span>{% endif %}</dt>
+                        <dd class="field">
+                            {{ field }}
+                            {% if field.help_text %}<span class="help">{{ field.help_text }}</span>{% endif %}
+                            {% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}
+                        </dd>
+                    </dl>
+                </li>
             {% endfor %}
+            </ol>
         </fieldset>
 
         <fieldset>
             <legend>Summer Mailing Address</legend>
+            <ol>
             {% for field in summer_address_form %}
-                <p>
-                    {{ field.label_tag }}{% if field.field.required %}*{% endif %} {{ field }}
-                    {% if field.help_text %}<span class="help">{{ field.help_text }}</span>{% endif %}
-                    {% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}
-                </p>
+                <li>
+                    <dl>
+                        <dt class="label">{{ field.label_tag }}{% if field.field.required %}<span class="required">(required)</span>{% endif %}</dt>
+                        <dd class="field">{{ field }}</dd>
+                        <dd class="field">{% if field.help_text %}<span class="help">{{ field.help_text }}</span>{% endif %}</dd>
+                        <dd class="field">{% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}</dd>
+                    </dl>
+                </li>
             {% endfor %}
+            </ol>
         </fieldset>
 
         <fieldset>
             <legend>Current Phone</legend>
+            <ol>
             {% for field in current_phone_form %}
-                <p>
-                    {{ field.label_tag }}{% if field.field.required %}*{% endif %} {{ field }}
-                    {% if field.help_text %}<span class="help">{{ field.help_text }}</span>{% endif %}
-                    {% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}
-                </p>
+                <li>
+                    <dl>
+                        <dt class="label">{{ field.label_tag }}{% if field.field.required %}<span class="required">(required)</span>{% endif %}</dt>
+                        <dd class="field">{{ field }}</dd>
+                        <dd class="field">{% if field.help_text %}<span class="help">{{ field.help_text }}</span>{% endif %}</dd>
+                        <dd class="field">{% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}</dd>
+                    </dl>
+                </li>
             {% endfor %}
+            </ol>
         </fieldset>
 
         <fieldset>
             <legend>Summer Phone</legend>
+            <ol>
             {% for field in summer_phone_form %}
-                <p>
-                    {{ field.label_tag }}{% if field.field.required %}*{% endif %} {{ field }}
-                    {% if field.help_text %}<span class="help">{{ field.help_text }}</span>{% endif %}
-                    {% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}
-                </p>
+                <li>
+                    <dl>
+                        <dt class="label">{{ field.label_tag }}{% if field.field.required %}<span class="required">(required)</span>{% endif %}</dt>
+                        <dd class="field">{{ field }}</dd>
+                        <dd class="field">{% if field.help_text %}<span class="help">{{ field.help_text }}</span>{% endif %}</dd>
+                        <dd class="field">{% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}</dd>
+                    </dl>
+                </li>
             {% endfor %}
+            </ol>
         </fieldset>
 
         <fieldset>
             <legend>Cell Phone</legend>
+            <ol>
             {% for field in cell_phone_form %}
-                <p>
-                    {{ field.label_tag }}{% if field.field.required %}*{% endif %} {{ field }}
-                    {% if field.help_text %}<span class="help">{{ field.help_text }}</span>{% endif %}
-                    {% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}
-                </p>
+                <li>
+                    <dl>
+                        <dt class="label">{{ field.label_tag }}{% if field.field.required %}<span class="required">(required)</span>{% endif %}</dt>
+                        <dd class="field">{{ field }}</dd>
+                        <dd class="field">{% if field.help_text %}<span class="help">{{ field.help_text }}</span>{% endif %}</dd>
+                        <dd class="field">{% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}</dd>
+                    </dl>
+                </li>
             {% endfor %}
+            </ol>
         </fieldset>
     </fieldset>
 
@@ -83,21 +119,22 @@
         <p>The References section is optional and is for you to list one or more people who can vouch for you.  If you include a person's name, please include a contact phone number for that person.</p>
         {% for reference_form in reference_forms %}
             <fieldset>
-            <legend>Reference</legend>
-            {% if reference_form.non_field_errors %}
-                {{ reference_form.non_field_errors }}
-            {% endif %}
-            {% for field in reference_form %}
-                <p>
-                {{ field }} {{ field.label_tag }}{% if field.field.required %}*{% endif %}
-                {% if field.help_text %}
-                    <span>{{ field.help_text }}</span>
+                <legend>Reference</legend>
+                {% if reference_form.non_field_errors %}
+                    {{ reference_form.non_field_errors }}
                 {% endif %}
-                {% if field.errors %}
-                    {{ field.errors }}
-                {% endif %}
-                </p>
-            {% endfor %}
+                <ol>
+                {% for field in reference_form %}
+                    <li>
+                        <dl>
+                            <dt class="label">{{ field.label_tag }}{% if field.field.required %}<span class="required">(required)</span>{% endif %}</dt>
+                            <dd class="field">{{ field }}</dd>
+                            <dd class="field">{% if field.help_text %}<span class="help">{{ field.help_text }}</span>{% endif %}</dd>
+                            <dd class="field">{% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}</dd>
+                        </dl>
+                    </li>
+                {% endfor %}
+                </ol>
             </fieldset>
         {% endfor %}
     </fieldset>
@@ -105,34 +142,40 @@
     <fieldset id="placement_preference">
         <legend>Placement Preference</legend>
         <p>Please rank the places you would like to work, using <strong>1</strong> for the place you are most interested in (e.g., 1 Edens/Higginson, 2 Beta/Gamma, etc.).  You can use the same rank value more than once to show equal preference for multiple communities. If you do not wish to apply for a specific community, simply leave it blank.</p>
+        <ol class="list-item">
         {% for placement_preference_form in placement_preference_forms %}
-            <p>
-                {{ placement_preference_form.rank}} <label for="id_{{ placement_preference_form.rank.html_name }}">{{ placement_preference_form.community.name }}</label>
+            <li>
+                 {{ placement_preference_form.rank}} <label for="id_{{ placement_preference_form.rank.html_name }}">{{ placement_preference_form.community.name }}</label>
                 {% if placement_preference_form.help_text %}
-                    <span>{{ placement_preference_form.help_text }}</span>
+                    <span class="help">{{ placement_preference_form.help_text }}</span>
                 {% endif %}
                 {% if placement_preference_form.rank.errors %}
-                    {{ placement_preference_form.rank.errors }}
+                    <span class="errors">{{ placement_preference_form.rank.errors }}</span>
                 {% endif %}
-            </p>
+            </li>
         {% endfor %}
+        </ol>
     </fieldset>
 
     <fieldset id="essay_response">
         <legend>Essay Questions</legend>
         <p>Your answers to these questions will give us a better understanding of what kind of person you are and what you can bring to the Desk Attendant position.</p>
+        <ol>
         {% for essay_response_form in essay_response_forms %}
-            <p>
-            <label for="id_{{ essay_response_form.answer.html_name }}" style="font-weight: strong;">{{ essay_response_form.question }}{% if essay_response_form.answer.field.required %}*{% endif %}</label>
-            {{ essay_response_form.answer }}
-            {% if essay_response_form.answer.help_text %}
-                <span>{{ essay_response_form.answer.help_text }}</span>
-            {% endif %}
-            {% if essay_response_form.answer.errors %}
-                <span class="errors">{{ essay_response_form.answer.errors }}</span>
-            {% endif %}
-            </p>
+            <li>
+                <dl>
+                    <dt class="label"><label for="id_{{ essay_response_form.answer.html_name }}" style="font-weight: strong;">{{ essay_response_form.question }}{% if essay_response_form.answer.field.required %}<span class="required">(required)</span>{% endif %}</label></dt>
+                    <dd class="field">{{ essay_response_form.answer }}</dd>
+                    <dd class="field">{% if essay_response_form.answer.help_text %}
+                        <span class="errors">{{ essay_response_form.answer.help_text }}</span>
+                    {% endif %}</dd>
+                    <dd class="field">{% if essay_response_form.answer.errors %}
+                        <span class="errors">{{ essay_response_form.answer.errors }}</span>
+                    {% endif %}</dd>
+                </dl>
+            </li>
         {% endfor %}
+        </ol>
     </fieldset>
 
     <fieldset id="resume">
