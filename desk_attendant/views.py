@@ -364,15 +364,6 @@ def csv_export(request):
     del applicants
 
     communities = Community.objects.exclude(name='New York Apartments') #TODO WHERE has_desk = true
-    community_abbrevs = {'Beta/Gamma':'BG',
-                         'Birnam Wood': 'BW',
-                         'Buchanan Towers':'BT',
-                         'Edens/Higginson':'EH',
-                         'Fairhaven':'FX',
-                         'Kappa':'RK',
-                         'Mathes':'MA',
-                         'Nash':'NA',
-                         'SHADO':'SH',}
     apps = {}
     #application = {}
 
@@ -393,7 +384,7 @@ def csv_export(request):
         #apps[a.application_id]['placement_preferences'] = SortedDict()
         apps[a.application_id]['community_status'] = {}
         for c in communities:
-            apps[a.application_id]['community_status'][community_abbrevs[c.name]] = ''
+            apps[a.application_id]['community_status'][c.code] = ''
 
     #status_choices = dict(ProcessStatusForm.STATUS_CHOICES)
     #for s in statuses:
@@ -453,18 +444,6 @@ def admin_list(request):
 
     statuses = ApplicantStatus.objects.filter(application__in=app_ids).filter(community__in=admin_communities)
     placement_preferences = PlacementPreference.objects.filter(application__in=app_ids).exclude(community__name='New York Apartments')
-    # TODO: see ticket #7006
-    community_abbrevs = {'Beta/Gamma':'BG',
-                         'Birnam Wood': 'BW',
-                         'Buchanan Towers':'BT',
-                         'Edens/Higginson':'EH',
-                         'Fairhaven':'FX',
-                         'Kappa':'RK',
-                         'Mathes':'MA',
-                         'Nash':'NA',
-                         'SHADO':'SH',
-                         'Guest House Inn':'GHI',
-                         'Viking Gardens':'VG'}
     apps = {}
     application = {}
     #availability_fields = {'Prior DA':'prior_desk_attendant', 'Hours Available':'hours_available'}
@@ -483,7 +462,7 @@ def admin_list(request):
         apps[a.application_id]['placement_preferences'] = SortedDict()
         #apps[a.application_id]['Status'] = {}
         for c in communities:
-            apps[a.application_id]['placement_preferences'][community_abbrevs[c.name]] = 0
+            apps[a.application_id]['placement_preferences'][c.code] = 0
         # Why can't I do the below?
         #for k, v in availability_fields.items():
             #apps[a.application_id][k] = a.v
@@ -496,7 +475,7 @@ def admin_list(request):
             apps[s.application_id][s.name] = s.value
 
     for p in placement_preferences:
-        apps[p.application_id]['placement_preferences'][community_abbrevs[p.community.name]] = p.rank
+        apps[p.application_id]['placement_preferences'][p.community.code] = p.rank
 
     sorted_apps = SortedDict()
     for id, name in applicants:
