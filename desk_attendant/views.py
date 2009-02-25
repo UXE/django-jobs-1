@@ -262,7 +262,7 @@ def admin_individual(request, id):
     # Load the communities that the current user administers.  Search administrators see
     # all communities.
     admin_communities = request.user.community_admins.all()
-    communities = Community.objects.exclude(name='New York Apartments').order_by('name') #TODO WHERE has_desk = true
+    communities = Community.objects.filter(has_desk=True).order_by('name')
     if len(admin_communities) == 0:
         # If user doesn't administrate any communities, find out whether they are
         # search administrators for the application process.
@@ -363,7 +363,8 @@ def csv_export(request):
     phones = Phone.objects.filter(user__in=user_list)
     del applicants
 
-    communities = Community.objects.exclude(name='New York Apartments') #TODO WHERE has_desk = true
+    # Get all communities that have desks.
+    communities = Community.objects.filter(has_desk=True)
     apps = {}
     #application = {}
 
@@ -416,7 +417,7 @@ def admin_list(request):
     # all communities.
     job = Job.objects.filter(title='Desk Attendant').latest('open_datetime')
     admin_communities = request.user.community_admins.all()
-    communities = Community.objects.exclude(name='New York Apartments') #TODO WHERE has_desk = true
+    communities = Community.objects.filter(has_desk=True)
     if len(admin_communities) == 0:
         # If user doesn't administrate any communities, find out whether they are
         # search administrators for the application process.
