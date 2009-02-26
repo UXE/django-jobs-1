@@ -44,13 +44,13 @@ class AvailabilityForm(forms.ModelForm):
         ("no", "No"),
     )
     hours_available = forms.IntegerField(min_value=1, max_value=19, help_text="Please use a whole number from one to nineteen.")
-    on_campus = forms.CharField(label="Will you be living on campus next year?",
+    on_campus = forms.CharField(label=Availability._meta.get_field_by_name("on_campus")[0].verbose_name,
                                 widget=forms.RadioSelect(choices=ON_CAMPUS_CHOICES),
                                 initial=ON_CAMPUS_CHOICES[0][0])
-    work_study = forms.CharField(label="Do you anticipate having federal work study next year?",
+    work_study = forms.CharField(label=Availability._meta.get_field_by_name("work_study")[0].verbose_name,
                                 widget=forms.RadioSelect(choices=WORK_STUDY_CHOICES),
                                 initial=WORK_STUDY_CHOICES[0][0])
-    prior_desk_attendant = forms.CharField(label="Are you a returning desk attendant?",
+    prior_desk_attendant = forms.CharField(label=Availability._meta.get_field_by_name("work_study")[0].verbose_name,
                                         widget=forms.RadioSelect(choices=RETURNING_DA_CHOICES))
 
     class Meta:
