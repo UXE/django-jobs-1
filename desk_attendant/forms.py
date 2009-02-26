@@ -50,7 +50,7 @@ class AvailabilityForm(forms.ModelForm):
     work_study = forms.CharField(label=Availability._meta.get_field_by_name("work_study")[0].verbose_name,
                                 widget=forms.RadioSelect(choices=WORK_STUDY_CHOICES),
                                 initial=WORK_STUDY_CHOICES[0][0])
-    prior_desk_attendant = forms.CharField(label=Availability._meta.get_field_by_name("work_study")[0].verbose_name,
+    prior_desk_attendant = forms.CharField(label=Availability._meta.get_field_by_name("prior_desk_attendant")[0].verbose_name,
                                         widget=forms.RadioSelect(choices=RETURNING_DA_CHOICES))
 
     class Meta:
