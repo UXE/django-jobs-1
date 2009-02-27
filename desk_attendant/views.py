@@ -5,6 +5,7 @@ from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
+from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import Template, RequestContext, Context, loader
@@ -143,7 +144,7 @@ def apply(request):
 
     # Generate a form for each placement preference (community).
     context['placement_preference_forms'] = []
-    for community in Community.objects.all():
+    for community in Community.objects.filter(has_desk=True):
         placement_preference_subform = PlacementPreferenceForm(data, prefix=community.id)
         if request.method == 'POST' and placement_preference_subform.is_valid():
             # The form may be valid, but we only want to save forms with ranks.
@@ -430,6 +431,15 @@ def admin_list(request):
             return HttpResponseRedirect(reverse('wwu_housing.jobs.desk_attendant.views.index'))
 
     applications = Application.objects.select_related().filter(job=job).filter(end_datetime__isnull=False)
+
+    # Only show applicants who have specified a preference for one of the
+    # current user's communities or who have not specified a preference for any
+    # communities.
+    placement_query = Q(placementpreference__community__in=admin_communities,
+                        placementpreference__rank__gt=0)
+    placement_query |= Q(placementpreference__isnull=True)
+    applications = applications.filter(placement_query).distinct()
+
     filter = FilterObject(request, applications, admin_communities)
     filter_html = filter.output()
     get_string = filter.get_query_string()
@@ -443,7 +453,8 @@ def admin_list(request):
     availability = Availability.objects.filter(application__in=app_ids)
 
     statuses = ApplicantStatus.objects.filter(application__in=app_ids).filter(community__in=admin_communities)
-    placement_preferences = PlacementPreference.objects.filter(application__in=app_ids).exclude(community__name='New York Apartments')
+    placement_preferences = PlacementPreference.objects.filter(application__in=app_ids,
+                                                               community__has_desk=True)
     apps = {}
     application = {}
     #availability_fields = {'Prior DA':'prior_desk_attendant', 'Hours Available':'hours_available'}
@@ -463,9 +474,6 @@ def admin_list(request):
         #apps[a.application_id]['Status'] = {}
         for c in communities:
             apps[a.application_id]['placement_preferences'][c.code] = 0
-        # Why can't I do the below?
-        #for k, v in availability_fields.items():
-            #apps[a.application_id][k] = a.v
 
     status_choices = dict(ProcessStatusForm.STATUS_CHOICES)
     for s in statuses:

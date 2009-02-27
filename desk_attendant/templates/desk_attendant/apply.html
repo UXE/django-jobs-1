@@ -141,7 +141,8 @@
 
     <fieldset id="placement_preference">
         <legend>Placement Preference</legend>
-        <p>Please rank the places you would like to work, using <strong>1</strong> for the place you are most interested in (e.g., 1 Edens/Higginson, 2 Beta/Gamma, etc.).  You can use the same rank value more than once to show equal preference for multiple communities. If you do not wish to apply for a specific community, simply leave it blank.</p>
+        <p>Rank the communities you would like to work in, using <strong>1</strong> for the place you are <strong>most interested</strong> in (e.g., 1 Edens/Higginson, 2 Beta/Gamma, etc.).</p>
+        <p>You can use the same rank value more than once to show equal preference for multiple communities. If you do not wish to apply for a specific community, simply leave it blank.</p>
         <ol class="list-item">
         {% for placement_preference_form in placement_preference_forms %}
             <li>
@@ -166,12 +167,16 @@
                 <dl>
                     <dt class="label"><label for="id_{{ essay_response_form.answer.html_name }}" style="font-weight: strong;">{{ essay_response_form.question }}{% if essay_response_form.answer.field.required %}<span class="required">(required)</span>{% endif %}</label></dt>
                     <dd class="field">{{ essay_response_form.answer }}</dd>
-                    <dd class="field">{% if essay_response_form.answer.help_text %}
-                        <span class="errors">{{ essay_response_form.answer.help_text }}</span>
-                    {% endif %}</dd>
-                    <dd class="field">{% if essay_response_form.answer.errors %}
-                        <span class="errors">{{ essay_response_form.answer.errors }}</span>
-                    {% endif %}</dd>
+                    <dd class="field">
+                        {% if essay_response_form.answer.help_text %}
+                            <span class="errors">{{ essay_response_form.answer.help_text }}</span>
+                        {% endif %}
+                    </dd>
+                    <dd class="field">
+                        {% if essay_response_form.answer.errors %}
+                            <span class="errors">{{ essay_response_form.answer.errors }}</span>
+                        {% endif %}
+                    </dd>
                 </dl>
             </li>
         {% endfor %}

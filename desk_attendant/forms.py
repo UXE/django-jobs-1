@@ -43,7 +43,9 @@ class AvailabilityForm(forms.ModelForm):
         ("yes", "Yes"),
         ("no", "No"),
     )
-    hours_available = forms.IntegerField(min_value=1, max_value=19, help_text="Please use a whole number from one to nineteen.")
+    hours_available = forms.IntegerField(label=Availability._meta.get_field_by_name("hours_available")[0].verbose_name,
+                                         min_value=1, max_value=19,
+                                         help_text="Please use a whole number from one to nineteen.")
     on_campus = forms.CharField(label=Availability._meta.get_field_by_name("on_campus")[0].verbose_name,
                                 widget=forms.RadioSelect(choices=ON_CAMPUS_CHOICES),
                                 initial=ON_CAMPUS_CHOICES[0][0])
