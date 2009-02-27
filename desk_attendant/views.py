@@ -430,7 +430,6 @@ def admin_list(request):
             return HttpResponseRedirect(reverse('wwu_housing.jobs.desk_attendant.views.index'))
 
     applications = Application.objects.select_related().filter(job=job).filter(end_datetime__isnull=False)
-    applications = applications.filter(placementpreference__community__in=admin_communities, placementpreference__rank__gt=0)
     filter = FilterObject(request, applications, admin_communities)
     filter_html = filter.output()
     get_string = filter.get_query_string()
