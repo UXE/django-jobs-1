@@ -33,7 +33,12 @@ def index(request):
         applicant = False
 
     try:
-        application, created = Application.objects.get(applicant=applicant)
+        application, created = Application.objects.get_or_create(applicant=applicant, job=job)
+        context["application"] = application
+
+        # If the applicant has already submitted their application, let them know.
+        if application.end_datetime:
+            context['da_message'] = "You have already submitted your application.  Please contact Residence Life at 650-2960 or by email at reslife@wwu.edu if you have any questions about your application."
     except:
         application = False
 
@@ -43,6 +48,7 @@ def index(request):
         del request.session['da_message']
     except:
         pass
+
 
     return render_to_response('desk_attendant/index.html', context, context_instance=RequestContext(request))
 

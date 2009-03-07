@@ -10,14 +10,18 @@
     <p class="review">{{ da_message }}</p>
 {% endif %}
 
-<p><a href="apply/"><img src="/media/img/da-app.png" alt="Desk Attendant" /></a></p>
-
 {% if application.end_datetime %}
     <p>You submitted your application on {{ application.end_datetime|date:"l, F jS \a\t P" }}</p>
 {% else %}
     {% if job.is_open %}
         <p><a href="apply/">Apply!</a></p>
     {% endif %}
+{% endif %}
+
+{% if application.end_datetime %}
+    <p><img src="/media/img/da-app.png" alt="Desk Attendant" /></p>
+{% else %}
+    <p><a href="apply/"><img src="/media/img/da-app.png" alt="Desk Attendant" /></a></p>
 {% endif %}
 
 {{ job.description|safe }}
