@@ -1,6 +1,7 @@
 import os
 
 from django.conf import settings
+from django.core.files.storage import FileSystemStorage
 from django.db import models
 from django.db.models import ImageField
 
@@ -91,8 +92,9 @@ class ApplicantStatus(models.Model):
 
 class Resume(models.Model):
     application = models.ForeignKey(Application)
-    # TODO: use storage kwarg to specify how these files are stored.
-    resume = models.FileField(upload_to='deskattendant/resumes')
+    upload_path = os.path.join(settings.FILE_UPLOAD_ROOT, "deskattendant", "resumes")
+    fs = FileSystemStorage(location=upload_path)
+    resume = models.FileField(storage=fs)
 
     def __unicode__(self):
-        return u'Resume for %s' % self.application.applicant 
+        return u"Resume for %s" % self.application.applicant
