@@ -92,9 +92,8 @@ class ApplicantStatus(models.Model):
 
 class Resume(models.Model):
     application = models.ForeignKey(Application)
-    upload_path = os.path.join(settings.FILE_UPLOAD_ROOT, "deskattendant", "resumes")
-    #fs = FileSystemStorage(location=upload_path)
-    resume = models.FileField(storage=fs)
+    fs = FileSystemStorage(location=settings.FILE_UPLOAD_ROOT)
+    resume = models.FileField(storage=fs, upload_to="deskattendant/resumes")
 
     def __unicode__(self):
         return u"Resume for %s" % self.application.applicant
