@@ -28,10 +28,19 @@
         <th>Work Study</th>
     </tr>
     <tr class="row1">
-        <td><img src="/media/admin/img/admin/icon-{{ availability.prior_desk_attendant|yesno:"yes,no" }}.gif" alt="{{ availability.prior_desk_attendant|yesno:"yes,no" }}" /></td>
+        <td>
+            <img src="/media/admin/img/admin/icon-{{ availability.prior_desk_attendant|yesno:"yes,no" }}.gif" alt="{{ availability.prior_desk_attendant|yesno:"yes,no" }}" /> 
+            {{ availability.prior_desk_attendant|yesno:"Yes,No" }}
+        </td>
         <td>{{ availability.hours_available }}</td>
-        <td><img src="/media/admin/img/admin/icon-{{ availability.on_campus|yesno:"yes,no" }}.gif" alt="{{ availability.on_campus|yesno:"yes,no" }}" /> {{ availability.on_campus_where }}</td>
-        <td>{{ availability.work_study|yesno:"Yes,No,Unknown" }}</td>
+        <td>
+            <img src="/media/admin/img/admin/icon-{{ availability.on_campus|yesno:"yes,no" }}.gif" alt="{{ availability.on_campus|yesno:"yes,no" }}" /> 
+            {{ availability.on_campus_where }}
+        </td>
+        <td>
+            <img src="/media/admin/img/admin/icon-{{ availability.work_study|yesno:"yes,no" }}.gif" alt="{{ availability.work_study|yesno:"yes,no" }}" /> 
+            {{ availability.work_study|yesno:"Yes,No,Unknown" }} 
+        </td>
     </tr>
     </table>
     {% else %}
