@@ -93,7 +93,7 @@ class ApplicantStatus(models.Model):
 class Resume(models.Model):
     application = models.ForeignKey(Application)
     upload_path = os.path.join(settings.FILE_UPLOAD_ROOT, "deskattendant", "resumes")
-    fs = FileSystemStorage(location=upload_path)
+    #fs = FileSystemStorage(location=upload_path)
     resume = models.FileField(storage=fs)
 
     def __unicode__(self):
