@@ -2,12 +2,35 @@
 
 {% block title %}{{ job.title }} Applications{% endblock %}
 {% block stylesheets %}
-<link rel="stylesheet" href="/media/css/desk-attendant.css" type="text/css" />
+<link rel="stylesheet" href="{{ media_url }}css/desk-attendant.css" type="text/css" />
+{% endblock %}
+
+{% block scripts %}
+{% ifnotequal communities|length 1 %}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $(".statuses").hide();
+            $(".first-status").after("<a href='see more' title='see more'>(see more)</a>");
+            $(".statuses").prev("a").click(function(event) {
+                if ($(this).attr("title") == "see more") {
+                    $(this).attr("href", "see less").attr("title", "see less").text("(see less)");
+                    $(this).next(".statuses").slideDown();
+                    event.preventDefault();
+                }else
+                if ($(this).attr("title") == "see less") {
+                    $(this).attr("href", "see more").attr("title", "see more").text("(see more)");
+                    $(this).next(".statuses").slideUp();
+                    event.preventDefault();
+                }
+            });
+        });
+    </script>
+{% endifnotequal %}
 {% endblock %}
 
 {% block content %}
     <h1>{{ job.title }} Applications</h1>
-<p>Viewing {{ total_applications }} applications for {{ communities }}.</p>
+<p>Viewing {{ total_applications }} applications for {{ communities|join:", " }}.</p>
 
 <h2>Applications</h2>
 
@@ -22,12 +45,12 @@
         <tr class='row-label'>
             <th>Name</th>
             <th>Prior DA</th>
-            <th>Hours Available</th>
+            <th class="table-hours">Hours Available</th>
             <th>Will Live On Campus</th>
             {% for hall, rank in application.placement_preferences.items %}
                 <th>{{ hall }}</th>
             {% endfor %}
-            <th>Status</th>
+            <th class="table-status">Status</th>
         </tr>
     {% endif %}
     <tr id="applicant-{{ id }}" class="{% cycle 'row1' 'row2' %}">
@@ -39,11 +62,29 @@
             <td>{% ifnotequal rank 0 %}{{ rank }}{% endifnotequal %}</td>
         {% endfor %}
         <td>
-            {% if application.process_status %}
-                {% ifnotequal application.process_status 'Unreviewed' %}
-                    {{ application.process_status }} {% ifequal application.process_status 'Hired' %}({{ application.hours_hired_for }} hours){% endifequal %}
-                {% endifnotequal %}
-            {% endif %}
+            <span class="first-status">
+                <strong>{{ application.statuses.items.0.0 }}</strong> 
+                {{ application.statuses.items.0.1.process_status }} 
+
+                {% ifequal application.statuses.items.0.1.process_status "Hired" %}
+                ({{ application.statuses.items.0.1.hours_hired_for }} hours)
+                {% endifequal%}
+            </span>
+            {% ifnotequal communities|length 1 %}
+                <ul class="statuses">
+                {% for community in application.statuses.items %}
+                    {% if not forloop.first %}
+                                <li>
+                                    <strong>{{ community.0 }}</strong> 
+                                    {{ community.1.process_status }} 
+                                    {% ifequal community.1.process_status "Hired" %}({{ community.1.hours_hired_for }} hours){% endifequal%}<br />
+                                </li>
+                            {% ifnotequal community.1.process_status "Unreviewed" %}
+                            {% endifnotequal %}
+                    {% endif %}
+                {% endfor %}
+                </ul>
+            {% endifnotequal %}
         </td>
     </tr>
 {% endfor %}

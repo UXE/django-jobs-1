@@ -309,7 +309,7 @@ def admin_individual(request, id):
 
     status_by_community = SortedDict()
     status_choices = dict(ProcessStatusForm.STATUS_CHOICES)
-    statuses = ApplicantStatus.objects.exclude(community__in=admin_communities).filter(application=id)
+    statuses = ApplicantStatus.objects.filter(community__in=admin_communities, application=id)
     for status in statuses:
         if not status_by_community.has_key(status.community.name):
             status_by_community[status.community.name] = {}
@@ -433,6 +433,7 @@ def admin_list(request):
             request.user.groups.get(name='Desk Attendant Search Administrator')
             admin_communities = communities
         except:
+            #TODO: Catch group DoesNotExist
             request.user.message_set.create(message="Our records reflect that you are not currently administering any communities.  Please contact the web team with the name of the community you should be administering.")
             return HttpResponseRedirect(reverse('wwu_housing.jobs.desk_attendant.views.index'))
 
@@ -463,7 +464,6 @@ def admin_list(request):
                                                                community__has_desk=True)
     apps = {}
     application = {}
-    #availability_fields = {'Prior DA':'prior_desk_attendant', 'Hours Available':'hours_available'}
 
     applicants = []
     for application in applications:
@@ -477,16 +477,18 @@ def admin_list(request):
         apps[a.application_id]['on_campus'] = a.on_campus
         apps[a.application_id]['on_campus_where'] = a.on_campus_where and a.on_campus_where.name or ''
         apps[a.application_id]['placement_preferences'] = SortedDict()
-        #apps[a.application_id]['Status'] = {}
+        apps[a.application_id]['statuses'] = SortedDict()
         for c in communities:
             apps[a.application_id]['placement_preferences'][c.code] = 0
 
     status_choices = dict(ProcessStatusForm.STATUS_CHOICES)
+
     for s in statuses:
+        if not apps[s.application_id]["statuses"].has_key(s.community.code):
+            apps[s.application_id]["statuses"][s.community.code] = {}
         if s.name == 'process_status':
-            apps[s.application_id][s.name] = status_choices.get(s.value, s.value)
-        else:
-            apps[s.application_id][s.name] = s.value
+            s.value = status_choices[s.value]
+        apps[s.application_id]["statuses"][s.community.code][s.name] = s.value
 
     for p in placement_preferences:
         apps[p.application_id]['placement_preferences'][p.community.code] = p.rank
@@ -496,14 +498,14 @@ def admin_list(request):
         sorted_apps[id] = apps[id]
     apps = sorted_apps
 
-    admin_communities = ", ".join([c.name for c in admin_communities])
     context = {'applications': apps,
                'applicants': applicants,
-               'job': job,
                'communities': admin_communities,
-               'total_applications': len(apps),
                'filter_html': filter_html,
-               'get_string': get_string}
+               'get_string': get_string,
+               'job': job,
+               'total_applications': len(apps),
+               }
 
     return render_to_response('desk_attendant/adminlist.html', context, context_instance=RequestContext(request))
 
