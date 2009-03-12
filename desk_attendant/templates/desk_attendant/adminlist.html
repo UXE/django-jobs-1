@@ -74,12 +74,12 @@
                 <ul class="statuses">
                 {% for community in application.statuses.items %}
                     {% if not forloop.first %}
+                            {% ifnotequal community.1.process_status "Unreviewed" %}
                                 <li>
                                     <strong>{{ community.0 }}</strong> 
                                     {{ community.1.process_status }} 
                                     {% ifequal community.1.process_status "Hired" %}({{ community.1.hours_hired_for }} hours){% endifequal%}<br />
                                 </li>
-                            {% ifnotequal community.1.process_status "Unreviewed" %}
                             {% endifnotequal %}
                     {% endif %}
                 {% endfor %}
