@@ -19,9 +19,9 @@
 {% endif %}
 
 {% if application.end_datetime %}
-    <p><img src="/media/img/da-app.png" alt="Desk Attendant" /></p>
+    <p><img src="{{ media_url }}desk_attendant/images/da-app-2009-alt.png" alt="Desk Attendant" /></p>
 {% else %}
-    <p><a href="apply/"><img src="/media/img/da-app.png" alt="Desk Attendant" /></a></p>
+    <p><a href="apply/"><img src="{{ media_url }}desk_attendant/images/da-app-2009-alt.png" alt="Desk Attendant" /></a></p>
 {% endif %}
 
 {{ job.description|safe }}
