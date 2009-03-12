@@ -18,19 +18,28 @@
     {% endif %}
 {% endif %}
 
+<div id="logo">
 {% if application.end_datetime %}
-    <p><img src="{{ media_url }}desk_attendant/images/da-app-2009-alt.png" alt="Desk Attendant" /></p>
+    <img src="{{ media_url }}desk_attendant/images/da-app-2009-alt.png" alt="Desk Attendant" />
 {% else %}
-    <p><a href="apply/"><img src="{{ media_url }}desk_attendant/images/da-app-2009-alt.png" alt="Desk Attendant" /></a></p>
+    {% if job.is_open %}
+        <a href="apply/"><img src="{{ media_url }}desk_attendant/images/da-app-2009-alt.png" alt="Desk Attendant" /></a>
+    {% endif %}
 {% endif %}
+</div>
 
+<div id="important-dates">
+    <h2>Important Dates</h2>
+    <ul>
+        <li>Application Opens: {{ job.open_datetime|date:"l, F jS \a\t P" }}</li>
+        <li>Application Deadline: {{ job.deadline|date:"l, F jS \a\t P" }}</li>
+    </ul>
+</div>
+
+<div id="job-description">
 {{ job.description|safe }}
+</div>
 
-<h2>Important Dates</h2>
-<ul>
-    <li>Application Opens: {{ job.open_datetime|date:"l, F jS \a\t P" }}</li>
-    <li>Application Deadline: {{ job.deadline|date:"l, F jS \a\t P" }}</li>
-</ul>
 {% endblock %}
 
 
