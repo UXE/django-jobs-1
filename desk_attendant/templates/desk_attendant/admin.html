@@ -120,7 +120,7 @@
     <ul style="margin-top: 1em;">
     {% for community, statuses in status_by_community.items %}
         <li>
-            {{ community }}: {{ statuses.process_status }}
+            <strong>{{ community }}</strong>: {{ statuses.process_status }}
             {% ifequal statuses.process_status 'Hired' %}
                 ({{ statuses.hours_hired_for }} hour{{ statuses.hours_hired_for|pluralize }})
             {% endifequal %}
