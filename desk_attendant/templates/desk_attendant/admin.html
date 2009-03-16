@@ -2,6 +2,7 @@
 
 {% block title %}{{ job.title }} Application{% endblock %}
 {% block stylesheets %}
+    <link rel="stylesheet" href="{{ media_url }}css/desk-attendant.css" type="text/css" />
 {% endblock %}
 
 {% block content %}
@@ -117,16 +118,16 @@
     <h2>Status</h2>
     <p>The following are the statuses of this application in all other communities that have opened this application and the status of the application in your community.</p>
 
-    <ul style="margin-top: 1em;">
+    <dl>
     {% for community, statuses in status_by_community.items %}
-        <li>
-            <strong>{{ community }}</strong>: {{ statuses.process_status }}
-            {% ifequal statuses.process_status 'Hired' %}
-                ({{ statuses.hours_hired_for }} hour{{ statuses.hours_hired_for|pluralize }})
-            {% endifequal %}
-        </li>
+            <dt>{{ community }}: </dt>
+                <dd>{{ statuses.process_status }}
+                {% ifequal statuses.process_status 'Hired' %}
+                    ({{ statuses.hours_hired_for }} hour{{ statuses.hours_hired_for|pluralize }})
+                {% endifequal %}
+                </dd>
     {% endfor %}
-    </ul>
+    </dl>
 
     {% for community, forms in status_forms.items %}
         <form method="post" action="">
