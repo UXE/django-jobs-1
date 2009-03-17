@@ -19,13 +19,15 @@
 {% endif %}
 
 <div id="logo">
-{% if application.end_datetime %}
-    <img src="{{ media_url }}desk_attendant/images/da-app-2009-alt3.png" alt="Desk Attendant" />
-{% else %}
-    {% if job.is_open %}
-        <a href="apply/"><img src="{{ media_url }}desk_attendant/images/da-app-2009-alt.png" alt="Desk Attendant" /></a>
+{% with "desk_attendant/images/da-app-2009-alt3.png" as application_image_path %}
+    {% if application.end_datetime %}
+        <img src="{{ media_url }}{{ application_image_path }}" alt="Desk Attendant" />
+    {% else %}
+        {% if job.is_open %}
+            <a href="apply/"><img src="{{ media_url }}{{ application_image_path }}" alt="Desk Attendant" /></a>
+        {% endif %}
     {% endif %}
-{% endif %}
+{% endwith %}
 </div>
 
 <div id="important-dates">
