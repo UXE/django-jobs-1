@@ -129,6 +129,13 @@
     {% endfor %}
     </dl>
 
+    <h2>Comments</h2>
+    <div id="comments" class="comments">
+        {% with application as comment_object %}
+            {% include "desk_attendant/comments.html" %}
+        {% endwith %}
+    </div>
+
     {% for community, forms in status_forms.items %}
         <form method="post" action="">
         <div style="margin-top: 1em;">

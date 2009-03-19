@@ -4,6 +4,7 @@ import operator
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
+from django.contrib.comments.models import Comment
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
@@ -51,6 +52,26 @@ def index(request):
 
 
     return render_to_response('desk_attendant/index.html', context, context_instance=RequestContext(request))
+
+@login_required
+def comment(request, id):
+    if not request.user.has_perm("jobs.change_application"):
+        return HttpResponseRedirect(reverse("permission_denied"))
+
+    # If next location not set, return to referer.
+    return_address = request.POST.get("next") or request.META["HTTP_REFERER"]
+
+    # Allow users to delete their own comments.
+    try:
+        comment = Comment.objects.get(pk=id)
+        if comment.user == request.user:
+            comment.is_removed = True
+            comment.save()
+            request.user.message_set.create(message="Your comment has been deleted.")
+    except Comment.DoesNotExist:
+        request.user.message_set.create(message="The comment you specified does not exist.")
+
+    return HttpResponseRedirect(return_address)
 
 
 @login_required
@@ -326,19 +347,19 @@ def admin_individual(request, id):
     # Build context
     # Is this terribly inefficient as far as queries go...?
     context = {}
-    context['job'] = job
     context['application'] = app
     context['applicant_name'] = app.applicant.user.get_full_name()
     context['addresses'] = app.applicant.user.address_set.all()
+    context['communities'] = admin_communities
+    context['essay_responses'] = app.essayresponse_set.all().order_by('question')
+    context['get_string'] = get_string
+    context['job'] = job
     context['phones'] = app.applicant.user.phone_set.all()
+    context['placement_preferences'] = app.placementpreference_set.all()
     context['references'] = app.reference_set.all()
     context['resume'] = resume
-    context['placement_preferences'] = app.placementpreference_set.all()
-    context['essay_responses'] = app.essayresponse_set.all().order_by('question')
-    context['status_forms'] = status_forms
     context['status_by_community'] = status_by_community
-    context['communities'] = admin_communities
-    context['get_string'] = get_string
+    context['status_forms'] = status_forms
 
     try:
         context['availability'] = app.availability_set.all()[0]
