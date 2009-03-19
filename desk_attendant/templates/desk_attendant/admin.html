@@ -115,6 +115,13 @@
         <p>Applicant did not respond to the essay questions.</p>
     {% endif %}
 
+    <h2>Comments</h2>
+    <div id="comments" class="comments">
+        {% with application as comment_object %}
+            {% include "desk_attendant/comments.html" %}
+        {% endwith %}
+    </div>
+
     <h2>Status</h2>
     <p>The following are the statuses of this application in all other communities that have opened this application and the status of the application in your community.</p>
 
@@ -128,13 +135,6 @@
                 </dd>
     {% endfor %}
     </dl>
-
-    <h2>Comments</h2>
-    <div id="comments" class="comments">
-        {% with application as comment_object %}
-            {% include "desk_attendant/comments.html" %}
-        {% endwith %}
-    </div>
 
     {% for community, forms in status_forms.items %}
         <form method="post" action="">
