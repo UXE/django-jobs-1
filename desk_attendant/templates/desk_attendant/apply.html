@@ -38,10 +38,10 @@ $(document).ready(function() {
             {% for field in availability_form %}
                 <li>
                     <dl>
-                        <dt class="label">{{ field.label_tag }}{% if field.field.required %}<span class="required">(required)</span>{% endif %}</dt>
-                        <dd class="field">{{ field }}</dd>
-                        <dd class="field">{% if field.help_text %}<span class="help">{{ field.help_text }}</span>{% endif %}</dd>
-                        <dd class="field">{% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}</dd>
+                        <dt>{{ field.label_tag }}{% if field.field.required %}<span class="required">(required)</span>{% endif %}</dt>
+                        <dd>{{ field }}</dd>
+                        <dd>{% if field.help_text %}<span class="help">{{ field.help_text }}</span>{% endif %}</dd>
+                        <dd>{% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}</dd>
                     </dl>
                 </li>
             {% endfor %}
@@ -54,8 +54,8 @@ $(document).ready(function() {
             {% for field in current_address_form %}
                 <li>
                     <dl>
-                        <dt class="label">{{ field.label_tag }}{% if field.field.required %}<span class="required">(required)</span>{% endif %}</dt>
-                        <dd class="field">
+                        <dt>{{ field.label_tag }}{% if field.field.required %}<span class="required">(required)</span>{% endif %}</dt>
+                        <dd>
                             {{ field }}
                             {% if field.help_text %}<span class="help">{{ field.help_text }}</span>{% endif %}
                             {% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}
@@ -72,10 +72,10 @@ $(document).ready(function() {
             {% for field in summer_address_form %}
                 <li>
                     <dl>
-                        <dt class="label">{{ field.label_tag }}{% if field.field.required %}<span class="required">(required)</span>{% endif %}</dt>
-                        <dd class="field">{{ field }}</dd>
-                        <dd class="field">{% if field.help_text %}<span class="help">{{ field.help_text }}</span>{% endif %}</dd>
-                        <dd class="field">{% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}</dd>
+                        <dt>{{ field.label_tag }}{% if field.field.required %}<span class="required">(required)</span>{% endif %}</dt>
+                        <dd>{{ field }}</dd>
+                        <dd>{% if field.help_text %}<span class="help">{{ field.help_text }}</span>{% endif %}</dd>
+                        <dd>{% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}</dd>
                     </dl>
                 </li>
             {% endfor %}
@@ -88,10 +88,10 @@ $(document).ready(function() {
             {% for field in current_phone_form %}
                 <li>
                     <dl>
-                        <dt class="label">{{ field.label_tag }}{% if field.field.required %}<span class="required">(required)</span>{% endif %}</dt>
-                        <dd class="field">{{ field }}</dd>
-                        <dd class="field">{% if field.help_text %}<span class="help">{{ field.help_text }}</span>{% endif %}</dd>
-                        <dd class="field">{% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}</dd>
+                        <dt>{{ field.label_tag }}{% if field.field.required %}<span class="required">(required)</span>{% endif %}</dt>
+                        <dd>{{ field }}</dd>
+                        <dd>{% if field.help_text %}<span class="help">{{ field.help_text }}</span>{% endif %}</dd>
+                        <dd>{% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}</dd>
                     </dl>
                 </li>
             {% endfor %}
@@ -104,10 +104,10 @@ $(document).ready(function() {
             {% for field in summer_phone_form %}
                 <li>
                     <dl>
-                        <dt class="label">{{ field.label_tag }}{% if field.field.required %}<span class="required">(required)</span>{% endif %}</dt>
-                        <dd class="field">{{ field }}</dd>
-                        <dd class="field">{% if field.help_text %}<span class="help">{{ field.help_text }}</span>{% endif %}</dd>
-                        <dd class="field">{% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}</dd>
+                        <dt>{{ field.label_tag }}{% if field.field.required %}<span class="required">(required)</span>{% endif %}</dt>
+                        <dd>{{ field }}</dd>
+                        <dd>{% if field.help_text %}<span class="help">{{ field.help_text }}</span>{% endif %}</dd>
+                        <dd>{% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}</dd>
                     </dl>
                 </li>
             {% endfor %}
@@ -120,10 +120,10 @@ $(document).ready(function() {
             {% for field in cell_phone_form %}
                 <li>
                     <dl>
-                        <dt class="label">{{ field.label_tag }}{% if field.field.required %}<span class="required">(required)</span>{% endif %}</dt>
-                        <dd class="field">{{ field }}</dd>
-                        <dd class="field">{% if field.help_text %}<span class="help">{{ field.help_text }}</span>{% endif %}</dd>
-                        <dd class="field">{% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}</dd>
+                        <dt>{{ field.label_tag }}{% if field.field.required %}<span class="required">(required)</span>{% endif %}</dt>
+                        <dd>{{ field }}</dd>
+                        <dd>{% if field.help_text %}<span class="help">{{ field.help_text }}</span>{% endif %}</dd>
+                        <dd>{% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}</dd>
                     </dl>
                 </li>
             {% endfor %}
@@ -144,10 +144,10 @@ $(document).ready(function() {
                 {% for field in reference_form %}
                     <li>
                         <dl>
-                            <dt class="label">{{ field.label_tag }}{% if field.field.required %}<span class="required">(required)</span>{% endif %}</dt>
-                            <dd class="field">{{ field }}</dd>
-                            <dd class="field">{% if field.help_text %}<span class="help">{{ field.help_text }}</span>{% endif %}</dd>
-                            <dd class="field">{% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}</dd>
+                            <dt>{{ field.label_tag }}{% if field.field.required %}<span class="required">(required)</span>{% endif %}</dt>
+                            <dd>{{ field }}</dd>
+                            <dd>{% if field.help_text %}<span class="help">{{ field.help_text }}</span>{% endif %}</dd>
+                            <dd>{% if field.errors %}<span class="errors">{{ field.errors }}</span>{% endif %}</dd>
                         </dl>
                     </li>
                 {% endfor %}
@@ -182,14 +182,14 @@ $(document).ready(function() {
         {% for essay_response_form in essay_response_forms %}
             <li>
                 <dl>
-                    <dt class="label"><label for="id_{{ essay_response_form.answer.html_name }}" style="font-weight: strong;">{{ essay_response_form.question }}{% if essay_response_form.answer.field.required %}<span class="required">(required)</span>{% endif %}</label></dt>
-                    <dd class="field">{{ essay_response_form.answer }}</dd>
-                    <dd class="field">
+                    <dt><label for="id_{{ essay_response_form.answer.html_name }}" style="font-weight: strong;">{{ essay_response_form.question }}{% if essay_response_form.answer.field.required %}<span class="required">(required)</span>{% endif %}</label></dt>
+                    <dd>{{ essay_response_form.answer }}</dd>
+                    <dd>
                         {% if essay_response_form.answer.help_text %}
                             <span class="errors">{{ essay_response_form.answer.help_text }}</span>
                         {% endif %}
                     </dd>
-                    <dd class="field">
+                    <dd>
                         {% if essay_response_form.answer.errors %}
                             <span class="errors">{{ essay_response_form.answer.errors }}</span>
                         {% endif %}

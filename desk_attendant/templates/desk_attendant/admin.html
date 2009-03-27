@@ -125,7 +125,7 @@
     <h2>Status</h2>
     <p>The following are the statuses of this application in all other communities that have opened this application and the status of the application in your community.</p>
 
-    <dl>
+    <dl id="statuses">
     {% for community, statuses in status_by_community.items %}
             <dt>{{ community }}: </dt>
                 <dd>{{ statuses.process_status }}
