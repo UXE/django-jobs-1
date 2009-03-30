@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
 from wwu_housing.jobs.models import Job, Applicant, Application
-from wwu_housing.jobs.desk_attendant.forms import *
+from wwu_housing.desk_attendant.forms import *
 
 
 class ApplicationAccessTestCase(test.TestCase):
@@ -25,7 +25,7 @@ class ApplicationAccessTestCase(test.TestCase):
         self.job.save()
 
         # Access the closed job application.
-        response = self.client.get(reverse('wwu_housing.jobs.desk_attendant.views.apply'))
+        response = self.client.get(reverse('wwu_housing.desk_attendant.views.apply'))
         
         # Verify the user is redirected to the index.
         self.assertEquals(302, response.status_code)
@@ -41,7 +41,7 @@ class ApplicationAccessTestCase(test.TestCase):
             pass
 
         # Access the DA application.
-        response = self.client.get(reverse('wwu_housing.jobs.desk_attendant.views.apply'))
+        response = self.client.get(reverse('wwu_housing.desk_attendant.views.apply'))
         self.failUnlessEqual(200, response.status_code)
 
         # Load the applicant record which should now exist for the user.
@@ -60,7 +60,7 @@ class ApplicationAccessTestCase(test.TestCase):
             pass
 
         # Access the DA application.
-        response = self.client.get(reverse('wwu_housing.jobs.desk_attendant.views.apply'))
+        response = self.client.get(reverse('wwu_housing.desk_attendant.views.apply'))
         self.failUnlessEqual(200, response.status_code)
 
         # Load the application record which should now exist for the user.
@@ -121,14 +121,14 @@ class FormTestCase(test.TestCase):
     def test_save_incomplete_application(self):
         """Verifies that no application elements are saved if not all validate."""
         # Post an empty form for the DA application which should generate errors.
-        response = self.client.post(reverse('wwu_housing.jobs.desk_attendant.views.apply'), {})
+        response = self.client.post(reverse('wwu_housing.desk_attendant.views.apply'), {})
         self.assertEquals(200, response.status_code)       
 
     def test_save_complete_application(self):
         """Verifies that all application elements are saved when all elements validate."""
         # All that is required for a complete application is hours of availability and
         # a mailing address and phone number.
-        response = self.client.post(reverse('wwu_housing.jobs.desk_attendant.views.apply'), 
+        response = self.client.post(reverse('wwu_housing.desk_attendant.views.apply'), 
                                     {'hours_available': 19, 
                                      'current-address-street_line_1': '123 Fake St.',
                                      'current-address-city': 'Bellingham',

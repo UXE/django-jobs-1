@@ -1,7 +1,7 @@
 from django.contrib import admin
 
-from wwu_housing.jobs.desk_attendant.models import Availability, Reference, PlacementPreference
-from wwu_housing.jobs.desk_attendant.models import EssayQuestion, EssayResponse, ApplicantStatus, Resume
+from wwu_housing.desk_attendant.models import Availability, Reference, PlacementPreference
+from wwu_housing.desk_attendant.models import EssayQuestion, EssayResponse, ApplicantStatus, Resume
 
 
 class AvailabilityAdmin(admin.ModelAdmin):

@@ -85,7 +85,7 @@ def apply(request):
     # If the job is not open, forward to the index page
     if not job.is_open():
         request.session['da_message'] = 'You cannot access the application site when the application is closed.'
-        return HttpResponseRedirect(reverse('wwu_housing.jobs.desk_attendant.views.index'))
+        return HttpResponseRedirect(reverse('wwu_housing.desk_attendant.views.index'))
 
     # Try to load Applicant instance for request user using Applicant.objects.get_or_create().
     applicant, created = Applicant.objects.get_or_create(user=request.user)
@@ -96,7 +96,7 @@ def apply(request):
     # If the applicant has already submitted their application, redirect them to the index.
     if application.end_datetime:
         request.session['da_message'] = "You have already submitted your application.  Please contact Residence Life at 650-2960 or by email at reslife@wwu.edu if you have any questions about your application."
-        return HttpResponseRedirect(reverse('wwu_housing.jobs.desk_attendant.views.index'))
+        return HttpResponseRedirect(reverse('wwu_housing.desk_attendant.views.index'))
 
     # If Application was created, display application forms.
     NUMBER_OF_REFERENCE_FORMS = 3
@@ -249,7 +249,7 @@ def apply(request):
         application.end_datetime = datetime.datetime.now()
         application.save()
         request.session['da_message'] = 'Your application was submitted successfully!'
-        return HttpResponseRedirect(reverse('wwu_housing.jobs.desk_attendant.views.index'))
+        return HttpResponseRedirect(reverse('wwu_housing.desk_attendant.views.index'))
 
     context['application'] = application
     context['job'] = job
@@ -300,7 +300,7 @@ def admin_individual(request, id):
             admin_communities = communities
         except:
             request.user.message_set.create(message="Our records reflect that you are not currently administering any communities.  Please contact the web team with the name of the community you should be administering.")
-            return HttpResponseRedirect(reverse('wwu_housing.jobs.desk_attendant.views.index'))
+            return HttpResponseRedirect(reverse('wwu_housing.desk_attendant.views.index'))
 
     data = request.POST or None
     status_forms = SortedDict()
@@ -377,7 +377,7 @@ def csv_export(request):
     admin_communities = request.user.community_admins.all()
     if len(admin_communities) == 0:
         request.user.message_set.create(message="Our records reflect that you are not currently administering any communities.  Please contact the web team with the name of the community you should be administering.")
-        return HttpResponseRedirect(reverse('wwu_housing.jobs.desk_attendant.views.index'))
+        return HttpResponseRedirect(reverse('wwu_housing.desk_attendant.views.index'))
 
     applications = Application.objects.select_related().filter(job=job).filter(end_datetime__isnull=False)
     app_ids = [app.id for app in applications]
@@ -456,7 +456,7 @@ def admin_list(request):
         except:
             #TODO: Catch group DoesNotExist
             request.user.message_set.create(message="Our records reflect that you are not currently administering any communities.  Please contact the web team with the name of the community you should be administering.")
-            return HttpResponseRedirect(reverse('wwu_housing.jobs.desk_attendant.views.index'))
+            return HttpResponseRedirect(reverse('wwu_housing.desk_attendant.views.index'))
 
     applications = Application.objects.select_related().filter(job=job).filter(end_datetime__isnull=False)
 
