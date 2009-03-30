@@ -6,5 +6,4 @@ from models import Job
 
 urlpatterns = patterns("",
     url(r"^$", object_list, {"queryset": Job.objects.all(), "template_object_name": "job"}, name="jobs_index"),
-    (r"^desk-attendant/", include("wwu_housing.jobs.desk_attendant.urls")),
 )
