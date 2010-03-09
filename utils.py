@@ -18,7 +18,7 @@ def assign_reviewers(reviewers, applicants, rules=None,
     true. For example, to make sure no reviewer has more than fifteen applicants
     assigned to them, add this function to your rules:
 
-        ``lambda r, a, c: len(c) > 15``
+        ``lambda r, a, c: len(c) < 15``
 
     ``get_reviewer_key`` = A function that takes a reviewer and returns an
     immutable key to index the returned dictionary by. For example if a reviewer
