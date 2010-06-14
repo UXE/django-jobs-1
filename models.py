@@ -9,6 +9,13 @@ from django.template.defaultfilters import slugify
 
 from wwu_housing.library.models import Address
 
+class JobManager(models.Manager):
+    """
+    Custom manager for job instances. 
+    """
+
+    def posted(self):
+        return self.filter(post_datetime__lte=datetime.datetime.now(), close_datetime__gt=datetime.datetime.now())
 
 class Job(models.Model):
     """
@@ -25,6 +32,8 @@ class Job(models.Model):
     contact_email = models.EmailField()
     contact_address = models.ForeignKey(Address)
     administrators = models.ManyToManyField(User)
+
+    objects = JobManager()
 
     def __unicode__(self):
         return self.title
