@@ -22,8 +22,10 @@ class Job(models.Model):
     A set of information used to describe an available job as specified by one
     of the job administrators.
     """
-    site_url = models.URLField(verify_exists=False)
+    TYPE_CHOICES = (("student", "Student"), ("professional", "Professional"), ("temporary", "Temporary"))
+
     title = models.CharField(max_length=255)
+    type = models.CharField(max_length=255, choices=TYPE_CHOICES)
     description = models.TextField()
     post_datetime = models.DateTimeField(help_text="The date and time this job is to be posted online.")
     open_datetime = models.DateTimeField(help_text="The date and time this job posting opens.")
@@ -32,6 +34,7 @@ class Job(models.Model):
     contact_email = models.EmailField()
     contact_address = models.ForeignKey(Address)
     administrators = models.ManyToManyField(User)
+    site_url = models.URLField(verify_exists=False)
 
     objects = JobManager()
 
