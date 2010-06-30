@@ -16,5 +16,7 @@
         {% endwith %}
     </dl>
     <div>{{ job.description|safe }}</div>
+{% empty %}
+    <p>There are currently no open positions.</p>
 {% endfor %}
 {% endblock %}
