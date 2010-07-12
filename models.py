@@ -1,4 +1,5 @@
 import datetime
+import tagging
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -6,6 +7,9 @@ from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.template.defaultfilters import slugify
+
+from tagging.models import Tag
+
 
 from wwu_housing.library.models import Address
 
@@ -38,6 +42,10 @@ class Job(models.Model):
 
     objects = JobManager()
 
+    def add_tag(self, tag):
+        Tag.objects.add_tag(self, tag)
+        return self.tags
+
     def __unicode__(self):
         return self.title
 
@@ -53,6 +61,10 @@ class Job(models.Model):
         """Returns whether the application deadline has passed or not."""
         return self.open_datetime <= datetime.datetime.now() < self.deadline
 
+try:
+    tagging.register(Job)
+except tagging.AlreadyRegistered:
+    pass
 
 class Component(models.Model):
     """
