@@ -46,6 +46,12 @@ class Job(models.Model):
         Tag.objects.add_tag(self, tag)
         return self.tags
 
+    def remove_tag(self, tag):
+        tags = " ".join(tag.name for tag in self.tags)
+        tags = tags.replace(tag + " ", "")
+        Tag.objects.update_tags(self, tags)
+        return self.tags
+
     def __unicode__(self):
         return self.title
 
