@@ -15,7 +15,7 @@ from wwu_housing.library.models import Address
 
 class JobManager(models.Manager):
     """
-    Custom manager for job instances. 
+    Custom manager for job instances.
     """
 
     def posted(self):
@@ -29,8 +29,13 @@ class Job(models.Model):
     TYPE_CHOICES = (("student", "Student"), ("professional", "Professional"), ("temporary", "Temporary"))
 
     title = models.CharField(max_length=255)
-    type = models.CharField(max_length=255, choices=TYPE_CHOICES)
+    type = models.CharField(max_length=255, choices=TYPE_CHOICES, default="student")
+
+    # TODO: add help text re: the purpose of this field
     description = models.TextField()
+
+    # TODO: make all datetime fields optional initially. Not having a time set
+    # will just exclude the posting from dynamically generated pages.
     post_datetime = models.DateTimeField(help_text="The date and time this job is to be posted online.")
     open_datetime = models.DateTimeField(help_text="The date and time this job posting opens.")
     close_datetime = models.DateTimeField(help_text="The date and time this job posting closes.")
@@ -38,6 +43,7 @@ class Job(models.Model):
     contact_email = models.EmailField()
     contact_address = models.ForeignKey(Address)
     administrators = models.ManyToManyField(User)
+    # TODO: make this optional (it should be calculatable)
     site_url = models.URLField(verify_exists=False)
 
     objects = JobManager()
@@ -67,10 +73,19 @@ class Job(models.Model):
         """Returns whether the application deadline has passed or not."""
         return self.open_datetime <= datetime.datetime.now() < self.deadline
 
+    @models.permalink
+    def get_absolute_url(self):
+        """
+        Converts job title into a named URL to get the job's absolute url.
+        """
+        return ("%s_index" % slugify(self.title).replace("-", "_"),)
+
+
 try:
     tagging.register(Job)
 except tagging.AlreadyRegistered:
     pass
+
 
 class Component(models.Model):
     """
@@ -111,6 +126,17 @@ class Component(models.Model):
             self.slug = slugify(self.name)
         super(Component, self).save(*args, **kwargs)
 
+    def get_absolute_url(self):
+        """
+        Converts job title into a named URL to get the job's absolute url.
+        """
+        return u"".join([
+            self.job.get_absolute_url(),
+            "application/",
+            self.slug,
+            "/"
+        ])
+
 
 class Applicant(models.Model):
     """A user with contact information and data specific to being an applicant to a job."""
@@ -127,9 +153,9 @@ class Application(models.Model):
     """
     applicant = models.ForeignKey(Applicant)
     job = models.ForeignKey(Job)
-    start_datetime = models.DateTimeField(blank=True, editable=False, 
+    start_datetime = models.DateTimeField(blank=True, editable=False,
                                           help_text="The time when the applicant started the application.")
-    end_datetime = models.DateTimeField(blank=True, null=True, 
+    end_datetime = models.DateTimeField(blank=True, null=True,
                                         help_text="The time when the applicant submitted the application.")
     components = models.ManyToManyField(Component, through="ApplicationComponent")
 
@@ -139,7 +165,7 @@ class Application(models.Model):
     def save(self, *args, **kwargs):
         if not self.id:
             self.start_datetime = datetime.datetime.now()
-        super(Application, self).save(*args, **kwargs) 
+        super(Application, self).save(*args, **kwargs)
 
 
 class ApplicationComponent(models.Model):

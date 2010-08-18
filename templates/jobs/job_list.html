@@ -4,16 +4,16 @@
 <h1>Jobs</h1>
 {% for job in job_list %}
     <h2>{{ job }}</h2>
-    {% if job.is_open %}<p><a href="{{ job.site_url }}">Apply Now</a></p>{% endif %}
+    {% if job.is_open %}<p><a href="{{ job.get_absolute_url }}">Apply Now</a></p>{% endif %}
     <dl>
-        {% with "l, F j, Y \a\t f a" as date_format %}
+    {% with "l, F j, Y \a\t f a" as date_format %}
         <dt>Posted Date</dt>
-            <dd>{{ job.post_datetime|date:date_format }}</dd>
+        <dd>{{ job.post_datetime|date:date_format }}</dd>
         <dt>Open Date</dt>
-            <dd>{{ job.open_datetime|date:date_format }}</dd>
+        <dd>{{ job.open_datetime|date:date_format }}</dd>
         <dt>Deadline</dt>
-            <dd>{{ job.deadline|date:date_format }}</dd>
-        {% endwith %}
+        <dd>{{ job.deadline|date:date_format }}</dd>
+    {% endwith %}
     </dl>
     <div>{{ job.description|safe }}</div>
 {% empty %}
