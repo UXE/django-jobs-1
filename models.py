@@ -137,6 +137,8 @@ class Component(models.Model):
             "/"
         ])
 
+    def get_forms(self):
+        return {}
 
 class Applicant(models.Model):
     """A user with contact information and data specific to being an applicant to a job."""
