@@ -22,10 +22,10 @@ class AssignReviewersTestCase(test.TestCase):
         self.reviewers = [Reviewer("Nick"), Reviewer("Brian")]
         self.applicants = [Applicant("John"), Applicant("Firass")]
         self.get_reviewer_key = lambda r: r.name
-    
+
     def tearDown(self):
         pass
-    
+
     def test_no_rules(self):
         """
         Tests without any rules which behaves the same as if all rules returned
@@ -68,7 +68,7 @@ class AssignReviewersTestCase(test.TestCase):
             if (len(current_applicants) < applicants_per_reviewer and applicant not in current_applicants):
                 return True
             return False
-        
+
         assignments = assign_reviewers(self.reviewers, self.applicants,
                                        get_reviewer_key=self.get_reviewer_key,
                                        rules=[two_reviewers_rule])
