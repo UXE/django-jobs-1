@@ -8,6 +8,9 @@ class ComponentRegistry(dict):
     templates.
     """
     class NotRegistered(Exception):
+        """
+        Alerts users when a key has nothing registered in this registry.
+        """
         pass
 
     def register(self, key, value):
@@ -18,6 +21,10 @@ class ComponentRegistry(dict):
         self.setdefault(key, set()).add(value)
 
     def get(self, key):
+        """
+        Tries to find a value for the given key. Raises an exception if nothing
+        has been registered for the given key.
+        """
         value = super(ComponentRegistry, self).get(key)
         if value is None:
             raise self.NotRegistered("No values registered for key '%s'." % key)
