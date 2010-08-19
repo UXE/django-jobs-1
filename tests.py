@@ -99,27 +99,33 @@ class ComponentRegistryTestCase(test.TestCase):
         self.instance = FakeClass()
 
     def test_register(self):
-        self.registry.register("test", self.instance)
-        self.assertTrue("test" in self.registry)
+        self.registry.register("component", "test", self.instance)
+        self.assertTrue("component" in self.registry)
 
     def test_get(self):
-        self.registry.register("test", self.instance)
-        self.assertEqual(1, len(self.registry.get("test")))
-        self.assertTrue(self.instance in self.registry.get("test"))
+        self.registry.register("component", "test", self.instance)
+        self.assertEqual(1, len(self.registry.get("component")))
+        self.assertTrue("test" in self.registry.get("component"))
 
     def test_register_multiple(self):
-        self.registry.register("test", self.instance)
+        self.registry.register("component", "test", self.instance)
         instance_two = FakeClass()
-        self.registry.register("test", instance_two)
-        self.assertEqual(len(self.registry.get("test")), 2)
+        self.registry.register("component", "test_two", instance_two)
+        self.assertEqual(len(self.registry.get("component")), 2)
 
-    def test_register_duplicate(self):
+    def test_reregister(self):
         """
-        Registry shouldn't duplicate instances stored with the same key.
+        Registry shouldn't allow a registered key's value to be overwritten.
         """
-        self.registry.register("test", self.instance)
-        self.registry.register("test", self.instance)
-        self.assertEqual(1, len(self.registry.get("test")))
+        self.registry.register("component", "test", self.instance)
+        instance_two = FakeClass()
+        self.assertRaises(
+            ComponentRegistry.AlreadyRegistered,
+            self.registry.register,
+            "component",
+            "test",
+            instance_two
+        )
 
     def test_get_not_registered(self):
         self.assertRaises(
