@@ -1,5 +1,7 @@
 from django import test
 
+from wwu_housing.jobs import ComponentRegistry
+
 from utils import assign_reviewers
 
 
@@ -83,29 +85,45 @@ class AssignReviewersTestCase(test.TestCase):
                              for reviewers in reviewers_by_applicant.values()]),
                         reviewers_by_applicant)
 
-class ComponentRegistryTestCase(test.TestCase)
+
+class FakeClass(object):
+    pass
+
+
+class ComponentRegistryTestCase(test.TestCase):
     """
     Tests for registry
     """
     def setUp(self):
-        registry = ComponentRegistry()
+        self.registry = ComponentRegistry()
+        self.instance = FakeClass()
 
     def test_register(self):
-        instance = {}
-        registry.register("test", instance)
-        self.assertTrue(instance in registry)
-
-    def test_unregister(self):
-        pass
+        self.registry.register("test", self.instance)
+        self.assertTrue("test" in self.registry)
 
     def test_get(self):
-        pass
+        self.registry.register("test", self.instance)
+        self.assertEqual(1, len(self.registry.get("test")))
+        self.assertTrue(self.instance in self.registry.get("test"))
 
-    def test_reregister(self):
-        pass
+    def test_register_multiple(self):
+        self.registry.register("test", self.instance)
+        instance_two = FakeClass()
+        self.registry.register("test", instance_two)
+        self.assertEqual(len(self.registry.get("test")), 2)
 
-    def test_unregister_nonexistent(self):
-        pass
+    def test_register_duplicate(self):
+        """
+        Registry shouldn't duplicate instances stored with the same key.
+        """
+        self.registry.register("test", self.instance)
+        self.registry.register("test", self.instance)
+        self.assertEqual(1, len(self.registry.get("test")))
 
-    def test_get_nonexistent(self):
-        pass
+    def test_get_not_registered(self):
+        self.assertRaises(
+            ComponentRegistry.NotRegistered,
+            self.registry.get,
+            "test"
+        )
