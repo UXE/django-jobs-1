@@ -83,3 +83,29 @@ class AssignReviewersTestCase(test.TestCase):
                              for reviewers in reviewers_by_applicant.values()]),
                         reviewers_by_applicant)
 
+class ComponentRegistryTestCase(test.TestCase)
+    """
+    Tests for registry
+    """
+    def setUp(self):
+        registry = ComponentRegistry()
+
+    def test_register(self):
+        instance = {}
+        registry.register("test", instance)
+        self.assertTrue(instance in registry)
+
+    def test_unregister(self):
+        pass
+
+    def test_get(self):
+        pass
+
+    def test_reregister(self):
+        pass
+
+    def test_unregister_nonexistent(self):
+        pass
+
+    def test_get_nonexistent(self):
+        pass
