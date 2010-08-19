@@ -45,3 +45,5 @@ class ComponentRegistry(dict):
             raise self.NotRegistered("No values registered for component '%s'." % component)
         else:
             return value
+
+registry = ComponentRegistry()
