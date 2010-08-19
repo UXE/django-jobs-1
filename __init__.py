@@ -13,20 +13,35 @@ class ComponentRegistry(dict):
         """
         pass
 
-    def register(self, key, value):
+    class AlreadyRegistered(Exception):
         """
-        Stores a list of values for each key, creating a new list for a key if
-        one doesn't exist already.
+        Alerts users when a value has already been registered for a given
+        component.
         """
-        self.setdefault(key, set()).add(value)
+        pass
 
-    def get(self, key):
+    def register(self, component, key, value):
         """
-        Tries to find a value for the given key. Raises an exception if nothing
-        has been registered for the given key.
+        Stores a dictionary of values for each component, creating a new
+        dictionary for each component if one doesn't exist already.
         """
-        value = super(ComponentRegistry, self).get(key)
+        if component not in self:
+            self[component] = {}
+
+        if key in self[component]:
+            raise self.AlreadyRegistered(
+                "Key '%s' is already registered for component '%s'." % (key, component)
+            )
+        else:
+            self[component][key] = value
+
+    def get(self, component):
+        """
+        Tries to find a value for the given component. Raises an exception if nothing
+        has been registered for the given component.
+        """
+        value = super(ComponentRegistry, self).get(component)
         if value is None:
-            raise self.NotRegistered("No values registered for key '%s'." % key)
+            raise self.NotRegistered("No values registered for component '%s'." % component)
         else:
             return value
