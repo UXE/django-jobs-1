@@ -111,9 +111,6 @@ class Component(models.Model):
     slug = models.SlugField(blank=True, help_text="This field will be auto-generated for you if it is left blank.")
     sequence_number = models.IntegerField()
     is_required = models.BooleanField(default=True)
-    content_type = models.ForeignKey(ContentType, blank=True, null=True)
-    object_id = models.PositiveIntegerField(blank=True, null=True)
-    content_object = generic.GenericForeignKey("content_type", "object_id")
 
     class Meta:
         ordering = ("sequence_number",)
@@ -139,6 +136,21 @@ class Component(models.Model):
 
     def get_forms(self):
         return {}
+
+
+class ComponentPart(models.Model):
+    """
+    Represents a single part of a job component.
+    """
+    component = models.ForeignKey(Component)
+    sequence_number = models.IntegerField()
+    content_type = models.ForeignKey(ContentType, blank=True, null=True)
+    object_id = models.PositiveIntegerField(blank=True, null=True)
+    content_object = generic.GenericForeignKey("content_type", "object_id")
+
+    class Meta:
+        ordering = ("sequence_number",)
+
 
 class Applicant(models.Model):
     """A user with contact information and data specific to being an applicant to a job."""
