@@ -92,18 +92,14 @@ class Component(models.Model):
     Represents a component of a job that an applicant may need to complete as
     part of their job application.
 
-    A component has an optional foreign key relationship to an object that
-    represents the component.  For example, an "essay" component might reference
-    an EssayQuestion model.
+    A component has one or more component parts.  For example, an "essays"
+    component might consist of two component parts each associated with an
+    EssayQuestion model.
 
-    Components can be as generic as necessary for a given job.  It is not a
-    requirement for a component to map to a single instance of a model or a
-    particular form.  Rather, each job application should map each component to
-    a Django view the successful processing of which can be used to determine
-    completion of the component.
-
-    For example, a component called "Essays" would have a view named "essays"
-    and possibly a url like "ra_search/essays/".
+    Each job application should map each component to a Django view the
+    successful processing of which can be used to determine completion of the
+    component. For example, a component called "Essays" could have a view named
+    "essays" and possibly a url like "ra_search/essays/".
     """
     # TODO: add custom manager to pull all required components?
     job = models.ForeignKey(Job)
@@ -140,7 +136,8 @@ class Component(models.Model):
 
 class ComponentPart(models.Model):
     """
-    Represents a single part of a job component.
+    Represents a single part of a job component with a foreign key relationship
+    to a Django model instance.
     """
     component = models.ForeignKey(Component)
     sequence_number = models.IntegerField()
@@ -184,14 +181,14 @@ class Application(models.Model):
 
 class ApplicationComponentPart(models.Model):
     """
-    Represents the relationship between a job component and an application.  The
-    relationship includes meta data about when the component was complete for
-    the application.
+    Represents the relationship between a job component part and an application.
+    The relationship includes meta data about when the component part was
+    completed for the application.
 
-    An application component has an optional foreign key relationship to an
-    object that represents the applicant's response to the component.  For
-    example, an applicant might respond to an "essay" component with an instance
-    of EssayResponse.
+    An application component part has an optional foreign key relationship to an
+    object that represents the applicant's response for the component part.  For
+    example, an applicant might respond to an "essay" component part with an
+    instance of EssayResponse.
     """
     application = models.ForeignKey(Application)
     component_part = models.ForeignKey(ComponentPart)
