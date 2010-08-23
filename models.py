@@ -171,7 +171,7 @@ class Application(models.Model):
                                           help_text="The time when the applicant started the application.")
     end_datetime = models.DateTimeField(blank=True, null=True,
                                         help_text="The time when the applicant submitted the application.")
-    components = models.ManyToManyField(Component, through="ApplicationComponent")
+    component_parts = models.ManyToManyField(ComponentPart, through="ApplicationComponentPart")
 
     def __unicode__(self):
         return u"%s for %s" % (self.applicant, self.job)
@@ -182,7 +182,7 @@ class Application(models.Model):
         super(Application, self).save(*args, **kwargs)
 
 
-class ApplicationComponent(models.Model):
+class ApplicationComponentPart(models.Model):
     """
     Represents the relationship between a job component and an application.  The
     relationship includes meta data about when the component was complete for
@@ -194,7 +194,7 @@ class ApplicationComponent(models.Model):
     of EssayResponse.
     """
     application = models.ForeignKey(Application)
-    component = models.ForeignKey(Component)
+    component_part = models.ForeignKey(ComponentPart)
     activity_date = models.DateTimeField(blank=True, null=True, editable=False)
     content_type = models.ForeignKey(ContentType, blank=True, null=True)
     object_id = models.PositiveIntegerField(blank=True, null=True)
@@ -202,7 +202,7 @@ class ApplicationComponent(models.Model):
 
     def save(self, *args, **kwargs):
         self.activity_date = datetime.datetime.now()
-        super(ApplicationComponent, self).save(*args, **kwargs)
+        super(ApplicationComponentPart, self).save(*args, **kwargs)
 
 
 class Date(models.Model):
