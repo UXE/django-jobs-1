@@ -4,45 +4,47 @@ Jobs utility classes.
 
 class ComponentRegistry(dict):
     """
-    Tracks relationships between job components and Django forms, models, and
-    templates.
+    Defines relationships between Django content types and Django form classes.
+
+    These relationships are used to determine which form to use for a given
+    ComponentPart based on its content object's content type.
     """
     class NotRegistered(Exception):
         """
-        Alerts users when a key has nothing registered in this registry.
+        Alerts users when nothing is registered for a given app_label.
         """
         pass
 
     class AlreadyRegistered(Exception):
         """
         Alerts users when a value has already been registered for a given
-        component.
+        app_label.
         """
         pass
 
-    def register(self, component, key, value):
+    def register(self, app_label, model, value):
         """
-        Stores a dictionary of values for each component, creating a new
-        dictionary for each component if one doesn't exist already.
+        Stores a dictionary of values for each app_label, creating a new
+        dictionary for each app_label if one doesn't exist already.
         """
-        if component not in self:
-            self[component] = {}
+        if app_label not in self:
+            self[app_label] = {}
 
-        if key in self[component]:
+        if model in self[app_label]:
             raise self.AlreadyRegistered(
-                "Key '%s' is already registered for component '%s'." % (key, component)
+                "Model '%s' is already registered for app_label '%s'." % (model, app_label)
             )
         else:
-            self[component][key] = value
+            self[app_label][model] = value
 
-    def get(self, component):
+    def get(self, app_label):
         """
-        Tries to find a value for the given component. Raises an exception if nothing
-        has been registered for the given component.
+        Tries to find a value for the given app_label. Raises an exception if nothing
+        has been registered for the given app_label.
         """
-        value = super(ComponentRegistry, self).get(component)
+        value = super(ComponentRegistry, self).get(app_label)
         if value is None:
-            raise self.NotRegistered("No values registered for component '%s'." % component)
+            raise self.NotRegistered("No values registered for app_label '%s'." % app_label)
         else:
             return value
 
