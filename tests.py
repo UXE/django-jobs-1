@@ -133,3 +133,71 @@ class ComponentRegistryTestCase(test.TestCase):
             self.registry.get,
             "test"
         )
+
+
+class JobTestCase(test.TestCase):
+    def test_unpublished_job(self):
+        # Create an unpublished job.
+
+        # Confirm the job doesn't appear on the jobs page.
+
+        # Confirm the job website doesn't exist.
+        pass
+
+    def test_published_job(self):
+        # Create a published job.
+
+        # Confirm the job appears on the jobs page.
+
+        # Confirm the job website exists.
+
+        # Confirm the job title is in the job website's response.
+        pass
+
+    def test_early_application(self):
+        # Try to open an application before the application period has started.
+
+        # Confirm application site isn't available.
+
+        # Confirm an application wasn't created.
+        pass
+
+    def test_new_application(self):
+        # Open an application for the first time.
+
+        # Confirm that an Applicant was created for the user.
+
+        # Confirm that an Application was created for the applicant and the job.
+        pass
+
+    def test_existing_application(self):
+        # Confirm application exists already.
+
+        # Open application site.
+
+        # Confirm that only one application exists for the current user.
+        pass
+
+    def test_new_application_after_deadline(self):
+        # Set deadline on job.
+
+        # Open application site.
+
+        # Confirm application site redirects to job's site.
+
+        # Confirm no application exists for user.
+        pass
+
+    def test_existing_application_after_deadline(self):
+        # Set deadline on job.
+
+        # Open application site.
+
+        # Confirm application site loads.
+
+        # Confirm there isn't a submit button in the application site response.
+        pass
+
+    def test_closed_application(self):
+
+        pass
