@@ -1,5 +1,6 @@
 import datetime
 from django import test
+from django.template.defaultfilters import slugify
 
 from wwu_housing.tests import BaseTestCase
 from wwu_housing.jobs import ComponentRegistry
@@ -144,6 +145,15 @@ class JobTestCase(BaseTestCase):
     def setUp(self):
         super(JobTestCase, self).setUp()
         self.job = Job.objects.all()[0]
+
+    def test_new_job(self):
+        # Create a new job.
+        self.job.id = None
+        self.job.slug = None
+        self.job.save()
+
+        # Confirm new job has a slug based on the title.
+        self.assertEqual(slugify(self.job.title), self.job.slug)
 
     def test_unpublished_job(self):
         # Create an unpublished job.
