@@ -29,7 +29,7 @@ class Job(models.Model):
     TYPE_CHOICES = (("student", "Student"), ("professional", "Professional"), ("temporary", "Temporary"))
 
     title = models.CharField(max_length=255)
-    slug = models.SlugField(blank=True, help_text="This field will be auto-generated for you if it is left blank.")
+    slug = models.SlugField(max_length=255, blank=True, help_text="This field will be auto-generated for you if it is left blank.")
     type = models.CharField(max_length=255, choices=TYPE_CHOICES, default="student")
 
     # TODO: add help text re: the purpose of this field
