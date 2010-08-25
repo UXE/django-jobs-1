@@ -73,6 +73,10 @@ class Job(models.Model):
         """Returns whether the application deadline has passed or not."""
         return self.open_datetime <= datetime.datetime.now() < self.deadline
 
+    @property
+    def slug(self):
+        return slugify(self.title)
+
     @models.permalink
     def get_absolute_url(self):
         """
