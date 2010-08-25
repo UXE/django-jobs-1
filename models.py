@@ -29,6 +29,7 @@ class Job(models.Model):
     TYPE_CHOICES = (("student", "Student"), ("professional", "Professional"), ("temporary", "Temporary"))
 
     title = models.CharField(max_length=255)
+    slug = models.SlugField(blank=True, help_text="This field will be auto-generated for you if it is left blank.")
     type = models.CharField(max_length=255, choices=TYPE_CHOICES, default="student")
 
     # TODO: add help text re: the purpose of this field
@@ -47,6 +48,11 @@ class Job(models.Model):
     site_url = models.URLField(verify_exists=False)
 
     objects = JobManager()
+
+    def save(self, *args, **kwargs):
+        if not self.id and not self.slug:
+            self.slug = slugify(self.title)
+        super(Job, self).save(*args, **kwargs)
 
     def add_tag(self, tag):
         Tag.objects.add_tag(self, tag)
@@ -72,10 +78,6 @@ class Job(models.Model):
     def is_open(self):
         """Returns whether the application deadline has passed or not."""
         return self.open_datetime <= datetime.datetime.now() < self.deadline
-
-    @property
-    def slug(self):
-        return slugify(self.title)
 
     @models.permalink
     def get_absolute_url(self):
