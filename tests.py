@@ -1,7 +1,10 @@
+import datetime
 from django import test
 
+from wwu_housing.tests import BaseTestCase
 from wwu_housing.jobs import ComponentRegistry
 
+from models import Job
 from utils import assign_reviewers
 
 
@@ -135,14 +138,28 @@ class ComponentRegistryTestCase(test.TestCase):
         )
 
 
-class JobTestCase(test.TestCase):
+class JobTestCase(BaseTestCase):
+    fixtures = ["jobs.json"]
+
+    def setUp(self):
+        super(JobTestCase, self).setUp()
+        self.job = Job.objects.all()[0]
+
     def test_unpublished_job(self):
         # Create an unpublished job.
+        self.job.post_datetime = (
+            datetime.datetime.now() + datetime.timedelta(days=1)
+        )
+        self.job.save()
 
         # Confirm the job doesn't appear on the jobs page.
+        response = self.get("jobs_index")
+        self.assertEqual(200, response.status_code)
+        self.assertFalse(self.job.title in response.content)
 
         # Confirm the job website doesn't exist.
-        pass
+        response = self.get("jobs_job", self.job.slug)
+        self.assertEqual(404, response.status_code)
 
     def test_published_job(self):
         # Create a published job.

@@ -1,0 +1,21 @@
+[
+    {
+        "pk": 8,
+        "model": "jobs.job",
+        "fields": {
+            "description": "You will bake and make. It will be great.",
+            "title": "Baker and Candlestick Maker",
+            "site_url": "http://www.google.com",
+            "administrators": [
+                3
+            ],
+            "contact_address": 1,
+            "deadline": "2010-09-01 16:06:59",
+            "contact_email": "huddlej@wwu.edu",
+            "close_datetime": "2010-09-01 16:06:50",
+            "post_datetime": "2010-08-16 16:06:43",
+            "type": "student",
+            "open_datetime": "2010-08-16 16:06:45"
+        }
+    }
+]
