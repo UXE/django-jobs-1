@@ -198,6 +198,55 @@ class JobTestCase(test.TestCase):
         # Confirm there isn't a submit button in the application site response.
         pass
 
-    def test_closed_application(self):
+    def test_new_application_after_closed_job(self):
+        # Set close date on job.
 
+        # Open application site.
+
+        # Confirm application site isn't available.
+        pass
+
+    def test_existing_application_after_closed_job(self):
+        # Confirm application exists for current user.
+
+        # Set close date on job.
+
+        # Open application site.
+
+        # Confirm application site isn't available.
+        pass
+
+    def test_component(self):
+        # Create component for job.
+
+        # Open component site.
+
+        # Confirm component site is available.
+
+        # Confirm component name is in the component site response.
+        pass
+
+    def test_submit_component(self):
+        # Create a component for job.
+
+        # POST data to the component site.
+
+        # Confirm application component parts exist for the component and the
+        # current user.
+        pass
+
+    def test_submit_incomplete_application(self):
+        # Confirm an incomplete application exists for the current user.
+
+        # POST data to the application site to submit application.
+
+        # Confirm application has not been submitted.
+        pass
+
+    def test_submit_complete_application(self):
+        # Confirm a complete application exists for the current user.
+
+        # POST data to the application site to submit application.
+
+        # Confirm application has been submitted.
         pass
