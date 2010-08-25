@@ -5,6 +5,7 @@
         "fields": {
             "description": "You will bake and make. It will be great.",
             "title": "Baker and Candlestick Maker",
+            "slug": "baker-and-candlestick-maker",
             "site_url": "http://www.google.com",
             "administrators": [
                 3
