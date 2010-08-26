@@ -173,13 +173,25 @@ class JobTestCase(BaseTestCase):
 
     def test_published_job(self):
         # Create a published job.
+        self.job.close_datetime = (
+            datetime.datetime.now() + datetime.timedelta(days=1)
+        )
+        self.job.post_datetime = (
+            datetime.datetime.now() - datetime.timedelta(days=1)
+        )
+        self.job.save()
 
         # Confirm the job appears on the jobs page.
+        response = self.get("jobs_index")
+        self.assertEqual(200, response.status_code)
+        self.assertTrue(self.job.title in response.content)
 
         # Confirm the job website exists.
+        response = self.get("jobs_job", self.job.slug)
+        self.assertEqual(200, response.status_code)
 
         # Confirm the job title is in the job website's response.
-        pass
+        self.assertTrue(self.job.title in response.content)
 
     def test_early_application(self):
         # Try to open an application before the application period has started.
