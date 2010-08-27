@@ -7,7 +7,7 @@ import httplib
 from wwu_housing.tests import BaseTestCase
 from wwu_housing.jobs import ComponentRegistry
 
-from models import Applicant, Job
+from models import Applicant, Application, Job
 from utils import assign_reviewers
 
 
@@ -253,8 +253,17 @@ class ApplicationTestCase(BaseTestCase):
         # Create an unopened job.
         self.job = JobTestCase.create_unopened_job(self.job)
 
+        # Try to open an application before the application period has started.
         # Confirm application site isn't available (i.e., it redirects).
-        self.assertEqual(httplib.TEMPORARY_REDIRECT, response.status_code)
+        self.assertRedirects(
+            self.client.get(self.job.get_application_url()),
+            self.job.get_absolute_url()
+        )
+
+        # # Confirm user gets an appropriate message about the application's
+        # # status.
+        # response = self.client.get(self.job.get_absolute_url())
+        # self.assertContains(response, "open yet", msg_prefix=response.content)
 
         # Confirm an application wasn't created.
         self.assertRaises(
