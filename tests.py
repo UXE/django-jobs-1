@@ -203,6 +203,9 @@ class JobTestCase(BaseTestCase):
         response = self.get("jobs_application", self.job.slug)
         self.assertEqual(200, response.status_code)
 
+        # Confirm the job title appears on the application site.
+        self.assertTrue(self.job.title in response.content)
+
     def test_early_application(self):
         # Try to open an application before the application period has started.
 
