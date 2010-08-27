@@ -154,6 +154,20 @@ class JobTestCase(BaseTestCase):
         job.save()
         return job
 
+    @classmethod
+    def create_published_job(cls, job):
+        """
+        Returns an published job using the given job instance.
+        """
+        job.close_datetime = (
+            datetime.datetime.now() + datetime.timedelta(days=1)
+        )
+        job.post_datetime = (
+            datetime.datetime.now() - datetime.timedelta(days=1)
+        )
+        job.save()
+        return job
+
     def setUp(self):
         super(JobTestCase, self).setUp()
         self.job = Job.objects.all()[0]
@@ -182,13 +196,7 @@ class JobTestCase(BaseTestCase):
 
     def test_published_job(self):
         # Create a published job.
-        self.job.close_datetime = (
-            datetime.datetime.now() + datetime.timedelta(days=1)
-        )
-        self.job.post_datetime = (
-            datetime.datetime.now() - datetime.timedelta(days=1)
-        )
-        self.job.save()
+        self.job = JobTestCase.create_published_job(self.job)
 
         # Confirm the job appears on the jobs page.
         response = self.get("jobs_index")
