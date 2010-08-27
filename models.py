@@ -86,6 +86,13 @@ class Job(models.Model):
         """
         return ("jobs_job", (self.slug,))
 
+    @models.permalink
+    def get_application_url(self):
+        """
+        Returns the url for this job's application site (i.e., the "apply now"
+        link.
+        """
+        return ("jobs_application", (self.slug,))
 
 try:
     tagging.register(Job)
