@@ -169,6 +169,21 @@ class JobTestCase(BaseTestCase):
         job.save()
         return job
 
+    @classmethod
+    def create_unopened_job(cls, job):
+        """
+        Returns a published job that hasn't opened yet.
+        """
+        job = cls.create_published_job(job)
+        job.open_datetime = (
+            datetime.datetime.now() + datetime.timedelta(days=1)
+        )
+        job.deadline = (
+            datetime.datetime.now() + datetime.timedelta(days=2)
+        )
+        job.save()
+        return job
+
     def setUp(self):
         super(JobTestCase, self).setUp()
         self.job = Job.objects.all()[0]
@@ -235,8 +250,8 @@ class ApplicationTestCase(BaseTestCase):
         self.applicant = Applicant.objects.create(user=self.user)
 
     def test_early_application(self):
-        # Try to open an application before the application period has started.
-        response = self.client.get(self.job.get_application_url())
+        # Create an unopened job.
+        self.job = JobTestCase.create_unopened_job(self.job)
 
         # Confirm application site isn't available (i.e., it redirects).
         self.assertEqual(httplib.TEMPORARY_REDIRECT, response.status_code)
