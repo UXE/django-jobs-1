@@ -1,6 +1,7 @@
 import datetime
 from django import test
 from django.template.defaultfilters import slugify
+import httplib
 
 from wwu_housing.tests import BaseTestCase
 from wwu_housing.jobs import ComponentRegistry
@@ -164,12 +165,12 @@ class JobTestCase(BaseTestCase):
 
         # Confirm the job doesn't appear on the jobs page.
         response = self.get("jobs_index")
-        self.assertEqual(200, response.status_code)
+        self.assertEqual(httplib.OK, response.status_code)
         self.assertFalse(self.job.title in response.content)
 
         # Confirm the job website doesn't exist.
         response = self.get("jobs_job", self.job.slug)
-        self.assertEqual(404, response.status_code)
+        self.assertEqual(httplib.NOT_FOUND, response.status_code)
 
     def test_published_job(self):
         # Create a published job.
@@ -183,12 +184,12 @@ class JobTestCase(BaseTestCase):
 
         # Confirm the job appears on the jobs page.
         response = self.get("jobs_index")
-        self.assertEqual(200, response.status_code)
+        self.assertEqual(httplib.OK, response.status_code)
         self.assertTrue(self.job.title in response.content)
 
         # Confirm the job website exists.
         response = self.get("jobs_job", self.job.slug)
-        self.assertEqual(200, response.status_code)
+        self.assertEqual(httplib.OK, response.status_code)
 
         # Confirm the job title is in the job website's response.
         self.assertTrue(self.job.title in response.content)
@@ -196,12 +197,12 @@ class JobTestCase(BaseTestCase):
     def test_get_absolute_url(self):
         self.assertTrue(self.job.slug in self.job.get_absolute_url())
         response = self.client.get(self.job.get_absolute_url())
-        self.assertEqual(200, response.status_code)
+        self.assertEqual(httplib.OK, response.status_code)
 
     def test_application_url(self):
         # Confirm the job application site exists.
         response = self.client.get(self.job.get_application_url())
-        self.assertEqual(200, response.status_code)
+        self.assertEqual(httplib.OK, response.status_code)
 
         # Confirm the job title appears on the application site.
         self.assertTrue(self.job.title in response.content)
