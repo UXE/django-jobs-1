@@ -10,12 +10,12 @@ from models import Job
 from utils import assign_reviewers
 
 
-class Applicant(object):
+class MockApplicant(object):
     def __init__(self, name):
         self.name = name
 
 
-class Reviewer(object):
+class MockReviewer(object):
     def __init__(self, name):
         self.name = name
 
@@ -26,8 +26,8 @@ class AssignReviewersTestCase(test.TestCase):
     of applicant objects.
     """
     def setUp(self):
-        self.reviewers = [Reviewer("Nick"), Reviewer("Brian")]
-        self.applicants = [Applicant("John"), Applicant("Firass")]
+        self.reviewers = [MockReviewer("Nick"), MockReviewer("Brian")]
+        self.applicants = [MockApplicant("John"), MockApplicant("Firass")]
         self.get_reviewer_key = lambda r: r.name
 
     def tearDown(self):
