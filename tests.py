@@ -200,7 +200,7 @@ class JobTestCase(BaseTestCase):
 
     def test_application_url(self):
         # Confirm the job application site exists.
-        response = self.get("jobs_application", self.job.slug)
+        response = self.client.get(self.job.get_application_url())
         self.assertEqual(200, response.status_code)
 
         # Confirm the job title appears on the application site.
