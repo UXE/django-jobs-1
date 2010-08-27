@@ -174,6 +174,13 @@ class Applicant(models.Model):
     def __unicode__(self):
         return self.user.get_full_name()
 
+    def get_application_by_job(self, job):
+        """
+        Returns an application for this applicant and the given job if one
+        exists. Otherwise raises DoesNotExist.
+        """
+        return Application.objects.get(applicant=self, job=job)
+
 
 class Application(models.Model):
     """
