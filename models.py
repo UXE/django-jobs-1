@@ -84,7 +84,7 @@ class Job(models.Model):
         """
         Converts job title into a named URL to get the job's absolute url.
         """
-        return ("%s_index" % self.slug.replace("-", "_"),)
+        return ("jobs_job", (self.slug,))
 
 
 try:
