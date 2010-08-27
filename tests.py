@@ -193,6 +193,11 @@ class JobTestCase(BaseTestCase):
         # Confirm the job title is in the job website's response.
         self.assertTrue(self.job.title in response.content)
 
+    def test_application_url(self):
+        # Confirm the job application site exists.
+        response = self.get("jobs_application", self.job.slug)
+        self.assertEqual(200, response.status_code)
+
     def test_early_application(self):
         # Try to open an application before the application period has started.
 
