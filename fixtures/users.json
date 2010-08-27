@@ -1,0 +1,58 @@
+[
+    {
+        "pk": 15, 
+        "model": "auth.user", 
+        "fields": {
+            "username": "rohden", 
+            "first_name": "Nicholas", 
+            "last_name": "Rohde", 
+            "is_active": true, 
+            "is_superuser": false, 
+            "is_staff": false, 
+            "last_login": "2008-08-13 16:12:32", 
+            "groups": [], 
+            "user_permissions": [], 
+            "password": "sha1$1b32b$6f5874d051a43935fc4f5bc8d0ec1b993eb05c6b", 
+            "email": "rohden@cc.wwu.edu", 
+            "date_joined": "2007-06-04 22:18:02"
+        }
+    }, 
+    {
+        "pk": 14, 
+        "model": "auth.user", 
+        "fields": {
+            "username": "hoggp", 
+            "first_name": "Peter", 
+            "last_name": "Hogg", 
+            "is_active": true, 
+            "is_superuser": false, 
+            "is_staff": false, 
+            "last_login": "2009-04-17 11:00:06", 
+            "groups": [
+                34
+            ], 
+            "user_permissions": [], 
+            "password": " ", 
+            "email": "hoggp@cc.wwu.edu", 
+            "date_joined": "2007-04-12 21:14:01"
+        }
+    }, 
+    {
+        "pk": 410, 
+        "model": "auth.user", 
+        "fields": {
+            "username": "frasert", 
+            "first_name": "Tanisha", 
+            "last_name": "Fraser", 
+            "is_active": true, 
+            "is_superuser": false, 
+            "is_staff": false, 
+            "last_login": "2008-09-08 10:38:24", 
+            "groups": [], 
+            "user_permissions": [], 
+            "password": "sha1$8216f$2d42d1beb9011b83928e722191ef5151391cb9ad", 
+            "email": "frasert@cc.wwu.edu", 
+            "date_joined": "2008-09-08 10:38:24"
+        }
+    }
+]

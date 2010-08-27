@@ -1,12 +1,13 @@
 import datetime
 from django import test
+from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
 import httplib
 
 from wwu_housing.tests import BaseTestCase
 from wwu_housing.jobs import ComponentRegistry
 
-from models import Job
+from models import Applicant, Job
 from utils import assign_reviewers
 
 
@@ -223,13 +224,29 @@ class JobTestCase(BaseTestCase):
         # Confirm the job title appears on the application site.
         self.assertTrue(self.job.title in response.content)
 
+
+class ApplicationTestCase(BaseTestCase):
+    fixtures = ["jobs.json", "users.json"]
+
+    def setUp(self):
+        super(ApplicationTestCase, self).setUp()
+        self.job = Job.objects.all()[0]
+        self.user = User.objects.all()[0]
+        self.applicant = Applicant.objects.create(user=self.user)
+
     def test_early_application(self):
         # Try to open an application before the application period has started.
+        response = self.client.get(self.job.get_application_url())
 
-        # Confirm application site isn't available.
+        # Confirm application site isn't available (i.e., it redirects).
+        self.assertEqual(httplib.TEMPORARY_REDIRECT, response.status_code)
 
         # Confirm an application wasn't created.
-        pass
+        self.assertRaises(
+            Application.DoesNotExist,
+            self.applicant.get_application_by_job,
+            self.job
+        )
 
     def test_new_application(self):
         # Open an application for the first time.
