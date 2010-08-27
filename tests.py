@@ -143,6 +143,17 @@ class ComponentRegistryTestCase(test.TestCase):
 class JobTestCase(BaseTestCase):
     fixtures = ["jobs.json"]
 
+    @classmethod
+    def create_unpublished_job(cls, job):
+        """
+        Returns an unpublished job using the given job instance.
+        """
+        job.post_datetime = (
+            datetime.datetime.now() + datetime.timedelta(days=1)
+        )
+        job.save()
+        return job
+
     def setUp(self):
         super(JobTestCase, self).setUp()
         self.job = Job.objects.all()[0]
@@ -158,10 +169,7 @@ class JobTestCase(BaseTestCase):
 
     def test_unpublished_job(self):
         # Create an unpublished job.
-        self.job.post_datetime = (
-            datetime.datetime.now() + datetime.timedelta(days=1)
-        )
-        self.job.save()
+        self.job = JobTestCase.create_unpublished_job(self.job)
 
         # Confirm the job doesn't appear on the jobs page.
         response = self.get("jobs_index")
