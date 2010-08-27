@@ -1,14 +1,28 @@
-from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
+from django.contrib import messages
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render_to_response
+from django.template import RequestContext
 
 from models import Job
 
 
 def job(request, job_slug):
     job = get_object_or_404(Job.objects.posted(), slug=job_slug)
-    return HttpResponse(job.title)
+    context = {"job": job}
+    return render_to_response("jobs/job_detail.html", context, context_instance=RequestContext(request))
 
 
 def application(request, job_slug):
     job = get_object_or_404(Job.objects.posted(), slug=job_slug)
+
+    # Redirect the user to the job's website if the job isn't open.
+    if not job.is_open():
+        if job.will_open():
+            message = "Applications for %s are not open yet. They will open %s." % (job, job.open_datetime)
+        else:
+            message = "Applications for %s are closed." % job
+
+        messages.warning(request, message)
+        return HttpResponseRedirect(job.get_absolute_url())
+
     return HttpResponse(job.title)
