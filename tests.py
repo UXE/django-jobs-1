@@ -293,6 +293,9 @@ class ApplicationTestCase(BaseTestCase):
         super(ApplicationTestCase, self).setUp()
         self.job = Job.objects.all()[0]
         self.user = User.objects.all()[0]
+        self.password = "test0r"
+        self.user.set_password(self.password)
+        self.user.save()
         self.applicant = Applicant.objects.create(user=self.user)
 
     def test_application_url(self):
