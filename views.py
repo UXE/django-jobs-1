@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 
-from models import Job
+from models import Applicant, Application, Job
 
 
 def job(request, job_slug):
@@ -26,5 +26,11 @@ def application(request, job_slug):
 
         messages.warning(request, message)
         return HttpResponseRedirect(job.get_absolute_url())
+
+    applicant, created = Applicant.objects.get_or_create(user=request.user)
+    application, created = Application.objects.get_or_create(
+        applicant=applicant,
+        job=job
+    )
 
     return HttpResponse(job.title)
