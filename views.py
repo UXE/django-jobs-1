@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
@@ -12,6 +13,7 @@ def job(request, job_slug):
     return render_to_response("jobs/job_detail.html", context, context_instance=RequestContext(request))
 
 
+@login_required
 def application(request, job_slug):
     job = get_object_or_404(Job.objects.posted(), slug=job_slug)
 
