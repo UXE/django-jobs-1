@@ -51,7 +51,7 @@ class Job(models.Model):
     objects = JobManager()
 
     def save(self, *args, **kwargs):
-        if not self.id and not self.slug:
+        if not self.slug:
             self.slug = slugify(self.title)
         super(Job, self).save(*args, **kwargs)
 
