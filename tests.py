@@ -224,6 +224,24 @@ class JobTestCase(BaseTestCase):
         # Confirm new job has a slug based on the title.
         self.assertEqual(slugify(self.job.title), self.job.slug)
 
+    def test_is_open(self):
+        # Test an unopened job.
+        job = JobTestCase.create_unopened_job(self.job)
+        self.assertFalse(job.is_open())
+
+        # Test an opened job.
+        job = JobTestCase.create_opened_job(self.job)
+        self.assertTrue(job.is_open())
+
+    def test_will_open(self):
+        # Test an unopened job.
+        job = JobTestCase.create_unopened_job(self.job)
+        self.assertTrue(job.will_open())
+
+        # Test an opened job.
+        job = JobTestCase.create_opened_job(self.job)
+        self.assertFalse(job.will_open())
+
     def test_unpublished_job(self):
         # Create an unpublished job.
         self.job = JobTestCase.create_unpublished_job(self.job)
