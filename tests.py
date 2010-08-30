@@ -334,12 +334,28 @@ class ApplicationTestCase(BaseTestCase):
         )
 
     def test_new_application(self):
+        # Create an opened job.
+        self.job = JobTestCase.create_opened_job(self.job)
+
+        # Confirm there is no applicant for the user.
+        self.applicant.delete()
+        self.assertEqual(0, self.user.applicant_set.count())
+
         # Open an application for the first time.
+        with self.login(self.user.username, self.password):
+            response = self.client.get(self.job.get_application_url())
+            self.assertEqual(httplib.OK, response.status_code)
 
         # Confirm that an Applicant was created for the user.
+        self.assertEqual(1, self.user.applicant_set.count())
 
         # Confirm that an Application was created for the applicant and the job.
-        pass
+        applicant = self.user.applicant_set.all()[0]
+        applications = Application.objects.filter(
+            applicant=applicant,
+            job=self.job
+        )
+        self.assertEqual(1, applications.count())
 
     def test_existing_application(self):
         # Confirm application exists already.
