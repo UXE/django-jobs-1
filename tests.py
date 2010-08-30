@@ -145,43 +145,70 @@ class JobTestCase(BaseTestCase):
     fixtures = ["jobs.json"]
 
     @classmethod
-    def create_unpublished_job(cls, job):
+    def create_unpublished_job(cls, job, commit=True):
         """
-        Returns an unpublished job using the given job instance.
+        Returns an unpublished job.
         """
         job.post_datetime = (
-            datetime.datetime.now() + datetime.timedelta(days=1)
+            datetime.datetime.now() + datetime.timedelta(days=3)
         )
-        job.save()
+
+        if commit:
+            job.save()
+
         return job
 
     @classmethod
-    def create_published_job(cls, job):
+    def create_published_job(cls, job, commit=True):
         """
-        Returns an published job using the given job instance.
+        Returns an published job.
         """
         job.close_datetime = (
-            datetime.datetime.now() + datetime.timedelta(days=1)
+            datetime.datetime.now() + datetime.timedelta(days=3)
         )
         job.post_datetime = (
-            datetime.datetime.now() - datetime.timedelta(days=1)
+            datetime.datetime.now() - datetime.timedelta(days=3)
         )
-        job.save()
+
+        if commit:
+            job.save()
+
         return job
 
     @classmethod
-    def create_unopened_job(cls, job):
+    def create_unopened_job(cls, job, commit=True):
         """
         Returns a published job that hasn't opened yet.
         """
-        job = cls.create_published_job(job)
+        job = cls.create_published_job(job, commit=False)
         job.open_datetime = (
             datetime.datetime.now() + datetime.timedelta(days=1)
         )
         job.deadline = (
             datetime.datetime.now() + datetime.timedelta(days=2)
         )
-        job.save()
+
+        if commit:
+            job.save()
+
+        return job
+
+    @classmethod
+    def create_opened_job(cls, job, commit=True):
+        """
+        Returns a published and opened job.
+        """
+        job = cls.create_unopened_job(job, commit=False)
+        job.open_datetime = (
+            datetime.datetime.now() - datetime.timedelta(days=1)
+        )
+        job.deadline = (
+            datetime.datetime.now() + datetime.timedelta(days=1)
+        )
+
+        if commit:
+            job.save()
+
         return job
 
     def setUp(self):
