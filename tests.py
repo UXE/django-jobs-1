@@ -314,6 +314,8 @@ class ApplicationTestCase(BaseTestCase):
         # Try to open an application before the application period has started.
         # Confirm application site isn't available (i.e., it redirects).
         with self.login(self.user.username, self.password):
+            # Follow the redirect to get the content of the page we're
+            # redirected to.
             response = self.client.get(self.job.get_application_url(), follow=True)
             self.assertRedirects(
                 response,
