@@ -1,3 +1,4 @@
+from __future__ import with_statement
 import datetime
 from django import test
 from django.contrib.auth.models import User
@@ -276,14 +277,6 @@ class JobTestCase(BaseTestCase):
         response = self.client.get(self.job.get_absolute_url())
         self.assertEqual(httplib.OK, response.status_code)
 
-    def test_application_url(self):
-        # Confirm the job application site exists.
-        response = self.client.get(self.job.get_application_url())
-        self.assertEqual(httplib.OK, response.status_code)
-
-        # Confirm the job title appears on the application site.
-        self.assertTrue(self.job.title in response.content)
-
 
 class ApplicationTestCase(BaseTestCase):
     fixtures = ["jobs.json", "users.json"]
@@ -293,6 +286,15 @@ class ApplicationTestCase(BaseTestCase):
         self.job = Job.objects.all()[0]
         self.user = User.objects.all()[0]
         self.applicant = Applicant.objects.create(user=self.user)
+
+    def test_application_url(self):
+        # Confirm the job application site exists.
+        with self.login(self.user.username, self.password):
+            response = self.client.get(self.job.get_application_url())
+            self.assertEqual(httplib.OK, response.status_code)
+
+            # Confirm the job title appears on the application site.
+            self.assertTrue(self.job.title in response.content)
 
     def test_early_application(self):
         # Create an unopened job.
