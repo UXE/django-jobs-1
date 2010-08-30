@@ -313,15 +313,16 @@ class ApplicationTestCase(BaseTestCase):
 
         # Try to open an application before the application period has started.
         # Confirm application site isn't available (i.e., it redirects).
-        self.assertRedirects(
-            self.client.get(self.job.get_application_url()),
-            self.job.get_absolute_url()
-        )
+        with self.login(self.user.username, self.password):
+            response = self.client.get(self.job.get_application_url(), follow=True)
+            self.assertRedirects(
+                response,
+                self.job.get_absolute_url()
+            )
 
-        # # Confirm user gets an appropriate message about the application's
-        # # status.
-        # response = self.client.get(self.job.get_absolute_url())
-        # self.assertContains(response, "open yet", msg_prefix=response.content)
+            # Confirm user gets an appropriate message about the application's
+            # status.
+            self.assertContains(response, "open yet")
 
         # Confirm an application wasn't created.
         self.assertRaises(
