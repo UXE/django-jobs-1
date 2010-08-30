@@ -272,6 +272,14 @@ class JobTestCase(BaseTestCase):
         # Confirm the job title is in the job website's response.
         self.assertTrue(self.job.title in response.content)
 
+    def test_opened_job(self):
+        # Create a published job.
+        self.job = JobTestCase.create_opened_job(self.job)
+
+        # Confirm the job application link appears on the job page.
+        response = self.client.get(self.job.get_absolute_url())
+        self.assertTrue(self.job.get_application_url() in response.content)
+
     def test_get_absolute_url(self):
         self.assertTrue(self.job.slug in self.job.get_absolute_url())
         response = self.client.get(self.job.get_absolute_url())
