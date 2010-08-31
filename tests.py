@@ -3,6 +3,7 @@ import datetime
 from django import test
 from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
+from django.core.urlresolvers import reverse
 import httplib
 
 from wwu_housing.tests import BaseTestCase
@@ -456,11 +457,14 @@ class ApplicationTestCase(BaseTestCase):
 
     def test_new_application_after_closed_job(self):
         # Set close date on job.
-
+        self.job = JobTestCase.create_opened_job(self.job)
+        self.job.close_datetime = datetime.datetime.now() - datetime.timedelta(days=1)
+        self.job.save()
         # Open application site.
-
+        with self.login(self.user.username, self.password):
         # Confirm application site isn't available.
-        pass
+            response = self.client.get(self.job.get_application_url())
+            self.assertRedirects(response, reverse("jobs_index"))
 
     def test_existing_application_after_closed_job(self):
         # Confirm application exists for current user.
