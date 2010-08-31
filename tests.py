@@ -351,13 +351,12 @@ class ApplicationTestCase(BaseTestCase):
             self.job
         )
 
-    def test_new_application(self):
+    def test_new_applicant(self):
         # Create an opened job.
         self.job = JobTestCase.create_opened_job(self.job)
 
-        # Confirm there is no applicant for the user.
+        # Confirm there is no applicant.
         self.applicant.delete()
-        self.assertEqual(0, self.user.applicant_set.count())
 
         # Open an application for the first time.
         with self.login(self.user.username, self.password):
@@ -366,6 +365,22 @@ class ApplicationTestCase(BaseTestCase):
 
         # Confirm that an Applicant was created for the user.
         self.assertEqual(1, self.user.applicant_set.count())
+
+    def test_new_application(self):
+        # Create an opened job.
+        self.job = JobTestCase.create_opened_job(self.job)
+
+        # Confirm there is no application for the applicant and the job.
+        self.assertRaises(
+            Application.DoesNotExist,
+            self.applicant.get_application_by_job,
+            self.job
+        )
+
+        # Open an application for the first time.
+        with self.login(self.user.username, self.password):
+            response = self.client.get(self.job.get_application_url())
+            self.assertEqual(httplib.OK, response.status_code)
 
         # Confirm that an Application was created for the applicant and the job.
         applicant = self.user.applicant_set.all()[0]
