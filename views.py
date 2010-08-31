@@ -16,9 +16,13 @@ def job(request, job_slug):
 @login_required
 def application(request, job_slug):
     job = get_object_or_404(Job.objects.posted(), slug=job_slug)
+    application_exists = Application.objects.filter(
+        job=job,
+        applicant__user=request.user
+    ).count() > 0
 
     # Redirect the user to the job's website if the job isn't open.
-    if not job.is_open():
+    if not job.is_open() and not application_exists:
         if job.will_open():
             message = "Applications for %s are not open yet. They will open %s." % (job, job.open_datetime)
         else:
