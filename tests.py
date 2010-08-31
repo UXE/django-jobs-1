@@ -399,24 +399,49 @@ class ApplicationTestCase(BaseTestCase):
         pass
 
     def test_new_application_after_deadline(self):
-        # Set deadline on job.
+        # Create a job whose deadline has passed.
+        self.job = JobTestCase.create_deadlined_job(self.job)
 
-        # Open application site.
+        # Confirm there is no application for this job and applicant.
+        self.assertRaises(
+            Application.DoesNotExist,
+            self.applicant.get_application_by_job,
+            self.job
+        )
 
         # Confirm application site redirects to job's site.
+        with self.login(self.user.username, self.password):
+            response = self.client.get(self.job.get_application_url())
+            self.assertRedirects(response, self.job.get_absolute_url())
 
-        # Confirm no application exists for user.
-        pass
+        # Reconfirm no application exists for this job and applicant.
+        self.assertRaises(
+            Application.DoesNotExist,
+            self.applicant.get_application_by_job,
+            self.job
+        )
 
     def test_existing_application_after_deadline(self):
-        # Set deadline on job.
+        # Create a job whose deadline has passed.
+        self.job = JobTestCase.create_deadlined_job(self.job)
+
+        # Confirm an application exists.
+        application = Application.objects.create(
+            applicant=self.applicant,
+            job=self.job
+        )
 
         # Open application site.
+        with self.login(self.user.username, self.password):
+            # Confirm application site loads.
+            response = self.client.get(self.job.get_application_url())
+            self.assertEqual(httplib.OK, response.status_code)
 
-        # Confirm application site loads.
+            # Confirm there isn't a submit button in the application site
+            # response.
+            self.assertNotContains(response, "Submit application")
 
-        # Confirm there isn't a submit button in the application site response.
-        pass
+            # Confirm links don't exist for components to be edited.
 
     def test_new_application_after_closed_job(self):
         # Set close date on job.
