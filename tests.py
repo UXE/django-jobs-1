@@ -359,11 +359,22 @@ class ApplicationTestCase(BaseTestCase):
 
     def test_existing_application(self):
         # Confirm application exists already.
+        application = Application.objects.create(
+            applicant=self.applicant,
+            job=self.job
+        )
 
         # Open application site.
+        with self.login(self.user.username, self.password):
+            response = self.client.get(self.job.get_application_url())
+            self.assertEqual(httplib.OK, response.status_code)
 
         # Confirm that only one application exists for the current user.
-        pass
+        applications = Application.objects.filter(
+            applicant=self.applicant,
+            job=self.job
+        );
+        self.assertEqual(1, applications.count())
 
     def test_new_application_after_deadline(self):
         # Set deadline on job.
