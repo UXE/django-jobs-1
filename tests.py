@@ -212,6 +212,24 @@ class JobTestCase(BaseTestCase):
 
         return job
 
+    @classmethod
+    def create_deadlined_job(cls, job, commit=True):
+        """
+        Returns a job whose deadline has passed.
+        """
+        job = cls.create_unopened_job(job, commit=False)
+        job.open_datetime = (
+            datetime.datetime.now() - datetime.timedelta(days=2)
+        )
+        job.deadline = (
+            datetime.datetime.now() - datetime.timedelta(days=1)
+        )
+
+        if commit:
+            job.save()
+
+        return job
+
     def setUp(self):
         super(JobTestCase, self).setUp()
         self.job = Job.objects.all()[0]
