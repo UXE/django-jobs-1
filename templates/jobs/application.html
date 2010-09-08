@@ -8,10 +8,10 @@
 <h1>Your Application for {{ job }}</h1>
 
 <dl class="table">
-    <dt>Component</dt>
+    <dt>Step</dt>
     <dd>Status</dd>
 {% for component in job.component_set.all %}
-    <dt><a href="{{ component.get_absolute_url }}">{{ component }}</a></dt>
+    <dt>{{ forloop.counter }}. <a href="{{ component.get_absolute_url }}">{{ component }}</a></dt>
     <dd>&mdash;</dd>
 {% endfor %}
 </dl>
