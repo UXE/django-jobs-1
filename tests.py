@@ -487,6 +487,22 @@ class ApplicationTestCase(BaseTestCase):
             response = self.client.get(self.job.get_application_url())
             self.assertRedirects(response, reverse("jobs_index"))
 
+    def test_submit_incomplete_application(self):
+        # Confirm an incomplete application exists for the current user.
+
+        # POST data to the application site to submit application.
+
+        # Confirm application has not been submitted.
+        pass
+
+    def test_submit_complete_application(self):
+        # Confirm a complete application exists for the current user.
+
+        # POST data to the application site to submit application.
+
+        # Confirm application has been submitted.
+        pass
+
 
 class ComponentTestCase(BaseTestCase):
     fixtures = ["jobs.json", "users.json"]
