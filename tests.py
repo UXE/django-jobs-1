@@ -571,7 +571,9 @@ class ComponentTestCase(BaseTestCase):
 
     def test_get_template(self):
         # Confirm the component's template contains its name.
-        pass
+        self.assertTrue(
+            self.component.slug.replace("-", "_") in self.component.get_template()
+        )
 
     def test_submit_component(self):
         # Confirm this component has component parts.
