@@ -516,6 +516,10 @@ class ComponentTestCase(BaseTestCase):
         self.user.set_password(self.password)
         self.user.save()
         self.applicant = Applicant.objects.create(user=self.user)
+        self.application = Application.objects.create(
+            job=self.job,
+            applicant=self.applicant
+        )
         self.component = Component.objects.create(
             job=self.job,
             name="Fake",
