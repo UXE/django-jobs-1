@@ -510,6 +510,7 @@ class ComponentTestCase(BaseTestCase):
     def setUp(self):
         super(ComponentTestCase, self).setUp()
         self.job = Job.objects.all()[0]
+        self.job = JobTestCase.create_opened_job(self.job)
         self.user = User.objects.all()[0]
         self.password = "test0r"
         self.user.set_password(self.password)
@@ -531,9 +532,6 @@ class ComponentTestCase(BaseTestCase):
         self.assertTrue(self.component.slug in self.component.get_absolute_url())
 
     def test_nonexistent_component(self):
-        # Create an opened job.
-        self.job = JobTestCase.create_opened_job(self.job)
-
         # Delete existing component.
         self.component.delete()
 
@@ -551,9 +549,6 @@ class ComponentTestCase(BaseTestCase):
             self.assertEqual(httplib.NOT_FOUND, response.status_code)
 
     def test_component(self):
-        # Create an opened job.
-        self.job = JobTestCase.create_opened_job(self.job)
-
         # Open component site.
         with self.login(self.user.username, self.password):
             # Confirm component site is available.
