@@ -133,7 +133,7 @@ class Component(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        if not self.id and not self.slug:
+        if not self.slug:
             self.slug = slugify(self.name)
         super(Component, self).save(*args, **kwargs)
 
