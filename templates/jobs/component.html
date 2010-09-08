@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ component }}</h1>
+
+<form action="" method="post">{% csrf_token %}
+{% for component_part in component.componentpart_set.all %}
+    {{ component_part.render }}
+{% endfor %}
+
+<input type="submit" value="Save" />
+</form>
+{% endblock %}

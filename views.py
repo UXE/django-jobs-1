@@ -62,7 +62,7 @@ def component(request, job_slug, component_slug):
     component = get_object_or_404(job.component_set, slug=component_slug)
 
     return render_to_response(
-        component.get_template(),
+        "jobs/component.html",
         {"component": component},
         context_instance=RequestContext(request)
     )
