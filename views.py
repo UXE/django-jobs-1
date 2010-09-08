@@ -51,5 +51,6 @@ def component(request, job_slug, component_slug):
     except Job.DoesNotExist:
         return HttpResponseRedirect(reverse("jobs_index"))
 
+    component = get_object_or_404(job.component_set, slug=component_slug)
 
     return HttpResponse(component.name)
