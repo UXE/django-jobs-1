@@ -52,6 +52,7 @@ def application(request, job_slug):
     )
 
 
+@login_required
 def component(request, job_slug, component_slug):
     try:
         job = Job.objects.posted().get(slug=job_slug)
