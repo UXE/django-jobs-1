@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load markup %}
 
 {% block content %}
 <h1>Jobs</h1>
@@ -20,7 +21,7 @@
         <dd>{{ job.deadline|date:date_format }}</dd>
     {% endwith %}
     </dl>
-    <div>{{ job.description|safe }}</div>
+    <div>{{ job.description|markdown }}</div>
 {% empty %}
     <p>There are currently no open positions.</p>
 {% endfor %}
