@@ -487,19 +487,77 @@ class ApplicationTestCase(BaseTestCase):
             response = self.client.get(self.job.get_application_url())
             self.assertRedirects(response, reverse("jobs_index"))
 
+
+class ComponentTestCase(BaseTestCase):
+    fixtures = ["jobs.json", "users.json"]
+
+    def setUp(self):
+        super(ComponentTestCase, self).setUp()
+        self.job = Job.objects.all()[0]
+        self.user = User.objects.all()[0]
+        self.password = "test0r"
+        self.user.set_password(self.password)
+        self.user.save()
+        self.applicant = Applicant.objects.create(user=self.user)
+
+    def test_slug(self):
+        # Make a component.
+        component = Component.objects.create(
+            job=self.job,
+            name="Fake",
+            sequence_number=1
+        )
+
+        # Confirm a slug was created.
+        self.assertEqual(slugify(component.name), component.slug)
+
+    def test_get_absolute_url(self):
+        # Make a component.
+        component = Component.objects.create(
+            job=self.job,
+            name="Fake",
+            sequence_number=1
+        )
+
+        # Confirm the job and component slugs are in the component url.
+        self.assertTrue(self.job.slug in component.get_absolute_url())
+        self.assertTrue(component.slug in component.get_absolute_url())
+
+    def test_nonexistent_component(self):
+        # Create an opened job.
+        self.job = JobTestCase.create_opened_job(self.job)
+
+        # Make an unsaved component (so we have to pass the slug).
+        component = Component(
+            job=self.job,
+            name="Fake",
+            slug="fake",
+            sequence_number=1
+        )
+
+        # Try to load the nonexistent component.
+        with self.login(self.user.username, self.password):
+            response = self.client.get(component.get_absolute_url())
+            self.assertEqual(httplib.NOT_FOUND, response.status_code)
+
     def test_component(self):
+        # Create an opened job.
+        self.job = JobTestCase.create_opened_job(self.job)
+
         # Create component for job.
         component = Component.objects.create(
            job=self.job,
            name="Essay: Self History",
            sequence_number=2
         )
+
         # Open component site.
         with self.login(self.user.username, self.password):
-        # Confirm component site is available.
+            # Confirm component site is available.
             response = self.client.get(component.get_absolute_url())
             self.assertEqual(httplib.OK, response.status_code)
-        # Confirm component name is in the component site response.
+
+            # Confirm component name is in the component site response.
             self.assertContains(response, component.name)
 
     def test_submit_component(self):
