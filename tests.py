@@ -395,6 +395,9 @@ class ApplicationTestCase(BaseTestCase):
         self.assertEqual(1, applications.count())
 
     def test_existing_application(self):
+        # Create an opened job.
+        self.job = JobTestCase.create_opened_job(self.job)
+
         # Confirm application exists already.
         application = Application.objects.create(
             applicant=self.applicant,
