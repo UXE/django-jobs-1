@@ -137,16 +137,12 @@ class Component(models.Model):
             self.slug = slugify(self.name)
         super(Component, self).save(*args, **kwargs)
 
+    @models.permalink
     def get_absolute_url(self):
         """
         Converts job title into a named URL to get the job's absolute url.
         """
-        return u"".join([
-            self.job.get_absolute_url(),
-            "application/",
-            self.slug,
-            "/"
-        ])
+        return ("jobs_component", (self.job.slug, self.slug))
 
     def get_forms(self):
         return {}
