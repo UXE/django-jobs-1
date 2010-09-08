@@ -9,7 +9,7 @@ import httplib
 from wwu_housing.tests import BaseTestCase
 from wwu_housing.jobs import ComponentRegistry
 
-from models import Applicant, Application, Component, Job
+from models import Applicant, Application, Component, ComponentPart, Job
 from utils import assign_reviewers
 
 
@@ -555,6 +555,10 @@ class ComponentTestCase(BaseTestCase):
     def test_component(self):
         # Open component site.
         with self.login(self.user.username, self.password):
+            # Confirm component is listed on the application page.
+            response = self.client.get(self.component.job.get_application_url())
+            self.assertContains(response, self.component.get_absolute_url())
+
             # Confirm component site is available.
             response = self.client.get(self.component.get_absolute_url())
             self.assertEqual(httplib.OK, response.status_code)
@@ -562,27 +566,35 @@ class ComponentTestCase(BaseTestCase):
             # Confirm component name is in the component site response.
             self.assertContains(response, self.component.name)
 
+            # Confirm there's a form in the component site response.
+            self.assertContains(response, "<form")
+
+    def test_get_template(self):
+        # Confirm the component's template contains its name.
+        pass
+
     def test_submit_component(self):
-        # Create a component for job.
+        # Confirm this component has component parts.
+        ComponentPart.objects.create(
+            component=self.component,
+            sequence_number=1
+        )
+        self.assertNotEqual(0, self.component.componentpart_set.count())
+
+        # Confirm application component parts don't exist for components yet.
+        self.assertEqual(0, self.application.applicationcomponentpart_set.count())
 
         # POST data to the component site.
+        with self.login(self.user.username, self.password):
+            data = {}
+            response = self.client.post(
+                self.component.get_absolute_url(),
+                data
+            )
 
         # Confirm application component parts exist for the component and the
         # current user.
-        pass
-
-    def test_submit_incomplete_application(self):
-        # Confirm an incomplete application exists for the current user.
-
-        # POST data to the application site to submit application.
-
-        # Confirm application has not been submitted.
-        pass
-
-    def test_submit_complete_application(self):
-        # Confirm a complete application exists for the current user.
-
-        # POST data to the application site to submit application.
-
-        # Confirm application has been submitted.
-        pass
+        self.assertEqual(
+            self.component.componentpart_set.count(),
+            self.application.applicationcomponentpart_set.count()
+        )
