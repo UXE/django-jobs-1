@@ -20,6 +20,7 @@ def application(request, job_slug):
         job = Job.objects.posted().get(slug=job_slug)
     except Job.DoesNotExist:
         return HttpResponseRedirect(reverse("jobs_index"))
+
     application_exists = Application.objects.filter(
         job=job,
         applicant__user=request.user
@@ -43,11 +44,12 @@ def application(request, job_slug):
 
     return HttpResponse(job.title)
 
+
 def component(request, job_slug, component_slug):
     try:
         job = Job.objects.posted().get(slug=job_slug)
     except Job.DoesNotExist:
         return HttpResponseRedirect(reverse("jobs_index"))
-    
+
 
     return HttpResponse(component.name)
