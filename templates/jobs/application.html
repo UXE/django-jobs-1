@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ job }} | Jobs
+{% endblock %}
+
+{% block content %}
+<h1>Your Application for {{ job }}</h1>
+
+<dl class="table">
+    <dt>Component</dt>
+    <dd>Status</dd>
+{% for component in job.component_set.all %}
+    <dt><a href="{{ component.get_absolute_url }}">{{ component }}</a></dt>
+    <dd>&mdash;</dd>
+{% endfor %}
+</dl>
+
+<form action="" method="post">
+    <p><input type="submit" name="submit" value="Submit your application" /></p>
+</form>
+{% endblock %}

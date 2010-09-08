@@ -42,7 +42,14 @@ def application(request, job_slug):
         job=job
     )
 
-    return HttpResponse(job.title)
+    context = {
+        "job": job
+    }
+    return render_to_response(
+        "jobs/application.html",
+        context,
+        context_instance=RequestContext(request)
+    )
 
 
 def component(request, job_slug, component_slug):
