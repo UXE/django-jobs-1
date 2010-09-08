@@ -1,26 +1,27 @@
 {% extends "base.html" %}
+{% load markup %}
 
 {% block content %}
 <h1>Jobs</h1>
 {% for job in job_list %}
     <h2>{{ job }}</h2>
-    <ul>
+    <ul class="menu">
         <li><a href="{{ job.get_absolute_url }}">Learn more</a></li>
         {% if job.is_open %}
             <li><a href="{{ job.get_application_url }}">Apply Now</a></li>
         {% endif %}
     </ul>
-    <dl>
+    <dl class="table">
     {% with "l, F j, Y \a\t f a" as date_format %}
-        <dt>Posted Date</dt>
+        <dt>Posted Date:</dt>
         <dd>{{ job.post_datetime|date:date_format }}</dd>
-        <dt>Open Date</dt>
+        <dt>Open Date:</dt>
         <dd>{{ job.open_datetime|date:date_format }}</dd>
-        <dt>Deadline</dt>
+        <dt>Deadline:</dt>
         <dd>{{ job.deadline|date:date_format }}</dd>
     {% endwith %}
     </dl>
-    <div>{{ job.description|safe }}</div>
+    <div>{{ job.description|markdown }}</div>
 {% empty %}
     <p>There are currently no open positions.</p>
 {% endfor %}
