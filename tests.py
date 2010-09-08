@@ -1,6 +1,7 @@
 from __future__ import with_statement
 import datetime
 from django import test
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
 from django.core.urlresolvers import reverse
@@ -551,6 +552,18 @@ class ComponentTestCase(BaseTestCase):
         with self.login(self.user.username, self.password):
             response = self.client.get(component.get_absolute_url())
             self.assertEqual(httplib.NOT_FOUND, response.status_code)
+
+    def test_login_required(self):
+        # Confirm the component site requires a login.
+        response = self.client.get(self.component.get_absolute_url())
+        self.assertRedirects(
+            response,
+            "%s?next=%s" % (settings.LOGIN_URL, self.component.get_absolute_url())
+        )
+
+        with self.login(self.user.username, self.password):
+            response = self.client.get(self.component.get_absolute_url())
+            self.assertEqual(httplib.OK, response.status_code)
 
     def test_component(self):
         # Open component site.
