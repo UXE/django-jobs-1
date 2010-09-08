@@ -147,6 +147,12 @@ class Component(models.Model):
     def get_forms(self):
         return {}
 
+    def get_template(self):
+        """
+        Returns path for this component's template.
+        """
+        return u"jobs/component_%s.html" % self.slug.replace("-", "_")
+
 
 class ComponentPart(models.Model):
     """
