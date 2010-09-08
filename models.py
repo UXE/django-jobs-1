@@ -34,7 +34,7 @@ class Job(models.Model):
     type = models.CharField(max_length=255, choices=TYPE_CHOICES, default="student")
 
     # TODO: add help text re: the purpose of this field
-    description = models.TextField()
+    description = models.TextField(help_text="Use Markdown to format text")
 
     # TODO: make all datetime fields optional initially. Not having a time set
     # will just exclude the posting from dynamically generated pages.
