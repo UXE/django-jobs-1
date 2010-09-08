@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
 
-from models import Applicant, Application, Job
+from models import Applicant, Application, Component, Job
 
 
 def job(request, job_slug):
@@ -42,3 +42,12 @@ def application(request, job_slug):
     )
 
     return HttpResponse(job.title)
+
+def component(request, job_slug, component_slug):
+    try:
+        job = Job.objects.posted().get(slug=job_slug)
+    except Job.DoesNotExist:
+        return HttpResponseRedirect(reverse("jobs_index"))
+    
+
+    return HttpResponse(component.name)

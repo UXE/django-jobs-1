@@ -9,7 +9,7 @@ import httplib
 from wwu_housing.tests import BaseTestCase
 from wwu_housing.jobs import ComponentRegistry
 
-from models import Applicant, Application, Job
+from models import Applicant, Application, Component, Job
 from utils import assign_reviewers
 
 
@@ -90,8 +90,7 @@ class AssignReviewersTestCase(test.TestCase):
                 reviewers_by_applicant[app.name].append(reviewer)
 
         self.assertTrue(all([len(reviewers) == 2
-                             for reviewers in reviewers_by_applicant.values()]),
-                        reviewers_by_applicant)
+                             for reviewers in reviewers_by_applicant.values()]), reviewers_by_applicant)
 
 
 class FakeClass(object):
@@ -468,23 +467,33 @@ class ApplicationTestCase(BaseTestCase):
 
     def test_existing_application_after_closed_job(self):
         # Confirm application exists for current user.
-
+        application = Application.objects.create(
+            applicant=self.applicant,
+            job=self.job
+        )
         # Set close date on job.
-
+        self.job.close_datetime = datetime.datetime.now() - datetime.timedelta(days=1)
+        self.job.save()
         # Open application site.
-
+        with self.login(self.user.username, self.password):
         # Confirm application site isn't available.
-        pass
+            response = self.client.get(self.job.get_application_url())
+            self.assertRedirects(response, reverse("jobs_index"))
 
     def test_component(self):
         # Create component for job.
-
+        component = Component.objects.create(
+           job=self.job,
+           name="Essay: Self History",
+           sequence_number=2
+        )
         # Open component site.
-
+        with self.login(self.user.username, self.password):
         # Confirm component site is available.
-
+            response = self.client.get(component.get_absolute_url())
+            self.assertEqual(httplib.OK, response.status_code)
         # Confirm component name is in the component site response.
-        pass
+            self.assertContains(response, component.name)
 
     def test_submit_component(self):
         # Create a component for job.
