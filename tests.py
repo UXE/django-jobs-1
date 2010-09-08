@@ -318,6 +318,9 @@ class ApplicationTestCase(BaseTestCase):
         self.applicant = Applicant.objects.create(user=self.user)
 
     def test_application_url(self):
+        # Create an opened job.
+        self.job = JobTestCase.create_opened_job(self.job)
+
         # Confirm the job application site exists.
         with self.login(self.user.username, self.password):
             response = self.client.get(self.job.get_application_url())
