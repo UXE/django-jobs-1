@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load markup %}
 
 {% block content %}
 <h1>{{ job }}</h1>
@@ -8,4 +9,5 @@
 <ul>
     <li><a href="{{ job.get_application_url }}">Apply Now</a></li>
 </ul>
+    <div>{{ job.description|markdown }}</div>
 {% endblock %}
