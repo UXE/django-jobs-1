@@ -64,7 +64,7 @@ class Job(models.Model):
         return self.tags
 
     def __unicode__(self):
-        return self.title
+        return "%s (post: %s)" % (self.title, self.post_datetime)
 
     def is_posted(self):
         """Returns whether the job posting is ready to be posted on jobs pages."""
