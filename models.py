@@ -45,8 +45,6 @@ class Job(models.Model):
     contact_email = models.EmailField()
     contact_address = models.ForeignKey(Address)
     administrators = models.ManyToManyField(User)
-    # TODO: make this optional (it should be calculatable)
-    site_url = models.URLField(verify_exists=False)
 
     objects = JobManager()
 
