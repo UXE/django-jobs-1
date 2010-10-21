@@ -165,6 +165,9 @@ class ComponentPart(models.Model):
     object_id = models.PositiveIntegerField(blank=True, null=True)
     content_object = generic.GenericForeignKey("content_type", "object_id")
 
+    def __unicode__(self):
+        return "%s %s %s" % (self.component, self.content_type, self.content_object)
+
     class Meta:
         ordering = ("sequence_number",)
 
