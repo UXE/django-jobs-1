@@ -5,7 +5,10 @@ from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
 
-from models import Applicant, Application, Component, Job
+# importing * so it can capture the registry code
+from wwu_housing.wwu_jobs.forms import *
+
+from models import Applicant, Application, ApplicationComponentPart, Component, Job
 
 
 def job(request, job_slug):
@@ -59,10 +62,50 @@ def component(request, job_slug, component_slug):
     except Job.DoesNotExist:
         return HttpResponseRedirect(reverse("jobs_index"))
 
+    applicant = Applicant.objects.get(user=request.user)
+    application, created = Application.objects.get_or_create(job=job, applicant=applicant)
     component = get_object_or_404(job.component_set, slug=component_slug)
+    component_parts = component.componentpart_set.all()
+
+    all_forms_valid = True
+    for component_part in component_parts:
+        # Try to find the an existing response for this component part for this
+        # application. Otherwise, create an unsaved application component part.
+        try:
+            application_component_part = ApplicationComponentPart.objects.get(
+                application=application,
+                component_part=component_part
+            )
+            instance = application_component_part.content_object
+        except ApplicationComponentPart.DoesNotExist:
+            application_component_part = ApplicationComponentPart(
+                application=application,
+                component_part=component_part
+            )
+            instance = None
+
+        content_type = component_part.content_type
+        form_cls = registry.get(content_type.app_label).get(content_type.model)
+        form = form_cls(request.POST or None, instance=instance, prefix=component_part.id)
+        if form.is_valid():
+            # Save the result of the form's process method as the application
+            # component part's content which will serve as the initial instance
+            # for this form.
+            response = form.process(component_part)
+            application_component_part.content_object = response
+            application_component_part.save()
+        else:
+            all_forms_valid = False
+
+        component_part.form = form
+
+    # Only redirect if all forms validated.
+    if all_forms_valid:
+        return HttpResponseRedirect(job.get_application_url())
 
     return render_to_response(
         "jobs/component.html",
-        {"component": component},
+        {"component": component,
+         "component_parts": component_parts},
         context_instance=RequestContext(request)
     )
