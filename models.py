@@ -161,7 +161,10 @@ class ComponentPart(models.Model):
     """
     component = models.ForeignKey(Component)
     sequence_number = models.IntegerField()
-    content_type = models.ForeignKey(ContentType, blank=True, null=True)
+    content_type = models.ForeignKey(ContentType,
+                                     limit_choices_to={"app_label__in": ["wwu_jobs"]},
+                                     blank=True,
+                                     null=True)
     object_id = models.PositiveIntegerField(blank=True, null=True)
     content_object = generic.GenericForeignKey("content_type", "object_id")
 
@@ -223,7 +226,10 @@ class ApplicationComponentPart(models.Model):
     application = models.ForeignKey(Application)
     component_part = models.ForeignKey(ComponentPart)
     activity_date = models.DateTimeField(blank=True, null=True, editable=False)
-    content_type = models.ForeignKey(ContentType, blank=True, null=True)
+    content_type = models.ForeignKey(ContentType,
+                                     limit_choices_to={"app_label__in": ["wwu_jobs"]},
+                                     blank=True,
+                                     null=True)
     object_id = models.PositiveIntegerField(blank=True, null=True)
     content_object = generic.GenericForeignKey("content_type", "object_id")
 
