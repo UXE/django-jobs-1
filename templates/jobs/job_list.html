@@ -4,7 +4,7 @@
 {% block content %}
 <h1>Jobs</h1>
 {% for job in job_list %}
-    <h2>{{ job }}</h2>
+    <h2>{{ job.title }}</h2>
     <ul class="menu">
         <li><a href="{{ job.get_absolute_url }}">Learn more</a></li>
         {% if job.is_open %}
