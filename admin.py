@@ -19,6 +19,15 @@ class JobAdmin(admin.ModelAdmin):
 admin.site.register(Job, JobAdmin)
 
 
+class ComponentPartInline(admin.TabularInline):
+    model = ComponentPart
+
+
+class ComponentAdmin(admin.ModelAdmin):
+    inlines = [ComponentPartInline]
+admin.site.register(Component, ComponentAdmin)
+
+
 class ApplicantAdmin(admin.ModelAdmin):
     pass
 admin.site.register(Applicant, ApplicantAdmin)
