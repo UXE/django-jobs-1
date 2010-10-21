@@ -4,9 +4,12 @@
 <h1>{{ component }}</h1>
 
 <form action="" method="post">{% csrf_token %}
-{% for component_part in component.componentpart_set.all %}
-    {{ component_part.render }}
+<dl>
+{% for component_part in component_parts %}
+    <dt>{{ component_part.content_object }}</dt>
+    <dd>{{ component_part.form }}</dd>
 {% endfor %}
+</dl>
 
 <input type="submit" value="Save" />
 </form>
