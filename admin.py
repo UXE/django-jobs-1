@@ -1,8 +1,8 @@
 from django.contrib import admin
 
-from wwu_housing.jobs.models import Job, Applicant, Application, Date, \
-                                    Component, ApplicationComponentPart, \
-                                    Qualification
+from wwu_housing.jobs.models import (Applicant, Application,
+                                     ApplicationComponentPart, Component,
+                                     ComponentPart, Date, Job, Qualification)
 
 
 class ComponentInline(admin.TabularInline):
