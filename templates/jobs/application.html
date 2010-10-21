@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
 {% block title %}
-{{ job }} | Jobs
+{{ job.title }} | Jobs
 {% endblock %}
 
 {% block content %}
-<h1>Your Application for {{ job }}</h1>
+<h1>Your Application for {{ job.title }}</h1>
 
 <dl class="table">
     <dt>Step</dt>
