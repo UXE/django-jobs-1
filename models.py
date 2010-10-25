@@ -200,6 +200,7 @@ class Application(models.Model):
     end_datetime = models.DateTimeField(blank=True, null=True,
                                         help_text="The time when the applicant submitted the application.")
     component_parts = models.ManyToManyField(ComponentPart, through="ApplicationComponentPart")
+    is_submitted = models.BooleanField(blank=True)
 
     def __unicode__(self):
         return u"%s for %s" % (self.applicant, self.job)
