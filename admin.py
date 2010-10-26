@@ -24,6 +24,8 @@ class ComponentPartInline(admin.TabularInline):
 
 
 class ComponentAdmin(admin.ModelAdmin):
+    list_display = ("name", "job")
+    list_filter = ("job",)
     inlines = [ComponentPartInline]
 admin.site.register(Component, ComponentAdmin)
 
