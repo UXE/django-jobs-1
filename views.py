@@ -46,6 +46,7 @@ def application(request, job_slug):
     )
 
     context = {
+        "application": application,
         "job": job
     }
     return render_to_response(
