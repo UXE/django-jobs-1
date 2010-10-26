@@ -69,6 +69,7 @@ def component(request, job_slug, component_slug):
     component_parts = component.componentpart_set.all()
 
     all_forms_valid = True
+    has_file_field = False
     for component_part in component_parts:
         # Try to find the an existing response for this component part for this
         # application. Otherwise, create an unsaved application component part.
@@ -87,7 +88,12 @@ def component(request, job_slug, component_slug):
 
         content_type = component_part.content_type
         form_cls = registry.get(content_type.app_label).get(content_type.model)
-        form = form_cls(request.POST or None, instance=instance, prefix=component_part.id)
+        form = form_cls(request.POST or None, request.FILES or None,
+                        instance=instance, prefix=component_part.id)
+
+        if not has_file_field and form.is_multipart():
+            has_file_field = True
+
         if form.is_valid():
             # Save the result of the form's process method as the application
             # component part's content which will serve as the initial instance
@@ -107,6 +113,7 @@ def component(request, job_slug, component_slug):
     return render_to_response(
         "jobs/component.html",
         {"component": component,
-         "component_parts": component_parts},
+         "component_parts": component_parts,
+         "has_file_field": has_file_field},
         context_instance=RequestContext(request)
     )

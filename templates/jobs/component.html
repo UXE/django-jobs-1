@@ -3,11 +3,23 @@
 {% block content %}
 <h1>{{ component }}</h1>
 
-<form action="" method="post">{% csrf_token %}
+{% if has_file_field %}
+    <form action="" enctype="multipart/form-data" method="post">
+{% else %}
+    <form action="" method="post">
+{% endif %}
+
+{% csrf_token %}
 <dl>
 {% for component_part in component_parts %}
     <dt>{{ component_part.content_object }}</dt>
-    <dd>{{ component_part.form }}</dd>
+    {% if has_file_field and component_part.form.instance.file %}
+        <dd>Currently: {{ component_part.form.instance.file.name }}</dd>
+        <dd>Change:
+    {% else %}
+        <dd>
+    {% endif %}
+    {{ component_part.form }}</dd>
 {% endfor %}
 </dl>
 
