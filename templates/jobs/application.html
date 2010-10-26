@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load jobs %}
 
 {% block title %}
 {{ job.title }} | Jobs
@@ -12,7 +13,7 @@
     <dd>Status</dd>
 {% for component in job.component_set.all %}
     <dt>{{ forloop.counter }}. <a href="{{ component.get_absolute_url }}">{{ component }}</a></dt>
-    <dd>&mdash;</dd>
+    <dd>{% status application component %}</dd>
 {% endfor %}
 </dl>
 
