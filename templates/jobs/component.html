@@ -12,7 +12,7 @@
 {% csrf_token %}
 <dl>
 {% for component_part in component_parts %}
-    <dt>{{ component_part.content_object }}</dt>
+    <dt>{{ component_part.content_object|safe }}</dt>
     {% if has_file_field and component_part.form.instance.file %}
         <dd>Currently: {{ component_part.form.instance.file.name }}</dd>
         <dd>Change:
