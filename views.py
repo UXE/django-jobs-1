@@ -130,7 +130,8 @@ def component(request, job_slug, component_slug):
 
     return render_to_response(
         "jobs/component.html",
-        {"component": component,
+        {"application": application,
+         "component": component,
          "component_parts": component_parts,
          "has_file_field": has_file_field},
         context_instance=RequestContext(request)
