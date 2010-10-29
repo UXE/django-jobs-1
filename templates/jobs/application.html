@@ -20,4 +20,14 @@
 <form action="" method="post">
     <p><input type="submit" name="submit" value="Submit your application" /></p>
 </form>
+
+<div class="box">
+{% if messages %}
+<ul>
+    {% for message in messages %}
+        <li>{{ message|safe }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
 {% endblock %}
