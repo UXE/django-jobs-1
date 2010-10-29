@@ -112,7 +112,7 @@ def component(request, job_slug, component_slug):
         if not has_file_field and form.is_multipart():
             has_file_field = True
 
-        if form.is_valid():
+        if form.is_valid() and not application.is_submitted:
             # Save the result of the form's process method as the application
             # component part's content which will serve as the initial instance
             # for this form.
