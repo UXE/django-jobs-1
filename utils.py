@@ -1,5 +1,30 @@
 import random
 
+from models import ApplicationComponentPart
+
+def get_application_component_status(application, component):
+    is_complete = []
+    activity_date = None
+    for component_part in component.componentpart_set.all():
+        try:
+            application_component_part = application.applicationcomponentpart_set.get(
+                component_part=component_part
+            )
+
+            if application_component_part.content_object:
+                is_complete.append(True)
+
+                if not activity_date:
+                    activity_date = application_component_part.activity_date
+                elif application_component_part.activity_date > activity_date:
+                    activity_date = application_component_part.activity_date
+            else:
+                is_complete.append(False)
+        except ApplicationComponentPart.DoesNotExist:
+            is_complete.append(False)
+
+    return (is_complete, activity_date)
+
 
 def assign_reviewers(reviewers, applicants, rules=None,
                      get_reviewer_key=None, count_max=20):
