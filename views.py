@@ -45,6 +45,24 @@ def application(request, job_slug):
         job=job
     )
 
+    # Is the user submitting their application?
+    if request.POST and request.POST.has_key(u"submit"):
+        from utils import get_application_component_status
+        can_submit = True
+        for component in job.component_set.all():
+            if component.is_required:
+                is_complete = get_application_component_status(application, component)[0]
+                if not all(is_complete):
+                    can_submit = False
+        if can_submit:
+            application.is_submitted = True
+            application.save()
+            message = u"<strong>Congratulations!</strong> Your application was successfully submitted."
+            messages.success(request, message)
+        else:
+            message = u"<strong>Your application was not submitted.</strong> Please complete your application before submitting it."
+            messages.error(request, message)
+
     context = {
         "application": application,
         "job": job
