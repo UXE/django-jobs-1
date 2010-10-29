@@ -34,6 +34,13 @@
 {% endfor %}
 </dl>
 
-<input type="submit" value="Save" />
+<div class="box">
+{% if application.is_submitted %}
+    <p>You can no longer modify your application after it has been submitted.</p>
+{% else %}
+    <input type="submit" value="Save" />
+{% endif %}
+</div>
+
 </form>
 {% endblock %}

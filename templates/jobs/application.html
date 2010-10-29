@@ -17,9 +17,6 @@
 {% endfor %}
 </dl>
 
-<form action="" method="post">
-    <p><input type="submit" name="submit" value="Submit your application" /></p>
-</form>
 
 <div class="box">
 {% if messages %}
@@ -29,5 +26,14 @@
     {% endfor %}
 </ul>
 {% endif %}
+
+{% if application.is_submitted %}
+    <p>You have successfully submitted your application.</p>
+{% else %}
+    <form action="" method="post">{% csrf_token %}
+        <p><input type="submit" name="submit" value="Submit your application" /></p>
+    </form>
+{% endif %}
+</div>
 
 {% endblock %}
