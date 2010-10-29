@@ -1,4 +1,15 @@
-{% extends "base.html" %}
+{% extends "with_navigation.html" %}
+
+{% block navigation %}
+    <ul class="level1">
+        <li><a href="{{ component.job.get_application_url }}">{{ component.job.title }}</a></li>
+    </ul>
+    <ul class="level2">
+    {% for nav_component in component.job.component_set.all %}
+        <li><a href="{{ nav_component.get_absolute_url }}">{{ nav_component }}</a></li>
+    {% endfor %}
+    </ul>
+{% endblock %}
 
 {% block content %}
 <h1>{{ component }}</h1>
