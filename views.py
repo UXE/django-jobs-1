@@ -1,3 +1,5 @@
+import datetime
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
@@ -9,6 +11,7 @@ from django.core.urlresolvers import reverse
 from wwu_housing.wwu_jobs.forms import *
 
 from models import Applicant, Application, ApplicationComponentPart, Component, Job
+from utils import get_application_component_status
 
 
 def job(request, job_slug):
@@ -47,7 +50,6 @@ def application(request, job_slug):
 
     # Is the user submitting their application?
     if request.POST and request.POST.has_key(u"submit"):
-        from utils import get_application_component_status
         can_submit = True
         for component in job.component_set.all():
             if component.is_required:
@@ -56,6 +58,7 @@ def application(request, job_slug):
                     can_submit = False
         if can_submit:
             application.is_submitted = True
+            application.end_datetime = datetime.datetime.now()
             application.save()
             message = u"<strong>Congratulations!</strong> Your application was successfully submitted."
             messages.success(request, message)
