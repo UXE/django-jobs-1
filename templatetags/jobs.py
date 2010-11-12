@@ -13,7 +13,7 @@ def status(application, component):
     """
     is_complete, activity_date = get_application_component_status(application, component)
 
-    if all(is_complete):
+    if is_complete and all(is_complete):
         return "<strong>Completed</strong> on %s" % activity_date.strftime("%A, %B %e at %I:%M %p")
     elif True in is_complete:
         return "<strong>Started</strong>, last modified on %s" % activity_date.strftime("%A, %B %e at %I:%M %p")
