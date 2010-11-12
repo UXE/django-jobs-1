@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ user }} Admin for {{ job.title }}</h1>
+
+{% if has_file_field %}
+    <form action="" enctype="multipart/form-data" method="post">
+{% else %}
+    <form action="" method="post">
+{% endif %}
+
+{% for component in job.component_set.all %}
+    <h1>{{ component }}</h1>
+
+    <dl>
+    {% for part in component.componentpart_set.all %}
+        <dt>{{ part.content_object|safe }}</dt>
+    {% endfor %}
+    </dl>
+{% endfor %}
+
+{% endblock %}

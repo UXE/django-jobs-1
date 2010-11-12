@@ -7,6 +7,7 @@ from django.core.urlresolvers import reverse
 
 # importing * so it can capture the registry code
 from wwu_housing.wwu_jobs.forms import *
+from wwu_housing.data import Person
 
 from models import Applicant, Application, ApplicationComponentPart, Component, Job
 
@@ -16,6 +17,56 @@ def job(request, job_slug):
     context = {"job": job}
     return render_to_response("jobs/job_detail.html", context, context_instance=RequestContext(request))
 
+
+@login_required
+def admin(request, job_slug):
+    job = get_object_or_404(Job.objects.posted(), slug=job_slug)
+    apps = []
+    addresses = ["Birnam", "Ridgeway", "Buchanan", "Edens", "Fairhave", "Higginson", "Highland", "Mathes", "Nash"]
+    for applicant in job.application_set.all():
+        person = Person.query.get(applicant.applicant.user.username)
+        app = {}
+        app['username'] = person.username
+        app['first_name'] = person.first_name
+        app['last_name'] = person.last_name
+        app['gpa'] = person.gpa
+        app['is_submitted'] = applicant.is_submitted
+        addy = ""
+        for address in person.addresses:
+            if address.street_line_1.partition(' ')[0] in addresses:
+                addy = address.street_line_1
+
+        if addy:
+            app["address"] = addy
+        else:
+            app["address"] = "Off campus"
+
+        apps.append(app)
+
+    apps.sort(key=lambda apps: apps['is_submitted'])
+    statuses = ["In Progess", "Submitted", "Reviewing", "Interview Offered", "Interview Scheduled", "Denied", "Offered"]
+    status = ["In Progess", "Submitted", "Reviewing", "Interview Offered", "Interview Scheduled", "Denied", "Offered"]
+    colors = {"Submitted": "#FF9999", 
+              "Reviewing": "#FFFF80", 
+              "Interview Offered": "#99D699", 
+              "Interview Scheduled": "#99FFFF", 
+              "Denied": "white", 
+              "Offered": "white"}
+    context = {"apps": apps,
+               "colors": colors, 
+               "status": status, 
+               "statuses": statuses}
+    return render_to_response("jobs/admin.html", context, context_instance=RequestContext(request))
+
+@login_required
+def applicant(request, job_slug, applicant_slug):
+    job = get_object_or_404(Job.objects.posted(), slug=job_slug)
+    applicant = Applicant.objects.get(user=request.user)
+    application = Application.objects.get(applicant=applicant, job=job)
+    context = {"applicant": applicant,
+               "job": job,
+               "application": application}
+    return render_to_response("jobs/applicant.html", context, context_instance=RequestContext(request))
 
 @login_required
 def application(request, job_slug):

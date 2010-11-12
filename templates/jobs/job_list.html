@@ -10,6 +10,11 @@
         {% if job.is_open %}
             <li><a href="{{ job.get_application_url }}">Apply Now</a></li>
         {% endif %}
+        {% for admin in job.administrators.all %}
+            {% if request.user.username == admin.username %}
+                <li><a href="{{ job.get_absolute_url }}admin/">Admin</a></li>
+            {% endif %}
+        {% endfor %}
     </ul>
     <dl class="table">
     {% with "l, F j, Y \a\t f a" as date_format %}
