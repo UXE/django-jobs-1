@@ -23,7 +23,7 @@ def job(request, job_slug):
 
 @login_required
 def admin(request, job_slug):
-    job = get_object_or_404(Job.objects.posted(), slug=job_slug)
+    job = get_object_or_404(Job.objects, slug=job_slug)
     apps = []
     addresses = ["Birnam", "Ridgeway", "Buchanan", "Edens", "Fairhave", "Higginson", "Highland", "Mathes", "Nash"]
     for applicant in job.application_set.all():
@@ -63,7 +63,7 @@ def admin(request, job_slug):
 
 @login_required
 def applicant(request, job_slug, applicant_slug):
-    job = get_object_or_404(Job.objects.posted(), slug=job_slug)
+    job = get_object_or_404(Job.objects.all(), slug=job_slug)
     applicant = Applicant.objects.get(user=request.user)
     application = Application.objects.get(applicant=applicant, job=job)
     context = {"applicant": applicant,
