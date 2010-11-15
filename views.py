@@ -2,6 +2,7 @@ import datetime
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db import connection, transaction
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
@@ -19,6 +20,15 @@ def job(request, job_slug):
     job = get_object_or_404(Job.objects.posted(), slug=job_slug)
     context = {"job": job}
     return render_to_response("jobs/job_detail.html", context, context_instance=RequestContext(request))
+
+def has_conduct(person):
+    cursor = connection.cursor()
+    cursor.execute('SELECT id FROM conduct.students WHERE stunum = %s', [person.student_id])
+    id = cursor.fetchone()
+    if id:
+        return id[0]
+    else:
+        return False
 
 
 @login_required
@@ -43,7 +53,7 @@ def admin(request, job_slug):
             app["address"] = addy
         else:
             app["address"] = "Off campus"
-
+        app["conduct_id"] = has_conduct(person)
         apps.append(app)
 
     apps.sort(key=lambda apps: apps['is_submitted'])
