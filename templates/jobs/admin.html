@@ -20,7 +20,7 @@ desk attendat app at line 495 might be a good starting point...
     <th>Applicant</th>
     <th>Address</th>
     <th>GPA</th>
-    <th>Conduct Link</th>
+    <th>In Conduct</th>
     <th>Status</th>
     <!--<th>Update</th>-->
     </tr>
@@ -30,7 +30,11 @@ desk attendat app at line 495 might be a good starting point...
         <td><a href="{{ person.username }}">{{ person.first_name }} {{ person.last_name }}</a></td>
         <td>{{ person.address }}</td>
         <td>{{ person.gpa }}</td>
-        <td></td>
+        <td>
+        {% if person.conduct_id %}
+            <a href="/conduct/updateStu.php?id={{ person.conduct_id }}">Link</a>
+        {% endif %}
+        </td>
         <td>
             <select name="status">
             {% for stat in statuses %}
