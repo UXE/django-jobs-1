@@ -33,7 +33,7 @@ def has_conduct(person):
 
 @login_required
 def admin(request, job_slug):
-    job = get_object_or_404(Job.objects, slug=job_slug)
+    job = get_object_or_404(Job.objects.all(), slug=job_slug)
     apps = []
     addresses = ["Birnam", "Ridgeway", "Buchanan", "Edens", "Fairhave", "Higginson", "Highland", "Mathes", "Nash"]
     for applicant in job.application_set.all():
