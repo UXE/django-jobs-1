@@ -1,4 +1,5 @@
 import datetime
+import os
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -7,12 +8,14 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
+from django.conf import settings
 
 # importing * so it can capture the registry code
 from wwu_housing.wwu_jobs.forms import *
+
 from wwu_housing.data import Person
 
-from models import Applicant, Application, ApplicationComponentPart, Component, Job
+from models import Applicant, Application, ApplicationComponentPart, Component, Job, User
 from utils import get_application_component_status
 
 
@@ -74,9 +77,27 @@ def admin(request, job_slug):
 @login_required
 def applicant(request, job_slug, applicant_slug):
     job = get_object_or_404(Job.objects.all(), slug=job_slug)
-    applicant = Applicant.objects.get(user=request.user)
+    user = User.objects.get(username=applicant_slug)
+    applicant = Applicant.objects.get(user=user)
     application = Application.objects.get(applicant=applicant, job=job)
+    components = []
+    for component_part in application.component_parts.all():
+        responses = {}
+        response = application.applicationcomponentpart_set.get(application=application, component_part=component_part)
+        if response.content_type.name == "file response":
+            responses["response"] = response.content_object.file.name
+            responses["type"] = "file"
+            responses["file_path"] = os.path.join(settings.FILE_UPLOAD_ROOT)
+        else:
+            responses["response"] = response.content_object.response
+            responses["type"] = "normal"
+        responses["component_part"] = component_part
+        responses["component"] = response.component_part.component.name
+        components.append(responses)
+
+    components.sort(key= lambda responses: responses["component"])
     context = {"applicant": applicant,
+               "components": components,
                "job": job,
                "application": application}
     return render_to_response("jobs/applicant.html", context, context_instance=RequestContext(request))
