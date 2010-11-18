@@ -84,10 +84,14 @@ def applicant(request, job_slug, applicant_slug):
     for component_part in application.component_parts.all():
         responses = {}
         response = application.applicationcomponentpart_set.get(application=application, component_part=component_part)
-        if response.content_type.name == "file response":
+        if not response.content_type:
+            responses["type"] = "none"
+        elif response.content_type.name == "file response":
             responses["response"] = response.content_object.file.name
             responses["type"] = "file"
-            responses["file_path"] = os.path.join(settings.FILE_UPLOAD_ROOT)
+        elif response.content_type.name == "work history response":
+            responses["response"] = response.content_object
+            responses["type"] = "work_history"
         else:
             responses["response"] = response.content_object.response
             responses["type"] = "normal"
@@ -97,9 +101,7 @@ def applicant(request, job_slug, applicant_slug):
 
     components.sort(key= lambda responses: responses["component"])
     context = {"applicant": applicant,
-               "components": components,
-               "job": job,
-               "application": application}
+               "components": components}
     return render_to_response("jobs/applicant.html", context, context_instance=RequestContext(request))
 
 @login_required

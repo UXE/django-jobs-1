@@ -8,11 +8,17 @@
         {% ifchanged %}
             <dt><h1>{{ responses.component }}</h1></dt>
         {% endifchanged %}
-        <dd><b>{{ responses.component_part.content_object|safe }}:</b></dd>
-        {% if responses.type == "file" %}
-            <dd><a href="/apps/files/{{ responses.response }}">{{ responses.response }}</a></dd>
-        {% else %}
-            <dd>{{ responses.response }}</dd>
+        {% if not response.type == "none" %}
+            <dd><b>{{ responses.component_part.content_object|safe }}:</b></dd>
+            {% if responses.type == "file" %}
+                <dd><a href="/apps/files/{{ responses.response }}">{{ responses.response }}</a></dd>
+            {% else %}
+                {% if response.type == "work_history" %}
+                    <dd>{{ responses.response }}</dd>
+                {% else %}
+                    <dd>{{ responses.response }}</dd>
+                {% endif %}
+            {% endif %}
         {% endif %}
     </dl>
 {% endfor %}
