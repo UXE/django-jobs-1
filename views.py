@@ -26,7 +26,7 @@ def job(request, job_slug):
 
 def has_conduct(person):
     cursor = connection.cursor()
-    cursor.execute('SELECT id FROM conduct.students WHERE stunum = %s', [person.student_id])
+    cursor.execute('SELECT stunum FROM conduct.students WHERE stunum = %s', [person.student_id])
     id = cursor.fetchone()
     if id:
         return id[0]
