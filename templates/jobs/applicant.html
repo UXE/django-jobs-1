@@ -8,13 +8,18 @@
         {% ifchanged %}
             <dt><h1>{{ responses.component }}</h1></dt>
         {% endifchanged %}
-        {% if not response.type == "none" %}
-            <dd><b>{{ responses.component_part.content_object|safe }}:</b></dd>
+        {% if not responses.type == "none" %}
+            <dd><b>{{ responses.component_part.content_object|safe }}</b></dd>
             {% if responses.type == "file" %}
                 <dd><a href="/apps/files/{{ responses.response }}">{{ responses.response }}</a></dd>
             {% else %}
-                {% if response.type == "work_history" %}
-                    <dd>{{ responses.response }}</dd>
+                {% if responses.type == "work_history" %}
+                    <dd><b>Employer:</b> {{ responses.response.employer }}</dd>
+                    <dd><b>Position Title:</b> {{ responses.response.position_title }}</dd>
+                    <dd><b>Start Date:</b> {{ responses.response.start_date }}</dd>
+                    <dd><b>End Date:</b> {{ responses.response.end_date }}</dd>
+                    <dd><b>Hours Worked:</b> {{ responses.response.hours_worked }}</dd>
+                    <dd><b>Position Summary:</b> {{ responses.response.position_summary }}</dd>
                 {% else %}
                     <dd>{{ responses.response }}</dd>
                 {% endif %}
