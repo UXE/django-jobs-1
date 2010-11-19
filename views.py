@@ -62,11 +62,11 @@ def admin(request, job_slug):
     apps.sort(key=lambda apps: apps['is_submitted'])
     statuses = ["In Progess", "Submitted", "Reviewing", "Interview Offered", "Interview Scheduled", "Denied", "Offered"]
     status = ["In Progess", "Submitted", "Reviewing", "Interview Offered", "Interview Scheduled", "Denied", "Offered"]
-    colors = {"Submitted": "#FF9999", 
-              "Reviewing": "#FFFF80", 
-              "Interview Offered": "#99D699", 
-              "Interview Scheduled": "#99FFFF", 
-              "Denied": "white", 
+    colors = {"Submitted": "#FF9999",
+              "Reviewing": "#FFFF80",
+              "Interview Offered": "#99D699",
+              "Interview Scheduled": "#99FFFF",
+              "Denied": "white",
               "Offered": "white"}
     context = {"apps": apps,
                "colors": colors, 
