@@ -269,7 +269,7 @@ class ApplicationStatus(models.Model):
     """
     Statuses for applications.
     """
-    status = models.CharField(choices=STATUSES)
+    status = models.CharField(max_length=255)
 
 
 class AdminApplication(models.Model):
