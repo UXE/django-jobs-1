@@ -263,3 +263,18 @@ class Qualification(models.Model):
                                      help_text="""The name of a function in the
                                      job's requirements.py which returns true or
                                      false when given an Applicant object.""")
+
+
+class ApplicationStatus(models.Model):
+    """
+    Statuses for applications.
+    """
+    status = models.CharField(choices=STATUSES)
+
+
+class AdminApplication(models.Model):
+    """
+    Admin backend
+    """
+    status = models.ForeignKey(ApplicationStatus)
+    application = models.ForeignKey(Application)
