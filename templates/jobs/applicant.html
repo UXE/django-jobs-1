@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>{{ applicant }}: Admin for {{ job.title }}</h1>
+<h1>{{ job_title }} Admin for {{ applicant_name }}</h1>
 
 {% for responses in components %}
     <dl>

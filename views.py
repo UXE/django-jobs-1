@@ -100,8 +100,10 @@ def applicant(request, job_slug, applicant_slug):
         components.append(responses)
 
     components.sort(key= lambda responses: responses["component"])
-    context = {"applicant": applicant,
-               "components": components}
+    applicant_name = "%s %s" % (user.first_name, user.last_name)
+    context = {"applicant_name": applicant_name,
+               "components": components,
+               "job_title": job.title}
     return render_to_response("jobs/applicant.html", context, context_instance=RequestContext(request))
 
 @login_required
