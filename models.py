@@ -271,6 +271,9 @@ class ApplicationStatus(models.Model):
     """
     status = models.CharField(max_length=255)
 
+    def __unicode__(self):
+        return self.status
+
 
 class AdminApplication(models.Model):
     """
