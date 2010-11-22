@@ -12,7 +12,7 @@
 {% comment %}
 TODO: Add CSV support.
 
-desk attendat app at line 495 might be a good starting point...
+desk attendant app at line 495 might be a good starting point...
 {% endcomment %}
 
 <table>
@@ -42,18 +42,10 @@ desk attendat app at line 495 might be a good starting point...
         <td>
             <select name="status">
             {% for stat in statuses %}
-                {% if person.is_submitted %}
-                    {% if stat == "Submitted" %}
-                        <option selected="True">{{ stat }}</option>
-                    {% else %}
-                        <option>{{ stat }}</option>
-                    {% endif %}
+                {% if stat.status == person.status %}
+                    <option selected="True">{{ person.status }}</option>
                 {% else %}
-                    {% if stat == "In Progess" %}
-                        <option selected="True">{{ stat }}</option>
-                    {% else %}
-                        <option>{{ stat }}</option>
-                    {% endif %}
+                    <option>{{ stat }}</option>
                 {% endif %}
             {% endfor %}
             </select>

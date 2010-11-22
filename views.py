@@ -15,7 +15,7 @@ from wwu_housing.wwu_jobs.forms import *
 
 from wwu_housing.data import Person
 
-from models import Applicant, Application, ApplicationComponentPart, Component, Job, User
+from models import AdminApplication, Applicant, Application, ApplicationComponentPart, ApplicationStatus, Component, Job, User
 from utils import get_application_component_status
 
 
@@ -33,14 +33,16 @@ def has_conduct(person):
     else:
         return False
 
-
 @login_required
 def admin(request, job_slug):
     job = get_object_or_404(Job.objects.all(), slug=job_slug)
     apps = []
-    addresses = ["Birnam", "Ridgeway", "Buchanan", "Edens", "Fairhave", "Higginson", "Highland", "Mathes", "Nash"]
+    addresses = ["Birnam", "Ridgeway", "Buchanan", "Edens", "Fairhaven", "Higginson", "Highland", "Mathes", "Nash"]
     for applicant in job.application_set.all():
         person = Person.query.get(applicant.applicant.user.username)
+        user = User.objects.get(username=person.username)
+        applicant_full = Applicant.objects.get(user=user)
+        application = Application.objects.get(applicant=applicant_full, job=job)
         app = {}
         app['username'] = person.username
         app['first_name'] = person.first_name
@@ -51,17 +53,25 @@ def admin(request, job_slug):
         for address in person.addresses:
             if address.street_line_1.partition(' ')[0] in addresses:
                 addy = address.street_line_1
-
         if addy:
             app["address"] = addy
         else:
             app["address"] = "Off campus"
+
         app["conduct_id"] = has_conduct(person)
+
+        try:
+            status = AdminApplication.objects.get(application=application)
+            app['status'] = status.status.status
+        except AdminApplication.DoesNotExist:
+            if app['is_submitted']:
+                app['status'] = "Submitted"
+            else:
+                app['status'] = "In Progress"
         apps.append(app)
 
     apps.sort(key=lambda apps: apps['is_submitted'])
-    statuses = ["In Progess", "Submitted", "Reviewing", "Interview Offered", "Interview Scheduled", "Denied", "Offered"]
-    status = ["In Progess", "Submitted", "Reviewing", "Interview Offered", "Interview Scheduled", "Denied", "Offered"]
+    statuses = ApplicationStatus.objects.all()
     colors = {"Submitted": "#FF9999",
               "Reviewing": "#FFFF80",
               "Interview Offered": "#99D699",
@@ -69,8 +79,7 @@ def admin(request, job_slug):
               "Denied": "white",
               "Offered": "white"}
     context = {"apps": apps,
-               "colors": colors, 
-               "status": status, 
+               "colors": colors,
                "statuses": statuses}
     return render_to_response("jobs/admin.html", context, context_instance=RequestContext(request))
 
