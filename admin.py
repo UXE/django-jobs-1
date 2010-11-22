@@ -1,7 +1,8 @@
 from django.contrib import admin
 
-from wwu_housing.jobs.models import (Applicant, Application,
-                                     ApplicationComponentPart, Component,
+from wwu_housing.jobs.models import (AdminApplication, Applicant,
+                                     Application, ApplicationComponentPart,
+                                     ApplicationStatus, Component,
                                      ComponentPart, Date, Job, Qualification)
 
 
@@ -17,6 +18,16 @@ class JobAdmin(admin.ModelAdmin):
     save_as = True
     save_on_top = True
 admin.site.register(Job, JobAdmin)
+
+
+class AdminApplicationAdmin(admin.ModelAdmin):
+    list_display = ("status", "application")
+admin.site.register(AdminApplication, AdminApplicationAdmin)
+
+
+class ApplicationStatusAdmin(admin.ModelAdmin):
+    list_display = ("status",)
+admin.site.register(ApplicationStatus, ApplicationStatusAdmin)
 
 
 class ComponentPartInline(admin.TabularInline):
