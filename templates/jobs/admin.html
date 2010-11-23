@@ -50,10 +50,10 @@ desk attendant app at line 495 might be a good starting point...
             {% endfor %}
             </select>
         </td>
-        <!--<td><input type="button" value="Submit"></td>-->
         </form>
     </tr>
 {% endfor %}
+{% csrf_token %}
 </table>
 
 <input type="submit" value="Save" />
