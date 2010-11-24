@@ -269,6 +269,7 @@ class ApplicationStatus(models.Model):
     """
     Statuses for applications.
     """
+    ###TODO### Create weight field for proper sorting
     status = models.CharField(max_length=255)
 
     def __unicode__(self):
