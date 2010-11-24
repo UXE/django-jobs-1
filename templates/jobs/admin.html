@@ -3,17 +3,21 @@
 {% block content %}
 <h1>{{ job.title }} Admin</h1>
 
-{% if has_file_field %}
-    <form action="" enctype="multipart/form-data" method="post">
-{% else %}
-    <form action="" method="post">
-{% endif %}
+<form action="" method="post">
 
 {% comment %}
 TODO: Add CSV support.
 
 desk attendant app at line 495 might be a good starting point...
 {% endcomment %}
+
+{% if messages %}
+    <div class="box">
+    {% for message in messages %}
+        <p>{{ message }}</p>
+    {% endfor %}
+    </div>
+{% endif %}
 
 <table>
     <tr style="background-color: white; ">
@@ -26,7 +30,6 @@ desk attendant app at line 495 might be a good starting point...
     </tr>
 {% for person in apps %}
     <tr style='background-color: {{ colors.status }}; '>
-        <form>
         <td><a href="{{ person.username }}">{{ person.first_name }} {{ person.last_name }}</a></td>
         <td>{{ person.address }}</td>
         <td>
@@ -40,17 +43,8 @@ desk attendant app at line 495 might be a good starting point...
         {% endif %}
         </td>
         <td>
-            <select name="status">
-            {% for stat in statuses %}
-                {% if stat.status == person.status %}
-                    <option selected="True">{{ person.status }}</option>
-                {% else %}
-                    <option>{{ stat }}</option>
-                {% endif %}
-            {% endfor %}
-            </select>
+            {{ person.form.as_p }}
         </td>
-        </form>
     </tr>
 {% endfor %}
 {% csrf_token %}

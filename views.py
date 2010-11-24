@@ -15,6 +15,7 @@ from wwu_housing.wwu_jobs.forms import *
 
 from wwu_housing.data import Person
 
+from forms import AdminApplicationForm
 from models import AdminApplication, Applicant, Application, ApplicationComponentPart, ApplicationStatus, Component, Job, User
 from utils import get_application_component_status
 
@@ -35,9 +36,11 @@ def has_conduct(person):
 
 @login_required
 def admin(request, job_slug):
+    post_data = request.POST or None
     job = get_object_or_404(Job.objects.all(), slug=job_slug)
     apps = []
     addresses = ["Birnam", "Ridgeway", "Buchanan", "Edens", "Fairhaven", "Higginson", "Highland", "Mathes", "Nash"]
+    forms = []
     for applicant in job.application_set.all():
         person = Person.query.get(applicant.applicant.user.username)
         user = User.objects.get(username=person.username)
@@ -59,19 +62,28 @@ def admin(request, job_slug):
             app["address"] = "Off campus"
 
         app["conduct_id"] = has_conduct(person)
-
         try:
-            status = AdminApplication.objects.get(application=application)
-            app['status'] = status.status.status
+            instance = AdminApplication.objects.get(application=application)
         except AdminApplication.DoesNotExist:
             if app['is_submitted']:
-                app['status'] = "Submitted"
+                status = ApplicationStatus.objects.get(status="Submitted")
             else:
-                app['status'] = "In Progress"
+                status = ApplicationStatus.objects.get(status="In Progress")
+            instance = AdminApplication(status=status, application=application)
+        prefix = "%s" % (application.id)
+        form = AdminApplicationForm(post_data,
+                                     prefix=prefix,
+                                     instance=instance)
+        app["form"] = form
+        if form.is_valid():
+            form.save()
         apps.append(app)
-
-    apps.sort(key=lambda apps: apps['is_submitted'])
-    statuses = ApplicationStatus.objects.all()
+        forms.append(form)
+    if all((form.is_valid() for form in forms)):
+        messages.success(request, "Changes saved successfully")
+        return HttpResponseRedirect(reverse("jobs_job_admin",
+                                            args=[job_slug]))
+    apps.sort(key=lambda apps: apps["form"].instance.status.id)
     colors = {"Submitted": "#FF9999",
               "Reviewing": "#FFFF80",
               "Interview Offered": "#99D699",
@@ -79,8 +91,7 @@ def admin(request, job_slug):
               "Denied": "white",
               "Offered": "white"}
     context = {"apps": apps,
-               "colors": colors,
-               "statuses": statuses}
+               "colors": colors}
     return render_to_response("jobs/admin.html", context, context_instance=RequestContext(request))
 
 @login_required
