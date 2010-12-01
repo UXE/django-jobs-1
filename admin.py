@@ -2,8 +2,9 @@ from django.contrib import admin
 
 from wwu_housing.jobs.models import (AdminApplication, Applicant,
                                      Application, ApplicationComponentPart,
-                                     ApplicationStatus, Component,
-                                     ComponentPart, Date, Job, Qualification)
+                                     ApplicationEmail, ApplicationStatus,
+                                     Component, ComponentPart, Date, Job,
+                                     Qualification)
 
 
 class ComponentInline(admin.TabularInline):
@@ -24,9 +25,12 @@ class AdminApplicationAdmin(admin.ModelAdmin):
     list_display = ("status", "application")
 admin.site.register(AdminApplication, AdminApplicationAdmin)
 
+class ApplicationEmailAdmin(admin.ModelAdmin):
+    list_display = ("name", "job")
+admin.site.register(ApplicationEmail, ApplicationEmailAdmin)
 
 class ApplicationStatusAdmin(admin.ModelAdmin):
-    list_display = ("status",)
+    list_display = ("status", "job")
 admin.site.register(ApplicationStatus, ApplicationStatusAdmin)
 
 

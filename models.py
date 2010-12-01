@@ -265,20 +265,32 @@ class Qualification(models.Model):
                                      false when given an Applicant object.""")
 
 
+class ApplicationEmail(models.Model):
+    """
+    Emails to be sent to potential employees.
+    """
+    name = models.CharField(max_length=255)
+    content = models.TextField()
+    job = models.ForeignKey(Job)
+
+
 class ApplicationStatus(models.Model):
     """
     Statuses for applications.
     """
-    ###TODO### Create weight field for proper sorting
+    ###TODO### Create weight field for proper sorting, rename status as name?
     status = models.CharField(max_length=255)
+    weight = models.PositiveIntegerField(blank=True, null=True)
+    job = models.ForeignKey(Job)
 
     def __unicode__(self):
         return self.status
 
 
+###TODO### Rename this AdminStatus
 class AdminApplication(models.Model):
     """
-    Admin backend
+    Admin backend for storing application and its status.
     """
     status = models.ForeignKey(ApplicationStatus)
     application = models.ForeignKey(Application)
