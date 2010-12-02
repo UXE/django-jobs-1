@@ -1,12 +1,15 @@
 import datetime
 import os
 
+from string import Template
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import connection, transaction
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
+from django.core.mail import EmailMessage, mail_admins
 from django.core.urlresolvers import reverse
 from django.conf import settings
 
@@ -16,7 +19,8 @@ from wwu_housing.wwu_jobs.forms import *
 from wwu_housing.data import Person
 
 from forms import AdminApplicationForm
-from models import AdminApplication, Applicant, Application, ApplicationComponentPart, ApplicationStatus, Component, Job, User
+from models import AdminApplication, Applicant, Application, ApplicationComponentPart, ApplicationEmail, ApplicationStatus, Component, Job, User
+
 from utils import get_application_component_status
 
 
@@ -77,9 +81,27 @@ def admin(request, job_slug):
         app["form"] = form
         if form.is_valid():
             form.save()
+            if form.initial["status"] != form.cleaned_data["status"].id:
+                try:
+                    application_email = ApplicationEmail.objects.get(status=form.cleaned_data["status"], job=job)
+                except ApplicationEmail.DoesNotExist:
+                    application_email = None
+                if application_email and person.email:
+                    subject = application_email.subject
+                    from_email = application_email.sender
+                    to_email = person.email
+                    message_content = Template(application_email.content)
+                    message = message_content.substitute(name=person.first_name)
+                    email = EmailMessage(subject, message, from_email, to_email)
+                    email.send()
+                elif application_email:
+                    subject = "%s %s for position %s has no email" & (person.first_name, person.last_name, job)
+                    message = "%s %s (%s) does not have an email address. They applied for %s and were supposed to receive %s email." % (person.first_name, person.last_name, person.student_id, job, application_email.subject)
+                    mail_admins(subject, message)
+
         apps.append(app)
         forms.append(form)
-    if all((form.is_valid() for form in forms)):
+    if all(form.is_valid() for form in forms):
         messages.success(request, "Changes saved successfully")
         return HttpResponseRedirect(reverse("jobs_job_admin",
                                             args=[job_slug]))
