@@ -10,7 +10,6 @@ from django.template.defaultfilters import slugify
 
 from tagging.models import Tag
 
-
 from wwu_housing.library.models import Address
 
 
@@ -265,23 +264,12 @@ class Qualification(models.Model):
                                      false when given an Applicant object.""")
 
 
-class ApplicationEmail(models.Model):
-    """
-    Emails to be sent to potential employees.
-    """
-    name = models.CharField(max_length=255)
-    content = models.TextField()
-    job = models.ForeignKey(Job)
-
-
 class ApplicationStatus(models.Model):
     """
     Statuses for applications.
     """
-    ###TODO### Create weight field for proper sorting, rename status as name?
     status = models.CharField(max_length=255)
     weight = models.PositiveIntegerField(blank=True, null=True)
-    job = models.ForeignKey(Job)
 
     def __unicode__(self):
         return self.status
@@ -294,3 +282,15 @@ class AdminApplication(models.Model):
     """
     status = models.ForeignKey(ApplicationStatus)
     application = models.ForeignKey(Application)
+
+
+class ApplicationEmail(models.Model):
+    """
+    Emails to be sent to potential employees.
+    """
+    name = models.CharField(max_length=255)
+    content = models.TextField()
+    job = models.ForeignKey(Job)
+    sender = models.CharField(max_length=255)
+    status = models.ForeignKey(ApplicationStatus)
+    subject = models.CharField(max_length=255)

@@ -26,11 +26,11 @@ class AdminApplicationAdmin(admin.ModelAdmin):
 admin.site.register(AdminApplication, AdminApplicationAdmin)
 
 class ApplicationEmailAdmin(admin.ModelAdmin):
-    list_display = ("name", "job")
+    list_display = ("name", "status", "job")
 admin.site.register(ApplicationEmail, ApplicationEmailAdmin)
 
 class ApplicationStatusAdmin(admin.ModelAdmin):
-    list_display = ("status", "job")
+    list_display = ("status",)
 admin.site.register(ApplicationStatus, ApplicationStatusAdmin)
 
 
