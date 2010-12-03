@@ -86,18 +86,19 @@ def admin(request, job_slug):
                     application_email = ApplicationEmail.objects.get(status=form.cleaned_data["status"], job=job)
                 except ApplicationEmail.DoesNotExist:
                     application_email = None
-                if application_email and person.email:
-                    subject = application_email.subject
-                    from_email = application_email.sender
-                    to_email = person.email
-                    message_content = Template(application_email.content)
-                    message = message_content.substitute(name=person.first_name)
-                    email = EmailMessage(subject, message, from_email, to_email)
-                    email.send()
-                elif application_email:
-                    subject = "%s %s for position %s has no email" & (person.first_name, person.last_name, job)
-                    message = "%s %s (%s) does not have an email address. They applied for %s and were supposed to receive %s email." % (person.first_name, person.last_name, person.student_id, job, application_email.subject)
-                    mail_admins(subject, message)
+                if not settings.DEBUG:
+                    if application_email and person.email:
+                        subject = application_email.subject
+                        from_email = application_email.sender
+                        to_email = (person.email,)
+                        message_content = Template(application_email.content)
+                        message = message_content.substitute(name=person.first_name)
+                        email = EmailMessage(subject, message, from_email, to_email)
+                        email.send()
+                    elif application_email:
+                        subject = "%s %s for position %s has no email" & (person.first_name, person.last_name, job)
+                        message = "%s %s (%s) does not have an email address. They applied for %s and were supposed to receive %s email." % (person.first_name, person.last_name, person.student_id, job, application_email.subject)
+                        mail_admins(subject, message)
 
         apps.append(app)
         forms.append(form)
