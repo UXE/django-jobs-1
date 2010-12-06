@@ -25,7 +25,7 @@ from utils import get_application_component_status
 
 
 def job(request, job_slug):
-    job = get_object_or_404(Job.objects.posted(), slug=job_slug)
+    job = get_object_or_404(Job.objects.all(), slug=job_slug)
     context = {"job": job}
     return render_to_response("jobs/job_detail.html", context, context_instance=RequestContext(request))
 
