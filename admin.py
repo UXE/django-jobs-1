@@ -12,7 +12,7 @@ class ComponentInline(admin.TabularInline):
 
 
 class JobAdmin(admin.ModelAdmin):
-    list_display = ("title", "open_datetime", "close_datetime", "description",
+    list_display = ("title", "open_datetime", "close_datetime",
                     "post_datetime")
     list_filter = ("open_datetime", "close_datetime")
     inlines = [ComponentInline]
