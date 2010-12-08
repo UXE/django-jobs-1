@@ -140,6 +140,9 @@ def applicant(request, job_slug, applicant_slug):
         elif response.content_type.name == "work history response":
             responses["response"] = response.content_object
             responses["type"] = "work_history"
+        elif response.content_type.name == "placement preference response":
+            responses["response"] = response.content_object
+            responses["type"] = "placement_preference"
         else:
             responses["response"] = response.content_object.response
             responses["type"] = "normal"
