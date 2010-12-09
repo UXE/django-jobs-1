@@ -26,7 +26,12 @@ from utils import get_application_component_status
 
 def job(request, job_slug):
     job = get_object_or_404(Job.objects.all(), slug=job_slug)
-    context = {"job": job}
+    if job.close_datetime > datetime.datetime.now():
+        job_open = True
+    else:
+        job_open = False
+    context = {"job": job,
+               "job_open": job_open}
     return render_to_response("jobs/job_detail.html", context, context_instance=RequestContext(request))
 
 def has_conduct(person):
@@ -139,6 +144,9 @@ def applicant(request, job_slug, applicant_slug):
         elif response.content_type.name == "work history response":
             responses["response"] = response.content_object
             responses["type"] = "work_history"
+        elif response.content_type.name == "placement preference response":
+            responses["response"] = response.content_object
+            responses["type"] = "placement_preference"
         else:
             responses["response"] = response.content_object.response
             responses["type"] = "normal"
