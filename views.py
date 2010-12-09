@@ -9,7 +9,7 @@ from django.contrib.comments.models import Comment
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 from django.db import connection, transaction
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.core.mail import EmailMessage, mail_admins
@@ -50,6 +50,8 @@ def has_conduct(person):
 def admin(request, job_slug):
     post_data = request.POST or None
     job = get_object_or_404(Job.objects.all(), slug=job_slug)
+    if request.user not in job.administrators.all():
+        raise Http404
     apps = []
     addresses = ["Birnam", "Ridgeway", "Buchanan", "Edens", "Fairhaven", "Higginson", "Highland", "Mathes", "Nash"]
     forms = []
@@ -137,6 +139,8 @@ def admin(request, job_slug):
 @login_required
 def applicant(request, job_slug, applicant_slug):
     job = get_object_or_404(Job.objects.all(), slug=job_slug)
+    if request.user not in job.administrators.all():
+        raise Http404
     user = User.objects.get(username=applicant_slug)
     applicant = Applicant.objects.get(user=user)
     application = Application.objects.get(applicant=applicant, job=job)

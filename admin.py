@@ -30,7 +30,7 @@ class ApplicationEmailAdmin(admin.ModelAdmin):
 admin.site.register(ApplicationEmail, ApplicationEmailAdmin)
 
 class ApplicationStatusAdmin(admin.ModelAdmin):
-    list_display = ("status",)
+    list_display = ("status", "weight")
 admin.site.register(ApplicationStatus, ApplicationStatusAdmin)
 
 
