@@ -5,6 +5,9 @@ from string import Template
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.comments.models import Comment
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.sites.models import Site
 from django.db import connection, transaction
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render_to_response
@@ -84,6 +87,7 @@ def admin(request, job_slug):
                                      prefix=prefix,
                                      instance=instance)
         app["form"] = form
+        app["application"] = application
         if form.is_valid():
             form.save()
             if form.initial["status"] != form.cleaned_data["status"].id:
@@ -100,6 +104,14 @@ def admin(request, job_slug):
                         message = message_content.substitute(name=person.first_name)
                         email = EmailMessage(subject, message, from_email, to_email)
                         email.send()
+                        comment = "%s email has been sent" % (form.cleaned_data["status"])
+                        user = request.user or None
+                        content_type = ContentType.objects.get(name="application")
+                        Comment.objects.create(content_type=content_type,
+                                               object_pk=application.id,
+                                               site=Site.objects.get_current(),
+                                               user=user,
+                                               comment=comment)
                     elif application_email:
                         subject = "%s %s for position %s has no email" & (person.first_name, person.last_name, job)
                         message = "%s %s (%s) does not have an email address. They applied for %s and were supposed to receive %s email." % (person.first_name, person.last_name, person.student_id, job, application_email.subject)
