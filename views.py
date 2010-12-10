@@ -139,7 +139,7 @@ def admin(request, job_slug):
 @login_required
 def applicant(request, job_slug, applicant_slug):
     job = get_object_or_404(Job.objects.all(), slug=job_slug)
-    if request.user not in job.administrators.all():
+    if request.user not in job.administrators.all() and not request.user.is_superuser:
         raise Http404
     user = User.objects.get(username=applicant_slug)
     applicant = Applicant.objects.get(user=user)
