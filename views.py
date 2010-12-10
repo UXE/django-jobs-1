@@ -56,6 +56,8 @@ def admin(request, job_slug):
     addresses = ["Birnam", "Ridgeway", "Buchanan", "Edens", "Fairhaven", "Higginson", "Highland", "Mathes", "Nash"]
     forms = []
     for application in job.application_set.all():
+        if not application.applicationcomponentpart_set.all():
+            continue
         person = Person.query.get(application.applicant.user.username)
         user = User.objects.get(username=person.username)
         applicant_full = Applicant.objects.get(user=user)
