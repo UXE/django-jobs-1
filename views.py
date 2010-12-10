@@ -39,7 +39,7 @@ def job(request, job_slug):
 
 def has_conduct(person):
     cursor = connection.cursor()
-    cursor.execute('SELECT stunum FROM conduct.students WHERE stunum = %s', [person.student_id])
+    cursor.execute("SELECT stunum FROM conduct.students WHERE stunum = %s", [person.student_id])
     id = cursor.fetchone()
     if id:
         return id[0]
@@ -53,8 +53,9 @@ def admin(request, job_slug):
     if request.user not in job.administrators.all() and not request.user.is_superuser:
         raise Http404
     apps = []
-    addresses = ["Birnam", "Ridgeway", "Buchanan", "Edens", "Fairhaven", "Higginson", "Highland", "Mathes", "Nash"]
     forms = []
+    addresses = ["Birnam", "Ridgeway", "Buchanan", "Edens", "Fairhaven", "Higginson", "Highland", "Mathes", "Nash"]
+
     for application in job.application_set.all():
         if not application.applicationcomponentpart_set.all():
             continue
