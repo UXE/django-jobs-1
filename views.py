@@ -50,7 +50,7 @@ def has_conduct(person):
 def admin(request, job_slug):
     post_data = request.POST or None
     job = get_object_or_404(Job.objects.all(), slug=job_slug)
-    if request.user not in job.administrators.all():
+    if request.user not in job.administrators.all() and not request.user.is_superuser:
         raise Http404
     apps = []
     addresses = ["Birnam", "Ridgeway", "Buchanan", "Edens", "Fairhaven", "Higginson", "Highland", "Mathes", "Nash"]
