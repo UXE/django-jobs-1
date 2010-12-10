@@ -55,17 +55,16 @@ def admin(request, job_slug):
     apps = []
     addresses = ["Birnam", "Ridgeway", "Buchanan", "Edens", "Fairhaven", "Higginson", "Highland", "Mathes", "Nash"]
     forms = []
-    for applicant in job.application_set.all():
-        person = Person.query.get(applicant.applicant.user.username)
+    for application in job.application_set.all():
+        person = Person.query.get(application.applicant.user.username)
         user = User.objects.get(username=person.username)
         applicant_full = Applicant.objects.get(user=user)
-        application = Application.objects.get(applicant=applicant_full, job=job)
         app = {}
         app['username'] = person.username
         app['first_name'] = person.first_name
         app['last_name'] = person.last_name
         app['gpa'] = person.gpa
-        app['is_submitted'] = applicant.is_submitted
+        app['is_submitted'] = application.is_submitted
         addy = ""
         for address in person.addresses:
             if address.street_line_1.partition(' ')[0] in addresses:
