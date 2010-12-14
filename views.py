@@ -1,5 +1,4 @@
-import datetime
-import os
+import csv, datetime, os
 
 from string import Template
 
@@ -45,6 +44,23 @@ def has_conduct(person):
         return id[0]
     else:
         return False
+
+@login_required
+def create_admin_csv(request, job_slug):
+    job = get_object_or_404(Job.objects.all(), slug=job_slug)
+    if request.user not in job.administrators.all() and not request.user.is_superuser:
+        raise Http404
+    response = HttpResponse(mimetype="text/csv")
+    response["Content-Disposition"] = 'attachment; filename=%s.csv' % job_slug
+
+    writer = csv.writer(response)
+    writer.writerow(["First Name", "Last Name", "GPA"])
+    for application in job.application_set.all():
+        person = Person.query.get(application.applicant.user.username)
+
+        writer.writerow([person.first_name, person.last_name, person.gpa])
+
+    return response
 
 @login_required
 def admin(request, job_slug):
