@@ -1,6 +1,8 @@
 from django.conf.urls.defaults import *
 from django.views.generic.list_detail import object_list
 
+from wwu_housing.wwu_jobs.views import interview
+
 from models import Job
 from views import admin, applicant, application, component, create_admin_csv, job
 
@@ -8,6 +10,7 @@ from views import admin, applicant, application, component, create_admin_csv, jo
 urlpatterns = patterns("",
     url(r"^$", object_list, {"queryset": Job.objects.posted(), "template_object_name": "job"}, name="jobs_index"),
     url(r"^(?P<job_slug>[-\w]+)/$", job, name="jobs_job"),
+    url(r"^(?P<job_slug>[-\w]+)/interview/$", interview, name="jobs_interview"),
     url(r"^(?P<job_slug>[-\w]+)/admin/$", admin, name="jobs_job_admin"),
     url(r"^(?P<job_slug>[-\w]+)/admin/csv/$", create_admin_csv, name="jobs_job_admin_csv"),
     url(r"^(?P<job_slug>[-\w]+)/admin/(?P<applicant_slug>[-\w]+)/$", applicant, name="jobs_job_admin_applicant"),
