@@ -274,12 +274,6 @@ class ApplicationStatus(models.Model):
     def __unicode__(self):
         return self.status
 
-    def __eq__(self, other):
-        if isinstance(other, basestring):
-            return self.status == other
-        else:
-            return self.status == other.status
-
 
 ###TODO### Rename this AdminStatus
 class AdminApplication(models.Model):
