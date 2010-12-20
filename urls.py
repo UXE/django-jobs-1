@@ -4,11 +4,12 @@ from django.views.generic.list_detail import object_list
 from wwu_housing.wwu_jobs.views import interview
 
 from models import Job
-from views import admin, applicant, application, component, create_admin_csv, job
+from views import admin, applicant, application, component, create_admin_csv, job, jobs_index
 
 
 urlpatterns = patterns("",
-    url(r"^$", object_list, {"queryset": Job.objects.posted(), "template_object_name": "job"}, name="jobs_index"),
+#url(r"^$", object_list, {"queryset": Job.objects.posted(), "template_object_name": "job"}, name="jobs_index"),
+    url(r"^$", jobs_index, name="jobs_index"),
     url(r"^(?P<job_slug>[-\w]+)/$", job, name="jobs_job"),
     url(r"^(?P<job_slug>[-\w]+)/interview/$", interview, name="jobs_interview"),
     url(r"^(?P<job_slug>[-\w]+)/admin/$", admin, name="jobs_job_admin"),

@@ -36,6 +36,54 @@ def job(request, job_slug):
                "job_open": job_open}
     return render_to_response("jobs/job_detail.html", context, context_instance=RequestContext(request))
 
+def jobs_index(request):
+    context = {}
+    jobs = Job.objects.all()
+    job_list = []
+    if request.user:
+        user = request.user
+        applicant = Applicant.objects.filter(user=user)
+        applications = Application.objects.filter(applicant=applicant)
+
+    for eachjob in jobs:
+        job = {}
+        #check if user has a job app for each job
+        for application in applications:
+            if application.job == eachjob:
+                job["job"] = eachjob
+                job["applied"] = "true"
+                #if the application is submitted obtain status
+                if application.is_submitted:
+                    try:
+                        application_status = AdminApplication.objects.get(
+                                                        application=application)
+                        job["app_status"] = application_status.status.status
+                        if application_status.status.status in [u"Interview Scheduled", u"Interview Offered"]:
+                            job["interview_status"] = application_status.status.status
+                            try:
+                                interview = Interview.objects.get(job=application.job,
+                                                            application=application)
+                                job["interview_date"] = interview.datetime
+                            except Interview.DoesNotExist:
+                                job["interview_date"] = None
+                        job_list.append(job)
+                    except AdminApplication.DoesNotExist:
+                        job["app_status"] = "You have successfully submitted your application"
+                        job_list.append(job)
+                else:
+                    if eachjob.close_datetime > datetime.datetime.now():
+                        job["app_status"] = "In Progress"
+                        job_list.append(job)
+        if not job:
+            if eachjob.close_datetime > datetime.datetime.now():
+                job["job"] = eachjob
+                job["applied"] = None
+                job_list.append(job)
+
+    context = {"job_list" : job_list,
+                "user" : request.user}
+    return render_to_response("jobs/index.html", context, context_instance=RequestContext(request))
+
 def has_conduct(person):
     cursor = connection.cursor()
     cursor.execute("SELECT stunum FROM conduct.students WHERE stunum = %s", [person.student_id])
