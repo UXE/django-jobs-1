@@ -40,7 +40,8 @@ def jobs_index(request):
     context = {}
     jobs = Job.objects.all()
     job_list = []
-    if request.user:
+    applications = []
+    if request.user.is_authenticated():
         user = request.user
         applicant = Applicant.objects.filter(user=user)
         applications = Application.objects.filter(applicant=applicant)
