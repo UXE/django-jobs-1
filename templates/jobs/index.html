@@ -8,7 +8,7 @@
         <li><a href="{{job.job.get_absolute_url}}">{%if job.applied %}Job Description{%else%}Learn more{%endif%}</a></li>
         <li>{%if job.applied %}<a href="{{job.job.get_application_url}}">Application</a> Status: {{job.app_status}}{%else%}<a href="{{job.job.get_application_url}}">Apply{%endif%}</a></li>
         {%if job.interview_date %}
-        <li>Interview Date: {{job.interview_date|date:"l, F j, Y at P"}}</li>
+        <li>Interview Date: {{job.interview_date|date:"l, F j, Y \a\t P"}}</li>
         {%endif%}
         {%if job.interview_status %}
         <li><a href="{{job.job.get_absolute_url}}/interview">Change Interview Time</a></li>
