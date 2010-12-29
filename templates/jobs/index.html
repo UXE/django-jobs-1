@@ -16,8 +16,6 @@
     </ul>
     <dl class="table">
     {% with "l, F j, Y \a\t P" as date_format %}
-        <dt>Posted Date:</dt>
-        <dd>{{job.job.post_datetime|date:date_format }}</dd>
         <dt>Open Date:</dt>
         <dd> {{job.job.open_datetime|date:date_format }}</dd>
         <dt>Deadline:</dt>
