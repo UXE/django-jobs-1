@@ -43,7 +43,6 @@ class Job(models.Model):
     deadline = models.DateTimeField(help_text="The date and time applications are due.")
     contact_email = models.EmailField()
     contact_address = models.ForeignKey(Address)
-    administrators = models.ManyToManyField(User)
 
     objects = JobManager()
 
@@ -107,8 +106,11 @@ class JobUser(models.Model):
     Describes the adminstrative roles for any given job.
     Roles include admin (all access), and viewer (read only)
     """
-    permission = models.ForeignKey(Permission)
-    user = models.ForeignKey(User)
+    limit_permissions_to = {"codename__in": ["can_view","can_do"],
+                            "content_type__name": "job user"}
+    limit_users_to = {"is_staff": True}
+    permission = models.ForeignKey(Permission, limit_choices_to=limit_permissions_to)
+    user = models.ForeignKey(User, limit_choices_to=limit_users_to)
     job  = models.ForeignKey(Job)
 
     class Meta:
