@@ -21,7 +21,7 @@ from wwu_housing.wwu_jobs.forms import *
 from wwu_housing.data import Person
 
 from forms import AdminApplicationForm
-from models import AdminApplication, Applicant, Application, ApplicationComponentPart, ApplicationEmail, ApplicationStatus, Component, Job, User
+from models import AdminApplication, Applicant, Application, ApplicationComponentPart, ApplicationEmail, ApplicationStatus, Component, Job, JobUser, User
 
 from utils import get_application_component_status
 
@@ -45,14 +45,21 @@ def jobs_index(request):
         user = request.user
         applicant = Applicant.objects.filter(user=user)
         applications = Application.objects.filter(applicant=applicant)
-
+    
     for eachjob in jobs:
         job = {}
+        #Check if they are an admin or not
+        try:
+            administrator = JobUser.objects.get(user=user, job=eachjob)
+        except JobUser.DoesNotExist:
+            administrator = None
+
         #check if user has a job app for each job
         for application in applications:
             if application.job == eachjob:
                 job["job"] = eachjob
-                job["applied"] = "true"
+                job["applied"] = True
+                job["admin"] = administrator
                 #if the application is submitted obtain status
                 if application.is_submitted:
                     try:
@@ -79,10 +86,11 @@ def jobs_index(request):
             if eachjob.close_datetime > datetime.datetime.now():
                 job["job"] = eachjob
                 job["applied"] = None
+                job["admin"] = administrator
                 job_list.append(job)
 
     context = {"job_list" : job_list,
-                "user" : request.user}
+               "user" : request.user}
     return render_to_response("jobs/index.html", context, context_instance=RequestContext(request))
 
 def has_conduct(person):
@@ -97,8 +105,12 @@ def has_conduct(person):
 @login_required
 def create_admin_csv(request, job_slug):
     job = get_object_or_404(Job.objects.all(), slug=job_slug)
-    if request.user not in job.administrators.all() and not request.user.is_superuser:
-        raise Http404
+    try:
+        administrator = JobUser.objects.get(user=request.user, job=job)
+    except JobUser.DoesNotExist:
+        if not request.user.is_superuser:
+            raise Http404
+            
     response = HttpResponse(mimetype="text/csv")
     response["Content-Disposition"] = 'attachment; filename=%s.csv' % job_slug
 
@@ -115,8 +127,15 @@ def create_admin_csv(request, job_slug):
 def admin(request, job_slug):
     post_data = request.POST or None
     job = get_object_or_404(Job.objects.all(), slug=job_slug)
-    if request.user not in job.administrators.all() and not request.user.is_superuser:
-        raise Http404
+    try:
+        JobUser.objects.get(user=request.user, job=job)
+        administrator = True
+    except JobUser.DoesNotExist:
+        if not request.user.is_superuser:
+            raise Http404
+        else:
+            administrator = True
+            
     apps = []
     forms = []
     addresses = ["Birnam", "Ridgeway", "Buchanan", "Edens", "Fairhaven", "Higginson", "Highland", "Mathes", "Nash"]
@@ -157,7 +176,7 @@ def admin(request, job_slug):
                                      instance=instance)
         app["form"] = form
         app["application"] = application
-        if form.is_valid():
+        if administrator and form.is_valid():
             form.save()
             if form.initial["status"] != form.cleaned_data["status"].id:
                 try:
@@ -188,7 +207,7 @@ def admin(request, job_slug):
 
         apps.append(app)
         forms.append(form)
-    if all(form.is_valid() for form in forms):
+    if forms and all(form.is_valid() for form in forms):
         messages.success(request, "Changes saved successfully")
         return HttpResponseRedirect(reverse("jobs_job_admin",
                                             args=[job_slug]))
@@ -200,14 +219,20 @@ def admin(request, job_slug):
               "Denied": "white",
               "Offered": "white"}
     context = {"apps": apps,
-               "colors": colors}
+               "colors": colors,
+               "admin": administrator}
+
     return render_to_response("jobs/admin.html", context, context_instance=RequestContext(request))
 
 @login_required
 def applicant(request, job_slug, applicant_slug):
     job = get_object_or_404(Job.objects.all(), slug=job_slug)
-    if request.user not in job.administrators.all() and not request.user.is_superuser:
-        raise Http404
+    try:
+        administrator = JobUser.objects.get(user=request.user, job=job)
+    except JobUser.DoesNotExist:
+        if not request.user.is_superuser:
+            raise Http404
+            
     user = User.objects.get(username=applicant_slug)
     applicant = Applicant.objects.get(user=user)
     application = Application.objects.get(applicant=applicant, job=job)
