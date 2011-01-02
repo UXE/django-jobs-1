@@ -1,8 +1,10 @@
 from django.contrib import admin
 
-from wwu_housing.jobs.models import (Applicant, Application,
-                                     ApplicationComponentPart, Component,
-                                     ComponentPart, Date, Job, Qualification)
+from wwu_housing.jobs.models import (AdminApplication, Applicant,
+                                     Application, ApplicationComponentPart,
+                                     ApplicationEmail, ApplicationStatus,
+                                     Component, ComponentPart, Date, Job,
+                                     Qualification)
 
 
 class ComponentInline(admin.TabularInline):
@@ -10,13 +12,26 @@ class ComponentInline(admin.TabularInline):
 
 
 class JobAdmin(admin.ModelAdmin):
-    list_display = ("title", "open_datetime", "close_datetime", "description",
+    list_display = ("title", "open_datetime", "close_datetime",
                     "post_datetime")
     list_filter = ("open_datetime", "close_datetime")
     inlines = [ComponentInline]
     save_as = True
     save_on_top = True
 admin.site.register(Job, JobAdmin)
+
+
+class AdminApplicationAdmin(admin.ModelAdmin):
+    list_display = ("status", "application")
+admin.site.register(AdminApplication, AdminApplicationAdmin)
+
+class ApplicationEmailAdmin(admin.ModelAdmin):
+    list_display = ("name", "status", "job")
+admin.site.register(ApplicationEmail, ApplicationEmailAdmin)
+
+class ApplicationStatusAdmin(admin.ModelAdmin):
+    list_display = ("status", "weight")
+admin.site.register(ApplicationStatus, ApplicationStatusAdmin)
 
 
 class ComponentPartInline(admin.TabularInline):

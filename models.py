@@ -10,7 +10,6 @@ from django.template.defaultfilters import slugify
 
 from tagging.models import Tag
 
-
 from wwu_housing.library.models import Address
 
 
@@ -279,3 +278,35 @@ class Qualification(models.Model):
                                      help_text="""The name of a function in the
                                      job's requirements.py which returns true or
                                      false when given an Applicant object.""")
+
+
+class ApplicationStatus(models.Model):
+    """
+    Statuses for applications.
+    """
+    status = models.CharField(max_length=255)
+    weight = models.PositiveIntegerField(blank=True, null=True)
+
+    def __unicode__(self):
+        return self.status
+
+
+###TODO### Rename this AdminStatus
+class AdminApplication(models.Model):
+    """
+    Admin backend for storing application and its status.
+    """
+    status = models.ForeignKey(ApplicationStatus)
+    application = models.ForeignKey(Application)
+
+
+class ApplicationEmail(models.Model):
+    """
+    Emails to be sent to potential employees.
+    """
+    name = models.CharField(max_length=255)
+    content = models.TextField()
+    job = models.ForeignKey(Job)
+    sender = models.CharField(max_length=255)
+    status = models.ForeignKey(ApplicationStatus)
+    subject = models.CharField(max_length=255)

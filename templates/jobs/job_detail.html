@@ -6,8 +6,14 @@
 
 {% include "messages.html" %}
 
-<ul>
-    <li><a href="{{ job.get_application_url }}">Apply Now</a></li>
-</ul>
-    <div>{{ job.description|markdown }}</div>
+{% if job_open %}
+    <ul>
+        <li><a href="{{ job.get_application_url }}">Apply Now</a></li>
+    </ul>
+{% else %}
+    <p>This position is closed</p>
+{% endif %}
+
+<div>{{ job.description|markdown }}</div>
+
 {% endblock %}
