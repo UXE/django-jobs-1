@@ -2,7 +2,7 @@ import datetime
 import tagging
 
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth.models import Permission, User
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
@@ -101,6 +101,22 @@ try:
     tagging.register(Job)
 except tagging.AlreadyRegistered:
     pass
+
+
+class JobUser(models.Model):
+    """
+    Describes the adminstrative roles for any given job.
+    Roles include admin (all access), and viewer (read only)
+    """
+    permission = models.ForeignKey(Permission)
+    user = models.ForeignKey(User)
+    job  = models.ForeignKey(Job)
+
+    class Meta:
+        permissions = (
+            ("can_view", "Can view only"),
+            ("can_do", "Can do all"),
+        )
 
 
 class Component(models.Model):
