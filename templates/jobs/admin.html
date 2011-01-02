@@ -45,7 +45,11 @@ desk attendant app at line 495 might be a good starting point...
         {% endif %}
         </td>
         <td>
-            {{ person.form.as_p }}
+            {% if admin.permission.codename == "can_do" %}
+                {{ person.form.as_p }}
+            {% else %}
+                {{ person.form.instance.status }}
+            {% endif %}
         </td>
         <td>
             {% get_comment_list for person.application as comment_list %}
@@ -60,7 +64,9 @@ desk attendant app at line 495 might be a good starting point...
 {% csrf_token %}
 </table>
 
-<input type="submit" value="Save" />
+{% if admin.permission.codename == "can_do" %}
+    <input type="submit" value="Save" />
+{% endif %}
 
 <input value="Export as CSV" type="button" onclick="window.location.href='csv'" />
 
