@@ -22,7 +22,9 @@ admin.site.register(Job, JobAdmin)
 
 
 class JobUserAdmin(admin.ModelAdmin):
-    pass
+    list_display = ("user", "job", "permission")
+    list_filter = ("job",)
+    ordering = ["user__username","job"]
 admin.site.register(JobUser, JobUserAdmin)
 
 
