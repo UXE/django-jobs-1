@@ -4,7 +4,7 @@ from wwu_housing.jobs.models import (AdminApplication, Applicant,
                                      Application, ApplicationComponentPart,
                                      ApplicationEmail, ApplicationStatus,
                                      Component, ComponentPart, Date, Job,
-                                     Qualification)
+                                     JobUser, Qualification)
 
 
 class ComponentInline(admin.TabularInline):
@@ -21,13 +21,22 @@ class JobAdmin(admin.ModelAdmin):
 admin.site.register(Job, JobAdmin)
 
 
+class JobUserAdmin(admin.ModelAdmin):
+    list_display = ("user", "job", "permission")
+    list_filter = ("job",)
+    ordering = ["user__username","job"]
+admin.site.register(JobUser, JobUserAdmin)
+
+
 class AdminApplicationAdmin(admin.ModelAdmin):
     list_display = ("status", "application")
 admin.site.register(AdminApplication, AdminApplicationAdmin)
 
+
 class ApplicationEmailAdmin(admin.ModelAdmin):
     list_display = ("name", "status", "job")
 admin.site.register(ApplicationEmail, ApplicationEmailAdmin)
+
 
 class ApplicationStatusAdmin(admin.ModelAdmin):
     list_display = ("status", "weight")

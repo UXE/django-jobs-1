@@ -2,7 +2,7 @@ import datetime
 import tagging
 
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth.models import Permission, User
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
@@ -43,7 +43,6 @@ class Job(models.Model):
     deadline = models.DateTimeField(help_text="The date and time applications are due.")
     contact_email = models.EmailField()
     contact_address = models.ForeignKey(Address)
-    administrators = models.ManyToManyField(User)
 
     objects = JobManager()
 
@@ -100,6 +99,25 @@ try:
     tagging.register(Job)
 except tagging.AlreadyRegistered:
     pass
+
+
+class JobUser(models.Model):
+    """
+    Describes the adminstrative roles for any given job.
+    Roles include admin (all access), and viewer (read only)
+    """
+    limit_permissions_to = {"codename__in": ["can_view","can_do"],
+                            "content_type__name": "job user"}
+    limit_users_to = {"is_staff": True}
+    permission = models.ForeignKey(Permission, limit_choices_to=limit_permissions_to)
+    user = models.ForeignKey(User, limit_choices_to=limit_users_to)
+    job  = models.ForeignKey(Job)
+
+    class Meta:
+        permissions = (
+            ("can_view", "Can view only"),
+            ("can_do", "Can do all"),
+        )
 
 
 class Component(models.Model):
