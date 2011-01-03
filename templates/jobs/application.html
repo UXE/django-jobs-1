@@ -19,13 +19,18 @@
 
 
 <div class="box">
-{% if messages %}
 <ul>
-    {% for message in messages %}
-        <li>{{ message|safe }}</li>
-    {% endfor %}
+    {% if messages %}
+        {% for message in messages %}
+            <li>{{ message|safe }}</li>
+        {% endfor %}
+    {% endif %}
+
+    <li>Prior to employment, all candidates will undergo a criminal background
+        check. If you have questions about your eligibility for employment
+        please feel free to contact the Associate Director of Residence Life at
+        <a href="mailto:John.Purdie@wwu.edu">John.Purdie@wwu.edu</a></li>
 </ul>
-{% endif %}
 
 {% if application.is_submitted %}
     <p>You have successfully submitted your application.</p>
