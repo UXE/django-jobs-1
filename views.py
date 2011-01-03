@@ -41,18 +41,20 @@ def jobs_index(request):
     jobs = Job.objects.all()
     job_list = []
     applications = []
+
     if request.user.is_authenticated():
         user = request.user
         applicant = Applicant.objects.filter(user=user)
         applications = Application.objects.filter(applicant=applicant)
-    
+
     for eachjob in jobs:
         job = {}
         #Check if they are an admin or not
         try:
-            administrator = JobUser.objects.get(user=user, job=eachjob)
-        except JobUser.DoesNotExist:
+            administrator = JobUser.objects.get(user=request.user, job=eachjob)
+        except (JobUser.DoesNotExist, TypeError):
             administrator = None
+
 
         #check if user has a job app for each job
         for application in applications:
@@ -112,7 +114,7 @@ def create_admin_csv(request, job_slug):
     except JobUser.DoesNotExist:
         if not request.user.is_superuser:
             raise Http404
-            
+
     response = HttpResponse(mimetype="text/csv")
     response["Content-Disposition"] = 'attachment; filename=%s.csv' % job_slug
 
@@ -137,7 +139,7 @@ def admin(request, job_slug):
             raise Http404
         else:
             administrator = True
-            
+
     apps = []
     forms = []
     addresses = ["Birnam", "Ridgeway", "Buchanan", "Edens", "Fairhaven", "Higginson", "Highland", "Mathes", "Nash"]
@@ -234,7 +236,7 @@ def applicant(request, job_slug, applicant_slug):
     except JobUser.DoesNotExist:
         if not request.user.is_superuser:
             raise Http404
-            
+
     user = User.objects.get(username=applicant_slug)
     applicant = Applicant.objects.get(user=user)
     application = Application.objects.get(applicant=applicant, job=job)
