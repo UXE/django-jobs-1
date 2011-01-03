@@ -14,9 +14,14 @@
         <li>Interview Date: {{job.interview_date|date:"l, F j, Y \a\t P"}}</li>
         {%endif%}
 
-        {%if job.interview_status %}
+        {%if job.interview_date%}
         <li><a href="{{job.job.get_absolute_url}}/interview">Change Interview Time</a></li>
+        {%else%}
+            {%if job.interview_status %}
+            <li><a href="{{job.job.get_absolute_url}}/interview">Schedule Interview</a></li>
+            {%endif%}
         {%endif%}
+
     </ul>
     <dl class="table">
     {% with "l, F j, Y \a\t P" as date_format %}

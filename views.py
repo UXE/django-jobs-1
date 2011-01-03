@@ -78,10 +78,12 @@ def jobs_index(request):
                     except AdminApplication.DoesNotExist:
                         job["app_status"] = "You have successfully submitted your application"
                         job_list.append(job)
+                #else if job has app that has not been submitted and is still open add it to list
                 else:
                     if eachjob.close_datetime > datetime.datetime.now():
                         job["app_status"] = "In Progress"
                         job_list.append(job)
+        #include job's that are still open
         if not job:
             if eachjob.close_datetime > datetime.datetime.now():
                 job["job"] = eachjob
