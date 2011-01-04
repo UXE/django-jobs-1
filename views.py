@@ -132,8 +132,7 @@ def admin(request, job_slug):
     post_data = request.POST or None
     job = get_object_or_404(Job.objects.all(), slug=job_slug)
     try:
-        JobUser.objects.get(user=request.user, job=job)
-        administrator = True
+        administrator = JobUser.objects.get(user=request.user, job=job)
     except JobUser.DoesNotExist:
         if not request.user.is_superuser:
             raise Http404
