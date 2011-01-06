@@ -17,7 +17,7 @@ from django.conf import settings
 
 # importing * so it can capture the registry code
 from wwu_housing.wwu_jobs.forms import *
-
+from wwu_housing.wwu_jobs.models import Interview
 from wwu_housing.data import Person
 
 from forms import AdminApplicationForm
@@ -119,7 +119,7 @@ def create_admin_csv(request, job_slug):
     response["Content-Disposition"] = 'attachment; filename=%s.csv' % job_slug
 
     writer = csv.writer(response)
-    writer.writerow(["First Name", "Last Name","Address", "GPA"])
+    writer.writerow(["First Name", "Last Name","Address", "GPA", "Interview Date"])
     for application in job.application_set.all():
         person = Person.query.get(application.applicant.user.username)
         address = person.get_address_by_type("MA")
@@ -132,7 +132,23 @@ def create_admin_csv(request, job_slug):
             mailing_address = "%s %s, %s %s" % (mailing_address, address.city, address.state, address.zip_code)
         else:
             mailing_address = ""
-        writer.writerow([person.first_name, person.last_name, mailing_address, person.gpa])
+        interview_date = "None"
+        try:
+            application_status = AdminApplication.objects.get(
+                                        application=application)
+
+            if application_status.status.status in [u"Interview Scheduled"]:
+
+                interview = Interview.objects.get(job=application.job,
+                                                    application=application)
+
+                interview_date = interview.datetime.strftime("%A, %B %e at %I:%M %p")
+        except AdminApplication.DoesNotExist:
+            pass
+        except Interview.DoesNotExist:
+            pass
+
+        writer.writerow([person.first_name, person.last_name, mailing_address, person.gpa, interview_date])
 
     return response
 
