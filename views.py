@@ -119,11 +119,20 @@ def create_admin_csv(request, job_slug):
     response["Content-Disposition"] = 'attachment; filename=%s.csv' % job_slug
 
     writer = csv.writer(response)
-    writer.writerow(["First Name", "Last Name", "GPA"])
+    writer.writerow(["First Name", "Last Name","Address", "GPA"])
     for application in job.application_set.all():
         person = Person.query.get(application.applicant.user.username)
-
-        writer.writerow([person.first_name, person.last_name, person.gpa])
+        address = person.get_address_by_type("MA")
+        if address:
+            mailing_address = address.street_line_1
+            if address.street_line_2:
+                mailing_address = mailing_address + " " + address.street_line_2
+            if address.street_line_3:
+                mailing_address = mailing_address + " " + address.street_line_3
+            mailing_address = "%s %s, %s %s" % (mailing_address, address.city, address.state, address.zip_code)
+        else:
+            mailing_address = ""
+        writer.writerow([person.first_name, person.last_name, mailing_address, person.gpa])
 
     return response
 
