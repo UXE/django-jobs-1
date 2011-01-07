@@ -119,7 +119,7 @@ def create_admin_csv(request, job_slug):
     response["Content-Disposition"] = 'attachment; filename=%s.csv' % job_slug
 
     writer = csv.writer(response)
-    writer.writerow(["First Name", "Last Name","Address", "GPA", "Interview Date"])
+    writer.writerow(["First Name", "Last Name","Address", "GPA", "Interview Location", "Interview Date"])
     for application in job.application_set.all():
         person = Person.query.get(application.applicant.user.username)
         address = person.get_address_by_type("MA")
@@ -129,26 +129,21 @@ def create_admin_csv(request, job_slug):
                 mailing_address = mailing_address + " " + address.street_line_2
             if address.street_line_3:
                 mailing_address = mailing_address + " " + address.street_line_3
-            mailing_address = "%s %s, %s %s" % (mailing_address, address.city, address.state, address.zip_code)
+            mailing_address = "%s %s, %s %s" % (mailing_address, address.city,
+                                                address.state, address.zip_code)
         else:
             mailing_address = ""
-        interview_date = "None"
+
         try:
-            application_status = AdminApplication.objects.get(
-                                        application=application)
-
-            if application_status.status.status in [u"Interview Scheduled"]:
-
-                interview = Interview.objects.get(job=application.job,
-                                                    application=application)
-
-                interview_date = interview.datetime.strftime("%A, %B %e at %I:%M %p")
-        except AdminApplication.DoesNotExist:
-            pass
+            interview = Interview.objects.get(job=application.job,
+                                              application=application)
+            interview_location = interview.location
+            interview_date = interview.datetime.strftime("%A, %B %e at %I:%M %p")
         except Interview.DoesNotExist:
-            pass
+            interview_location = "None"
+            interview_date = "None"
 
-        writer.writerow([person.first_name, person.last_name, mailing_address, person.gpa, interview_date])
+        writer.writerow([person.first_name, person.last_name, mailing_address, person.gpa, interview_location, interview_date])
 
     return response
 
