@@ -2,6 +2,17 @@
 
 {% load comments %}
 
+{% block stylesheets %}
+<style type="text/css">
+.csv {
+    background: transparent url(/images/icons/table_go.png) no-repeat scroll left center;
+    margin-left: 1em;
+    padding-left: 1.5em;
+}
+</style>
+{% endblock %}
+
+
 {% block content %}
 <h1>{{ job.title }} Admin</h1>
 
@@ -68,7 +79,7 @@ desk attendant app at line 495 might be a good starting point...
     <input type="submit" value="Save" />
 {% endif %}
 
-<input value="Export as CSV" type="button" onclick="window.location.href='csv'" />
+<a href="csv/" class="csv">Export as CSV</a>
 
 </form>
 {% endblock %}
