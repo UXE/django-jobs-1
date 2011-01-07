@@ -193,7 +193,7 @@ def admin(request, job_slug):
         try:
             instance = AdminApplication.objects.get(application=application)
         except AdminApplication.DoesNotExist:
-            if app['is_submitted']:
+            if application.is_submitted or application.end_datetime:
                 status = ApplicationStatus.objects.get(status="Submitted")
             else:
                 status = ApplicationStatus.objects.get(status="In Progress")
