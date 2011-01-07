@@ -222,6 +222,18 @@ class Application(models.Model):
     def __unicode__(self):
         return u"%s for %s" % (self.applicant, self.job)
 
+    def _get_status(self):
+        try:
+            application_status = AdminApplication.objects.get(application=self)
+            status = application_status.status
+        except AdminApplication.DoesNotExist:
+            if self.end_datetime or self.is_submitted:
+                status = ApplicationStatus.objects.get(status=u"Submitted")
+            else:
+                status = ApplicationStatus.objects.get(status=u"In Progress")
+        return status
+    status = property(_get_status)
+
     def save(self, *args, **kwargs):
         if not self.id:
             self.start_datetime = datetime.datetime.now()
