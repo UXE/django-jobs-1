@@ -122,6 +122,8 @@ def create_admin_csv(request, job_slug):
     writer.writerow(["First Name", "Last Name", "Address", "GPA", "Status",
                      "Interview Location", "Interview Date"])
     for application in job.application_set.all():
+        if not application.applicationcomponentpart_set.all():
+            continue
         person = Person.query.get(application.applicant.user.username)
         address = person.get_address_by_type("MA")
         if address:
