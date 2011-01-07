@@ -27,46 +27,50 @@
     </div>
 {% endif %}
 
-<table>
-    <tr style="background-color: white; ">
-        <th>Applicant</th>
-        <th>Address</th>
-        <th>GPA</th>
-        <th>In Conduct</th>
-        <th>Status</th>
-        <th>Emails Sent</th>
-    </tr>
-{% for person in apps %}
-    <tr style="background-style: {{ colors.status }};">
-        <td><a href="{{ person.username }}">{{ person.first_name }} {{ person.last_name }}</a></td>
-        <td>{{ person.address }}</td>
-        <td>
-        {% if person.gpa %}
-            {{ person.gpa|floatformat:2 }}
-        {% endif %}
-        </td>
-        <td>
-        {% if person.conduct_id %}
-            <a href="/conduct/history.php?id={{ person.conduct_id }}">Link</a>
-        {% endif %}
-        </td>
-        <td>
-            {% if admin.permission.codename == "can_do" %}
-                {{ person.form.as_p }}
-            {% else %}
-                {{ person.form.instance.status }}
+<table class="tablesorter">
+    <thead>
+        <tr style="background-color: white; ">
+            <th>Applicant</th>
+            <th>Address</th>
+            <th>GPA</th>
+            <th>In Conduct</th>
+            <th>Status</th>
+            <th>Emails Sent</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for person in apps %}
+        <tr style="background-style: {{ colors.status }};">
+            <td><a href="{{ person.username }}">{{ person.first_name }} {{ person.last_name }}</a></td>
+            <td>{{ person.address }}</td>
+            <td>
+            {% if person.gpa %}
+                {{ person.gpa|floatformat:2 }}
             {% endif %}
-        </td>
-        <td>
-            {% get_comment_list for person.application as comment_list %}
-            {% for comment in comment_list %}
-                <p>
-                    {{ comment.submit_date|date:"M j, Y" }} by {{ comment.user.first_name }} {{ comment.user.last_name }}: {{ comment.comment }}
-                </p>
-            {% endfor %}
-        </td>
-    </tr>
-{% endfor %}
+            </td>
+            <td>
+            {% if person.conduct_id %}
+                <a href="/conduct/history.php?id={{ person.conduct_id }}">Link</a>
+            {% endif %}
+            </td>
+            <td>
+                {% if admin.permission.codename == "can_do" %}
+                    {{ person.form.as_p }}
+                {% else %}
+                    {{ person.form.instance.status }}
+                {% endif %}
+            </td>
+            <td>
+                {% get_comment_list for person.application as comment_list %}
+                {% for comment in comment_list %}
+                    <p>
+                        {{ comment.submit_date|date:"M j, Y" }} by {{ comment.user.first_name }} {{ comment.user.last_name }}: {{ comment.comment }}
+                    </p>
+                {% endfor %}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
 </table>
 
 {% if admin.permission.codename == "can_do" %}
