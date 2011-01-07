@@ -17,12 +17,7 @@
 <h1>{{ job.title }} Admin</h1>
 
 <form action="" method="post">
-
-{% comment %}
-TODO: Add CSV support.
-
-desk attendant app at line 495 might be a good starting point...
-{% endcomment %}
+{% csrf_token %}
 
 {% if messages %}
     <div class="box">
@@ -72,7 +67,6 @@ desk attendant app at line 495 might be a good starting point...
         </td>
     </tr>
 {% endfor %}
-{% csrf_token %}
 </table>
 
 {% if admin.permission.codename == "can_do" %}
