@@ -320,6 +320,9 @@ def application(request, job_slug):
         applicant=applicant,
         job=job
     )
+    if created:
+        status = ApplicationStatus.objects.get(status="In Progress")
+        AdminApplication.objects.create(application=application, status=status)
 
     # Is the user submitting their application?
     if request.POST and request.POST.has_key(u"submit"):
@@ -333,6 +336,12 @@ def application(request, job_slug):
             application.is_submitted = True
             application.end_datetime = datetime.datetime.now()
             application.save()
+
+            status = ApplicationStatus.objects.get(status="Submitted")
+            application_status = AdminApplication.objects.get(application=application)
+            application_status.status = status
+            application_status.save()
+
             message = u"<strong>Congratulations!</strong> Your application was successfully submitted."
             messages.success(request, message)
         else:
