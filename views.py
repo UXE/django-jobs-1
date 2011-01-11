@@ -180,6 +180,12 @@ def admin(request, job_slug):
         app['last_name'] = person.last_name
         app['gpa'] = person.gpa
         app['is_submitted'] = application.is_submitted
+        try:
+            interview = Interview.objects.get(job=application.job,
+                                              application=application)
+            app['interview_date'] = interview.datetime.strftime("%B, %e at %I:%M %p")
+        except Interview.DoesNotExist:
+            app['interview_date'] = "None"
         addy = ""
         for address in person.addresses:
             if address.street_line_1.partition(' ')[0] in addresses:

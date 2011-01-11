@@ -43,6 +43,7 @@ $(document).ready(function() {
             <th>GPA</th>
             <th>In Conduct</th>
             <th>Status</th>
+            <th>Interview Time</th>
             <th>Emails Sent</th>
         </tr>
     </thead>
@@ -67,6 +68,9 @@ $(document).ready(function() {
                 {% else %}
                     {{ person.form.instance.status }}
                 {% endif %}
+            </td>
+            <td>
+                {{ person.interview_date }}
             </td>
             <td>
                 {% get_comment_list for person.application as comment_list %}
