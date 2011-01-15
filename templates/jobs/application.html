@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load jobs %}
-
+{% load chunks %}
 {% block title %}
 {{ job.title }} | Jobs
 {% endblock %}
@@ -25,11 +25,9 @@
             <li>{{ message|safe }}</li>
         {% endfor %}
     {% endif %}
-
-    <li>Prior to employment, all candidates will undergo a criminal background
-        check. If you have questions about your eligibility for employment
-        please feel free to contact the Associate Director of Residence Life at
-        <a href="mailto:John.Purdie@wwu.edu">John.Purdie@wwu.edu</a></li>
+    {% if chunk %}
+        <li>{{chunk.content|safe }}</li>
+    {% endif %}
 </ul>
 
 {% if application.is_submitted %}

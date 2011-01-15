@@ -1,5 +1,6 @@
 import csv, datetime, os
 
+from chunks.models import Chunk
 from string import Template
 
 from django.contrib import messages
@@ -67,7 +68,7 @@ def jobs_index(request):
                     try:
                         application_status = AdminApplication.objects.get(
                                                         application=application)
-                        job["app_status"] = application_status.status.status
+                        job["app_status"] = application_status.status
                         if application_status.status.status in [u"Interview Scheduled", u"Interview Offered"]:
                             job["interview_status"] = application_status.status.status
                             try:
@@ -295,10 +296,19 @@ def applicant(request, job_slug, applicant_slug):
 
 @login_required
 def application(request, job_slug):
+
     try:
         job = Job.objects.posted().get(slug=job_slug)
     except Job.DoesNotExist:
         return HttpResponseRedirect(reverse("jobs_index"))
+
+    #Chunks titled "jobs.job-slug-here-application-view" contain a message
+    # to be displayed on the application view.
+    chunk_key = "jobs-" + job.slug + "-application-view"
+    try:
+        chunk = Chunk.objects.get(key=chunk_key)
+    except Chunk.DoesNotExist:
+        chunk = None
 
     application_exists = Application.objects.filter(
         job=job,
@@ -350,7 +360,8 @@ def application(request, job_slug):
 
     context = {
         "application": application,
-        "job": job
+        "job": job,
+        "chunk": chunk,
     }
     return render_to_response(
         "jobs/application.html",
