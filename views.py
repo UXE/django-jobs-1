@@ -181,6 +181,12 @@ def admin(request, job_slug):
         app['last_name'] = person.last_name
         app['gpa'] = person.gpa
         app['is_submitted'] = application.is_submitted
+        try:
+            interview = Interview.objects.get(job=application.job,
+                                              application=application)
+            app['interview_date'] = interview.datetime.strftime("%B, %e at %I:%M %p")
+        except Interview.DoesNotExist:
+            app['interview_date'] = "None"
         addy = ""
         for address in person.addresses:
             if address.street_line_1.partition(' ')[0] in addresses:
@@ -217,8 +223,15 @@ def admin(request, job_slug):
                         subject = application_email.subject
                         from_email = application_email.sender
                         to_email = (person.email,)
-                        message_content = Template(application_email.content)
-                        message = message_content.substitute(name=person.first_name)
+
+                        try:
+                            message_content = Template(application_email.content)
+                            message = message_content.substitute(name=person.first_name)
+                        except KeyError, e:
+                            subject = "KeyError in application email"
+                            message = "%s in application email id: %s" % (e.message, application_email.name)
+                            mail_admins(subject, message)
+
                         email = EmailMessage(subject, message, from_email, to_email)
                         email.send()
                         comment = "%s email has been sent" % (form.cleaned_data["status"])
