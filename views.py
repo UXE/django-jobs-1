@@ -120,7 +120,8 @@ def create_admin_csv(request, job_slug):
     response["Content-Disposition"] = 'attachment; filename=%s.csv' % job_slug
 
     writer = csv.writer(response)
-    writer.writerow(["First Name", "Last Name", "Address", "GPA", "Status",
+    writer.writerow(["Student ID", "First Name", "Last Name", "Gender",
+                     "Email", "Address", "GPA", "Ethnicity", "Status",
                      "Interview Location", "Interview Date"])
     for application in job.application_set.all():
         if not application.applicationcomponentpart_set.all():
@@ -147,8 +148,10 @@ def create_admin_csv(request, job_slug):
             interview_location = "None"
             interview_date = "None"
 
-        writer.writerow([person.first_name, person.last_name, mailing_address,
-                         person.gpa, application.status, interview_location,
+        writer.writerow([person.student_id, person.first_name,
+                         person.last_name, person.gender, person.email,
+                         mailing_address, person.gpa, person.ethnicity,
+                         application.status, interview_location,
                          interview_date])
 
     return response
