@@ -35,6 +35,8 @@ admin.site.register(AdminApplication, AdminApplicationAdmin)
 
 class ApplicationEmailAdmin(admin.ModelAdmin):
     list_display = ("name", "status", "job")
+    list_filter = ("job")
+
 admin.site.register(ApplicationEmail, ApplicationEmailAdmin)
 
 
