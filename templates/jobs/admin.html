@@ -4,13 +4,26 @@
 {% block scripts %}
 <script type="text/javascript" src="{{ MEDIA_URL }}jquery/plugins/jquery.tablesorter.min.js"></script>
 <script type="text/javascript">
-$(document).ready(function() {
-        $("table").tablesorter({sortList:[[0,0],]});
-});
+    $.tablesorter.addParser({
+        id: "input",
+        is: function(s) {
+            return false;
+        },
+        format: function(s, table, cell) {
+            ret = $("select option:selected", cell).text();
+            return ret;
+        },
+        type: "text"
+    });
+    $(document).ready(function() {
+        $("table").tablesorter({headers:{4:{sorter:"input"}},
+                                sortList:[[0,0],]});
+    });
 </script>
 {% endblock %}
 
 {% block stylesheets %}
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/jquery.tablesorter.css" />
 <style type="text/css">
 .csv {
     background: transparent url(/images/icons/table_go.png) no-repeat scroll left center;
