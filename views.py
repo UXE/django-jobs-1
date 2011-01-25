@@ -176,8 +176,8 @@ def admin(request, job_slug):
         administrator = JobUser.objects.get(user=request.user, job=job)
     except JobUser.DoesNotExist:
         if not request.user.is_superuser:
-            # TODO: change to authorization required (401)
-            raise Http404
+            return HttpResponse(content="401 Unauthorized: Access is denied due to invalid credentials.",
+                                mimetype="text/plain", status=401)
         else:
             administrator = True
 
