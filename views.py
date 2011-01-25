@@ -118,6 +118,7 @@ def create_admin_csv(request, job_slug):
         administrator = JobUser.objects.get(user=request.user, job=job)
     except JobUser.DoesNotExist:
         if not request.user.is_superuser:
+            # TODO: change to authorization required (401)
             raise Http404
 
     response = HttpResponse(mimetype="text/csv")
@@ -168,6 +169,7 @@ def admin(request, job_slug):
         administrator = JobUser.objects.get(user=request.user, job=job)
     except JobUser.DoesNotExist:
         if not request.user.is_superuser:
+            # TODO: change to authorization required (401)
             raise Http404
         else:
             administrator = True
@@ -280,8 +282,10 @@ def applicant(request, job_slug, applicant_slug):
         administrator = JobUser.objects.get(user=request.user, job=job)
     except JobUser.DoesNotExist:
         if not request.user.is_superuser:
+            # TODO: change to authorization required (401)
             raise Http404
 
+    # TODO: change applicant_slug to username for clarity
     user = User.objects.get(username=applicant_slug)
     applicant = Applicant.objects.get(user=user)
     application = Application.objects.get(applicant=applicant, job=job)
