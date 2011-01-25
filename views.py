@@ -1,7 +1,9 @@
-import csv, datetime, os
+import csv
+import datetime
+import os
 
-from chunks.models import Chunk
 from string import Template
+from sqlalchemy import or_
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -15,6 +17,8 @@ from django.template import RequestContext
 from django.core.mail import EmailMessage, mail_admins
 from django.core.urlresolvers import reverse
 from django.conf import settings
+
+from chunks.models import Chunk
 
 # importing * so it can capture the registry code
 from wwu_housing.wwu_jobs.forms import *
