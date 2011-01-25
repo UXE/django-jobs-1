@@ -128,10 +128,13 @@ def create_admin_csv(request, job_slug):
     writer.writerow(["Student ID", "First Name", "Last Name", "Gender",
                      "Email", "Address", "GPA", "Ethnicity", "Status",
                      "Interview Location", "Interview Date"])
+
+    persons = _get_persons_for_job(job)
+
     for application in job.application_set.all():
         if not application.applicationcomponentpart_set.all():
             continue
-        person = Person.query.get(application.applicant.user.username)
+        person = persons[application.applicant.user.username]
         address = person.get_address_by_type("MA")
         if address:
             mailing_address = address.street_line_1
@@ -174,6 +177,8 @@ def admin(request, job_slug):
         else:
             administrator = True
 
+    persons = _get_persons_for_job(job)
+
     apps = []
     forms = []
     addresses = ["Birnam", "Ridgeway", "Buchanan", "Edens", "Fairhaven", "Higginson", "Highland", "Mathes", "Nash"]
@@ -181,8 +186,8 @@ def admin(request, job_slug):
     for application in job.application_set.all():
         if not application.applicationcomponentpart_set.all():
             continue
-        person = Person.query.get(application.applicant.user.username)
-        user = User.objects.get(username=person.username)
+        person = persons[application.applicant.user.username]
+        user = application.applicant.user
         applicant_full = Applicant.objects.get(user=user)
         app = {}
         app['username'] = person.username
