@@ -41,6 +41,7 @@ def job(request, job_slug):
                "job_open": job_open}
     return render_to_response("jobs/job_detail.html", context, context_instance=RequestContext(request))
 
+
 def jobs_index(request):
     context = {}
     jobs = Job.objects.all()
@@ -102,6 +103,7 @@ def jobs_index(request):
                "user" : request.user}
     return render_to_response("jobs/index.html", context, context_instance=RequestContext(request))
 
+
 def has_conduct(person):
     cursor = connection.cursor()
     cursor.execute("SELECT stunum FROM conduct.students WHERE stunum = %s", [person.student_id])
@@ -110,6 +112,7 @@ def has_conduct(person):
         return id[0]
     else:
         return False
+
 
 @login_required
 def create_admin_csv(request, job_slug):
@@ -163,6 +166,7 @@ def create_admin_csv(request, job_slug):
                          interview_date])
 
     return response
+
 
 @login_required
 def admin(request, job_slug):
@@ -280,6 +284,7 @@ def admin(request, job_slug):
 
     return render_to_response("jobs/admin.html", context, context_instance=RequestContext(request))
 
+
 @login_required
 def applicant(request, job_slug, applicant_slug):
     job = get_object_or_404(Job.objects.all(), slug=job_slug)
@@ -322,6 +327,7 @@ def applicant(request, job_slug, applicant_slug):
                "components": components,
                "job_title": job.title}
     return render_to_response("jobs/applicant.html", context, context_instance=RequestContext(request))
+
 
 @login_required
 def application(request, job_slug):
