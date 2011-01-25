@@ -1,7 +1,13 @@
 {% extends "base.html" %}
+
 {% block title %}Jobs{% endblock %}
+
 {% block content %}
 <h1>Jobs</h1>
+{% if not user.is_authenticated %}
+    <p>Please <a href="{% url login_cas %}">log in</a> to see your specific job status</p>
+{% endif %}
+
 {% for job in job_list %}
 <h2>{{job.job.title}}</h2>
     <ul>
