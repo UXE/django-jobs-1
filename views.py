@@ -121,8 +121,7 @@ def create_admin_csv(request, job_slug):
         administrator = JobUser.objects.get(user=request.user, job=job)
     except JobUser.DoesNotExist:
         if not request.user.is_superuser:
-            # TODO: change to authorization required (401)
-            raise Http404
+            return HttpResponse(status=401, content="401 Unauthorized Access", mimetype="text/plain")
 
     response = HttpResponse(mimetype="text/csv")
     response["Content-Disposition"] = 'attachment; filename=%s.csv' % job_slug
@@ -292,8 +291,8 @@ def applicant(request, job_slug, applicant_slug):
         administrator = JobUser.objects.get(user=request.user, job=job)
     except JobUser.DoesNotExist:
         if not request.user.is_superuser:
-            # TODO: change to authorization required (401)
-            raise Http404
+            return HttpResponse(content="401 Unauthorized: Access is denied due to invalid credentials.",
+                                mimetype="text/plain", status=401)
 
     # TODO: change applicant_slug to username for clarity
     user = User.objects.get(username=applicant_slug)
