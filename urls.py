@@ -4,7 +4,7 @@ from django.views.generic.list_detail import object_list
 from wwu_housing.wwu_jobs.views import interview
 
 from models import Job
-from views import admin, applicant, application, component, create_admin_csv, job, jobs_index
+from views import admin, applicant, application, component, create_admin_csv, export_application, job, jobs_index
 
 
 urlpatterns = patterns("",
@@ -14,6 +14,7 @@ urlpatterns = patterns("",
     url(r"^(?P<job_slug>[-\w]+)/interview/$", interview, name="jobs_interview"),
     url(r"^(?P<job_slug>[-\w]+)/admin/$", admin, name="jobs_job_admin"),
     url(r"^(?P<job_slug>[-\w]+)/admin/csv/$", create_admin_csv, name="jobs_job_admin_csv"),
+    url(r"^(?P<job_slug>[-\w]+)/admin/export_application/$", export_application, name="jobs_job__export_application"),
     url(r"^(?P<job_slug>[-\w]+)/admin/(?P<applicant_slug>[-\w]+)/$", applicant, name="jobs_job_admin_applicant"),
     url(r"^(?P<job_slug>[-\w]+)/application/$", application, name="jobs_application"),
     url(r"^(?P<job_slug>[-\w]+)/application/(?P<component_slug>[-\w]+)/$", component, name="jobs_component")

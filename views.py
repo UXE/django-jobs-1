@@ -329,10 +329,77 @@ def applicant(request, job_slug, applicant_slug):
 
 
 @login_required
-def application(request, job_slug):
+def export_application(request, job_slug):
+    job = get_object_or_404(Job.objects.all(), slug=job_slug)
+    try:
+        administrator = JobUser.objects.get(user=request.user, job=job)
+    except JobUser.DoesNotExist:
+        if not request.user.is_superuser:
+            return HttpResponse(status=401, content="401 Unauthorized Access", mimetype="text/plain")
 
+    response = HttpResponse(mimetype="text/csv")
+    response["Content-Disposition"] = 'attachment; filename=%s_applications.csv' % job_slug
+    writer = csv.writer(response)
+    #create column headers
+    columns = []
+    for component in job.component_set.all():
+        for component_part in component.componentpart_set.all():
+            part_name = component_part.content_object.short_name or component_part.content_object.question
+            column_name = "%s: %s" % (component, part_name)
+            columns.append(column_name)
+    writer.writerow(columns)
+
+    # fill the rows with application component part responses
+    for application in job.application_set.all():
+        #only include submitted applications
+        if application.is_submitted:
+            component_responses = []
+            application_component_parts = application.component_parts.all().order_by('component')
+            for component_part in application_component_parts:
+                component_response = application.applicationcomponentpart_set.get(
+                                                                    application=application,
+                                                                    component_part=component_part                                                                   )
+                if not component_response.content_type:
+                    component_responses.append("empty")
+                elif component_response.content_type.name == "file response":
+                    component_responses.append( component_response.content_object.file.name)
+                elif component_response.content_type.name == "boolean response":
+                    component_responses.append( component_response.content_object.response)
+                elif component_response.content_type.name == "work history response":
+                    employer = component_response.content_object.employer
+                    position_title = component_response.content_object.position_title
+                    start_date = component_response.content_object.start_date
+                    end_date = component_response.content_object.end_date
+                    hours_worked = component_response.content_object.hours_worked
+                    position_summary = component_response.content_object.position_summary
+                    work_history = "Employer: %s, Position: %s, Start Date: %s, End Date: %s, Hours Worked: %s, Position Summary: %s " % (employer, position_title, start_date, end_date, hours_worked, position_summary)
+                    component_responses.append(work_history)
+                elif component_response.content_type.name == "placement preference response":
+                    preference_responses = component_response.content_object.preferences.all()
+                    preference_choices = "Preferences:"
+                    for preference in preference_responses:
+                        preference_choices  = "%s %s" %(preference_choices, preference)
+                    preference_choices = "%s Explantion: %s" %(preference_choices,
+                                                            component_response.content_object.explanation)
+
+                    component_responses.append(preference_choices)
+                else:
+                    component_responses.append( component_response.content_object.response.encode('ascii', 'ignore'))
+            writer.writerow(component_responses)
+
+    return response
+
+
+@login_required
+def application(request, job_slug):
+    #TODO: bug here when job is posted but closed applicant's
+    #can't get back into review app.  This might become an issue
+    #as applicant's might want to review thier app before interviewing
+    #chango to Job.objects.get(slug=job_slug) and then do logic on
+    #whether to show app or not.
     try:
         job = Job.objects.posted().get(slug=job_slug)
+
     except Job.DoesNotExist:
         return HttpResponseRedirect(reverse("jobs_index"))
 
