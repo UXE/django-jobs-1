@@ -54,50 +54,55 @@ def jobs_index(request):
         applications = Application.objects.filter(applicant=applicant)
 
     for eachjob in jobs:
-        job = {}
-        #Check if they are an admin or not
-        try:
-            administrator = JobUser.objects.get(user=request.user, job=eachjob)
-        except (JobUser.DoesNotExist, TypeError):
-            administrator = None
+        if eachjob.close_datetime > datetime.datetime.now():
+            job = {}
+            #Check if they are an admin or not
+            try:
+                administrator = JobUser.objects.get(user=request.user, job=eachjob)
+            except (JobUser.DoesNotExist, TypeError):
+                administrator = None
 
 
-        #check if user has a job app for each job
-        for application in applications:
-            if application.job == eachjob:
-                job["job"] = eachjob
-                job["applied"] = True
-                job["admin"] = administrator
-                #if the application is submitted obtain status
-                if application.is_submitted:
-                    try:
-                        application_status = AdminApplication.objects.get(
-                                                        application=application)
-                        job["app_status"] = application_status.status
-                        if application_status.status.status in [u"Interview Scheduled", u"Interview Offered"]:
-                            job["interview_status"] = application_status.status.status
-                            try:
-                                interview = Interview.objects.get(job=application.job,
+            #check if user has a job app for each job
+            for application in applications:
+                if application.job == eachjob:
+                    job["job"] = eachjob
+                    job["applied"] = True
+                    job["admin"] = administrator
+                    #if the application is submitted obtain status
+                    if application.is_submitted:
+                    #TODO: change so submitted app's don't show up if unaccessable
+                    # using the closedate
+                        try:
+                            application_status = AdminApplication.objects.get(
                                                             application=application)
-                                job["interview_date"] = interview.datetime
-                            except Interview.DoesNotExist:
-                                job["interview_date"] = None
-                        job_list.append(job)
-                    except AdminApplication.DoesNotExist:
-                        job["app_status"] = "You have successfully submitted your application"
-                        job_list.append(job)
-                #else if job has app that has not been submitted and is still open add it to list
-                else:
-                    if eachjob.close_datetime > datetime.datetime.now():
-                        job["app_status"] = "In Progress"
-                        job_list.append(job)
-        #include job's that are still open
-        if not job:
-            if eachjob.close_datetime > datetime.datetime.now():
-                job["job"] = eachjob
-                job["applied"] = None
-                job["admin"] = administrator
-                job_list.append(job)
+                            job["app_status"] = application_status.status
+                            if application_status.status.status in [u"Interview Scheduled", u"Interview Offered"]:
+                                job["interview_status"] = application_status.status.status
+                                try:
+                                    interview = Interview.objects.get(job=application.job,
+                                                                application=application)
+                                    job["interview_date"] = interview.datetime
+                                except Interview.DoesNotExist:
+                                    job["interview_date"] = None
+                            job_list.append(job)
+                        except AdminApplication.DoesNotExist:
+                            job["app_status"] = "You have successfully submitted your application"
+                            job_list.append(job)
+                    #else if job has app that has not been submitted and is still open add it to list
+                    else:
+                        #change to use the .priotitydate instead
+                        if eachjob.close_datetime > datetime.datetime.now():
+                            job["app_status"] = "In Progress"
+                            job_list.append(job)
+            #include job's that are still open
+            if not job:
+                # change to use the .priotirydate instead
+                if eachjob.close_datetime > datetime.datetime.now():
+                    job["job"] = eachjob
+                    job["applied"] = None
+                    job["admin"] = administrator
+                    job_list.append(job)
 
     context = {"job_list" : job_list,
                "user" : request.user}
@@ -392,15 +397,9 @@ def export_application(request, job_slug):
 
 @login_required
 def application(request, job_slug):
-    #TODO: bug here when job is posted but closed applicant's
-    #can't get back into review app.  This might become an issue
-    #as applicant's might want to review thier app before interviewing
-    #chango to Job.objects.get(slug=job_slug) and then do logic on
-    #whether to show app or not.
-    try:
-        job = Job.objects.posted().get(slug=job_slug)
-
-    except Job.DoesNotExist:
+    job = Job.objects.get(slug=job_slug)
+    #redirect if job closed
+    if job.close_datetime < datetime.datetime.now():
         return HttpResponseRedirect(reverse("jobs_index"))
 
     #Chunks titled "jobs.job-slug-here-application-view" contain a message
@@ -416,7 +415,8 @@ def application(request, job_slug):
         applicant__user=request.user
     ).count() > 0
 
-    # Redirect the user to the job's website if the job isn't open.
+    # Redirect the user to the job's website if the job isn't open
+    # and they do not have an application
     if not job.is_open() and not application_exists:
         if job.will_open():
             message = "Applications for %s are not open yet. They will open %s." % (job, job.open_datetime)
@@ -464,6 +464,9 @@ def application(request, job_slug):
         "job": job,
         "chunk": chunk,
     }
+    if job.deadline > datetime.datetime.now():
+        context["submit"] = True
+
     return render_to_response(
         "jobs/application.html",
         context,
@@ -525,12 +528,19 @@ def component(request, job_slug, component_slug):
     if all_forms_valid:
         return HttpResponseRedirect(job.get_application_url())
 
-    return render_to_response(
-        "jobs/component.html",
-        {"application": application,
+    context = {
+        "application": application,
          "component": component,
          "component_parts": component_parts,
-         "has_file_field": has_file_field},
+         "has_file_field": has_file_field
+    }
+
+    if job.deadline > datetime.datetime.now():
+        context["modify"] = True
+
+    return render_to_response(
+        "jobs/component.html",
+        context,
         context_instance=RequestContext(request)
     )
 

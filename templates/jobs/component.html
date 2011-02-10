@@ -46,7 +46,11 @@
 {% if application.is_submitted %}
     <p>You can no longer modify your application after it has been submitted.</p>
 {% else %}
-    <input type="submit" value="Save" />
+    {% if modify %}
+        <input type="submit" value="Save" />
+    {% else %}
+        <p>You may no longer submit your application the deadline has passed.</p>
+    {% endif %}
 {% endif %}
 </div>
 
