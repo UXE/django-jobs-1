@@ -28,7 +28,7 @@ from wwu_housing.data import Person
 from forms import AdminApplicationForm
 from models import AdminApplication, Applicant, Application, ApplicationComponentPart, ApplicationEmail, ApplicationStatus, Component, Job, JobUser, User
 
-from utils import get_application_component_status
+from utils import get_application_component_status, _get_persons_for_job
 
 
 def job(request, job_slug):
@@ -545,20 +545,4 @@ def component(request, job_slug, component_slug):
     )
 
 
-def _get_persons_for_job(job):
-    # load person objects for all job applicants
-    usernames = []
-    for application in job.application_set.all():
-        if not application.applicationcomponentpart_set.all():
-            continue
-        usernames.append(application.applicant.user.username)
-
-    usernames_or = [Person.pidm == Person.pidm_from_username(username) for username in usernames]
-    persons = Person.query.filter(or_(*usernames_or))
-
-    object_dict = {}
-    for person in persons:
-        object_dict[person.username] = person
-
-    return object_dict
 

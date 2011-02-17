@@ -1,4 +1,8 @@
+from sqlalchemy import or_
+
 import random
+
+from wwu_housing.data import Person
 
 from models import ApplicationComponentPart
 
@@ -91,3 +95,21 @@ resulting dictionary. You passed: %s
                         assignments["_UNASSIGNED"].append(applicant)
 
     return assignments
+
+def _get_persons_for_job(job):
+    # load person objects for all job applicants
+    usernames = []
+    for application in job.application_set.all():
+        if not application.applicationcomponentpart_set.all():
+            continue
+        usernames.append(application.applicant.user.username)
+
+    usernames_or = [Person.pidm == Person.pidm_from_username(username) for username in usernames]
+    persons = Person.query.filter(or_(*usernames_or))
+
+    object_dict = {}
+    for person in persons:
+        object_dict[person.username] = person
+
+    return object_dict
+
