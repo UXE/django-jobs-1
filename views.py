@@ -348,7 +348,7 @@ def export_application(request, job_slug):
     #create column headers
     columns = []
     for component in job.component_set.all():
-        for component_part in component.componentpart_set.all():
+        for component_part in component.componentpart_set.all().order_by('sequence_number'):
             part_name = component_part.content_object.short_name or component_part.content_object.question
             column_name = "%s: %s" % (component, part_name)
             columns.append(column_name)
@@ -359,11 +359,13 @@ def export_application(request, job_slug):
         #only include submitted applications
         if application.is_submitted:
             component_responses = []
-            application_component_parts = application.component_parts.all().order_by('component')
+            application_component_parts = application.component_parts.all().order_by('component', 'sequence_number')
+
             for component_part in application_component_parts:
                 component_response = application.applicationcomponentpart_set.get(
                                                                     application=application,
-                                                                    component_part=component_part                                                                   )
+                                                                    component_part=component_part
+                                                                    )
                 if not component_response.content_type:
                     component_responses.append("empty")
                 elif component_response.content_type.name == "file response":
