@@ -348,7 +348,7 @@ def export_application(request, job_slug):
     #create column headers
     columns = []
     for component in job.component_set.all():
-        for component_part in component.componentpart_set.all().order_by('sequence_number'):
+        for component_part in component.componentpart_set.all():
             part_name = component_part.content_object.short_name or component_part.content_object.question
             column_name = "%s: %s" % (component, part_name)
             columns.append(column_name)
