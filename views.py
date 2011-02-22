@@ -198,7 +198,7 @@ def admin(request, job_slug):
         user = application.applicant.user
         applicant_full = Applicant.objects.get(user=user)
         app = {}
-        app['username'] = person.username
+        app['username'] = person.username or person.student_id
         app['first_name'] = person.first_name
         app['last_name'] = person.last_name
         app['gpa'] = person.gpa

@@ -3,6 +3,7 @@ from sqlalchemy import or_
 import random
 
 from wwu_housing.data import Person
+from wwu_housing.library.validator import validate_id
 
 from models import ApplicationComponentPart
 
@@ -99,17 +100,28 @@ resulting dictionary. You passed: %s
 def _get_persons_for_job(job):
     # load person objects for all job applicants
     usernames = []
+    student_ids = []
     for application in job.application_set.all():
         if not application.applicationcomponentpart_set.all():
             continue
-        usernames.append(application.applicant.user.username)
+        if validate_id(application.applicant.user.username):
+            student_ids.append(application.applicant.user.username)
+        else:
+            usernames.append(application.applicant.user.username)
 
+    student_ids_or = [Person.student_id == student_id for student_id in student_ids]
     usernames_or = [Person.pidm == Person.pidm_from_username(username) for username in usernames]
-    persons = Person.query.filter(or_(*usernames_or))
+    ids_or = student_ids_or + usernames_or
+
+
+    persons = Person.query.filter(or_(*ids_or))
 
     object_dict = {}
     for person in persons:
-        object_dict[person.username] = person
+        if person.username:
+            object_dict[person.username] = person
+        else:
+            object_dict[person.student_id] = person
 
     return object_dict
 
