@@ -380,7 +380,7 @@ def export_application(request, job_slug):
                     hours_worked = component_response.content_object.hours_worked
                     position_summary = component_response.content_object.position_summary
                     work_history = "Employer: %s, Position: %s, Start Date: %s, End Date: %s, Hours Worked: %s, Position Summary: %s " % (employer, position_title, start_date, end_date, hours_worked, position_summary)
-                    component_responses.append(work_history)
+                    component_responses.append(work_history.encode('ascii', 'ignore'))
                 elif component_response.content_type.name == "placement preference response":
                     preference_responses = component_response.content_object.preferences.all()
                     preference_choices = "Preferences:"
@@ -389,7 +389,7 @@ def export_application(request, job_slug):
                     preference_choices = "%s Explantion: %s" %(preference_choices,
                                                             component_response.content_object.explanation)
 
-                    component_responses.append(preference_choices)
+                    component_responses.append(preference_choices.encode('ascii', 'ignore'))
                 else:
                     component_responses.append( component_response.content_object.response.encode('ascii', 'ignore'))
             writer.writerow(component_responses)
