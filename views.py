@@ -174,6 +174,7 @@ def create_admin_csv(request, job_slug):
 
 @login_required
 def admin(request, job_slug):
+
     post_data = request.POST or None
     job = get_object_or_404(Job.objects.all(), slug=job_slug)
     try:
@@ -236,39 +237,52 @@ def admin(request, job_slug):
         if administrator and form.is_valid():
             form.save()
             if form.initial["status"] != form.cleaned_data["status"].id:
-                try:
-                    application_email = ApplicationEmail.objects.get(status=form.cleaned_data["status"], job=job)
-                except ApplicationEmail.DoesNotExist:
-                    application_email = None
-                if not settings.DEBUG:
-                    if application_email and person.email:
-                        subject = application_email.subject
-                        from_email = application_email.sender
-                        to_email = (person.email,)
+                if form.cleaned_data["status"].status not in [u'Position Offered', u'Position Accepted']:
+                    try:
+                        application_email = ApplicationEmail.objects.get(status=form.cleaned_data["status"], job=job)
+                    except ApplicationEmail.DoesNotExist:
+                        application_email = None
+                    if not settings.DEBUG:
+                        if application_email and person.email:
+                            subject = application_email.subject
+                            from_email = application_email.sender
+                            to_email = (person.email,)
 
-                        try:
-                            message_content = Template(application_email.content)
-                            message = message_content.substitute(name=person.first_name)
-                        except KeyError, e:
-                            subject = "KeyError in application email"
-                            message = "%s in application email id: %s" % (e.message, application_email.name)
+                            try:
+                                message_content = Template(application_email.content)
+                                message = message_content.substitute(name=person.first_name)
+                            except KeyError, e:
+                                subject = "KeyError in application email"
+                                message = "%s in application email id: %s" % (e.message, application_email.name)
+                                mail_admins(subject, message)
+
+                            email = EmailMessage(subject, message, from_email, to_email)
+                            email.send()
+                            comment = "%s email has been sent" % (form.cleaned_data["status"])
+                            user = request.user or None
+                            content_type = ContentType.objects.get(name="application")
+                            Comment.objects.create(content_type=content_type,
+                                                object_pk=application.id,
+                                                site=Site.objects.get_current(),
+                                                user=user,
+                                                comment=comment)
+
+                        elif application_email:
+                            subject = "%s %s for position %s has no email" % (person.first_name, person.last_name, job)
+                            message = "%s %s (%s) does not have an email address. They applied for %s and were supposed to receive %s email." % (person.first_name, person.last_name, person.student_id, job, application_email.subject)
                             mail_admins(subject, message)
-
-                        email = EmailMessage(subject, message, from_email, to_email)
-                        email.send()
-                        comment = "%s email has been sent" % (form.cleaned_data["status"])
-                        user = request.user or None
-                        content_type = ContentType.objects.get(name="application")
-                        Comment.objects.create(content_type=content_type,
-                                               object_pk=application.id,
-                                               site=Site.objects.get_current(),
-                                               user=user,
-                                               comment=comment)
-                    elif application_email:
-                        subject = "%s %s for position %s has no email" & (person.first_name, person.last_name, job)
-                        message = "%s %s (%s) does not have an email address. They applied for %s and were supposed to receive %s email." % (person.first_name, person.last_name, person.student_id, job, application_email.subject)
-                        mail_admins(subject, message)
-
+                            from_email = application_email.sender
+                            to_email = (application_email.sender, )
+                            email = EmailMessage(subject, message, from_email, to_email)
+                            email.send()
+                            comment = "%s no email could be sent" % (form.cleaned_data["status"])
+                            user = request.user or None
+                            content_type = ContentType.objects.get(name="application")
+                            Comment.objects.create(content_type=content_type,
+                                                    object_pk=application.id,
+                                                    site=Site.objects.get_current(),
+                                                    user=user,
+                                                    comment=comment)
         apps.append(app)
         forms.append(form)
     if forms and all(form.is_valid() for form in forms):
