@@ -361,6 +361,7 @@ def export_application(request, job_slug):
     writer = csv.writer(response)
     #create column headers
     columns = []
+    columns.append("Submission Date")
     for component in job.component_set.all():
         for component_part in component.componentpart_set.all():
             part_name = component_part.content_object.short_name or component_part.content_object.question
@@ -374,7 +375,7 @@ def export_application(request, job_slug):
         if application.is_submitted:
             component_responses = []
             application_component_parts = application.component_parts.all().order_by('component', 'sequence_number')
-
+            component_responses.append(application.end_datetime.strftime("%m,%d,%y %I:%M"))
             for component_part in application_component_parts:
                 component_response = application.applicationcomponentpart_set.get(
                                                                     application=application,
