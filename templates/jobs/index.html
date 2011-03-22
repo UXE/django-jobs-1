@@ -37,5 +37,7 @@
         <dd>{{job.job.deadline|date:date_format }}</dd>
     {% endwith %}
     </dl>
+{% empty %}
+    <h2>There are currently positions open.</h2>
 {% endfor %}
 {% endblock %}
