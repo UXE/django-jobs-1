@@ -54,7 +54,7 @@ def jobs_index(request):
         applications = Application.objects.filter(applicant=applicant)
 
     for eachjob in jobs:
-        if eachjob.close_datetime > datetime.datetime.now():
+        if eachjob.close_datetime > datetime.datetime.now() and eachjob.post_datetime >= datetime.datetime.now():
             job = {}
             #Check if they are an admin or not
             try:
