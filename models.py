@@ -47,7 +47,9 @@ class Job(models.Model):
     objects = JobManager()
 
     def save(self, *args, **kwargs):
-        if not self.slug:
+        # generate the slug the first time the job is saved; if it's removed
+        # after that, the user probably knows what they are doing
+        if not self.slug and not self.id:
             self.slug = slugify(self.title)
         super(Job, self).save(*args, **kwargs)
 
