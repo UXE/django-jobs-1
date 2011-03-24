@@ -108,20 +108,19 @@ def _get_persons_for_job(job):
             student_ids.append(application.applicant.user.username)
         else:
             usernames.append(application.applicant.user.username)
+    if student_ids or usernames:
+        student_ids_or = [Person.student_id == student_id for student_id in student_ids]
+        usernames_or = [Person.pidm == Person.pidm_from_username(username) for username in usernames]
+        ids_or = student_ids_or + usernames_or
+        persons = Person.query.filter(or_(*ids_or))
+        object_dict = {}
+        for person in persons:
+            if person.username:
+                object_dict[person.username] = person
+            else:
+                object_dict[person.student_id] = person
 
-    student_ids_or = [Person.student_id == student_id for student_id in student_ids]
-    usernames_or = [Person.pidm == Person.pidm_from_username(username) for username in usernames]
-    ids_or = student_ids_or + usernames_or
-
-
-    persons = Person.query.filter(or_(*ids_or))
-
-    object_dict = {}
-    for person in persons:
-        if person.username:
-            object_dict[person.username] = person
-        else:
-            object_dict[person.student_id] = person
-
-    return object_dict
+        return object_dict
+    else:
+        return None
 
