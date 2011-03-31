@@ -33,11 +33,31 @@ from utils import get_application_component_status, _get_persons_for_job
 
 def job(request, job_slug):
     job = get_object_or_404(Job.objects.all(), slug=job_slug)
-    if job.close_datetime > datetime.datetime.now():
+    applied = False
+    status = "In progress"
+    if job.close_datetime > datetime.datetime.now() > job.post_datetime:
+        if request.user.is_authenticated():
+            application_exists = Application.objects.filter(
+                                job=job,
+                                applicant__user=request.user
+                                )
+            if application_exists:
+                applied = True
+                if application_exists[0].is_submitted:
+                    try:
+                            application_status = AdminApplication.objects.get(
+                                                            application=application_exists[0])
+                            status  = application_status.status
+                    except AdminApplication.DoesNotExist:
+                            status = "Application Submitted"
+
+    if job.deadline > datetime.datetime.now() > job.post_datetime:
         job_open = True
     else:
         job_open = False
     context = {"job": job,
+               "applied" : applied,
+               "status" : status,
                "job_open": job_open}
     return render_to_response("jobs/job_detail.html", context, context_instance=RequestContext(request))
 
@@ -61,9 +81,8 @@ def jobs_index(request):
                 administrator = JobUser.objects.get(user=request.user, job=eachjob)
             except (JobUser.DoesNotExist, TypeError):
                 administrator = None
-
-
-            #check if user has a job app for each job
+            # if user has a job app for a job whose deadline date has not
+            # passed include it.
             for application in applications:
                 if application.job == eachjob:
                     job["job"] = eachjob
@@ -89,16 +108,16 @@ def jobs_index(request):
                         except AdminApplication.DoesNotExist:
                             job["app_status"] = "You have successfully submitted your application"
                             job_list.append(job)
-                    #else if job has app that has not been submitted and is still open add it to list
+                    # If the user has started an application for this job and the job deadline has
+                    # not passed include it with "In Progress" Status
                     else:
-                        #change to use the .priotitydate instead
-                        if eachjob.close_datetime > datetime.datetime.now():
+
+                        if eachjob.deadline > datetime.datetime.now():
                             job["app_status"] = "In Progress"
                             job_list.append(job)
-            #include job's that are still open
+            # Include all job's that are still open regardless of application status
             if not job:
-                # change to use the .priotirydate instead
-                if eachjob.close_datetime > datetime.datetime.now():
+                if eachjob.deadline > datetime.datetime.now():
                     job["job"] = eachjob
                     job["applied"] = None
                     job["admin"] = administrator

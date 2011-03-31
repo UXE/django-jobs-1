@@ -5,16 +5,20 @@
 <h1>{{ job.title }}</h1>
 
 {% include "messages.html" %}
-
-{% if job_open %}
-    <ul>
-        <li><a href="{{ job.get_application_url }}">Apply Now</a></li>
-
+{% if applied %}
+     <ul>
+        <li><a href="{{ job.get_application_url }}">Application</a></li>
+        <li>Status: {{ status}}</li>
     </ul>
 {% else %}
-    <p>This position is closed</p>
+    {% if job_open %}
+        <ul>
+            <li><a href="{{ job.get_application_url }}">Apply Now</a></li>
+        </ul>
+    {% else %}
+        <p>This position is closed</p>
+    {% endif %}
 {% endif %}
-
 <div>{{ job.description|markdown }}</div>
     <ul>
         <li><a href="/apps/jobs">Back to Jobs list</a></li>
