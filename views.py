@@ -117,7 +117,7 @@ def jobs_index(request):
                             job_list.append(job)
             # Include all job's that are still open regardless of application status
             if not job:
-                if eachjob.deadline > datetime.datetime.now():
+                if eachjob.deadline > datetime.datetime.now() or administrator:
                     job["job"] = eachjob
                     job["applied"] = None
                     job["admin"] = administrator

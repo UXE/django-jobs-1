@@ -12,7 +12,7 @@
 <h2>{{job.job.title}}</h2>
     <ul>
         <li><a href="{{job.job.get_absolute_url}}">{%if job.applied %}Job Description{%else%}Learn more{%endif%}</a></li>
-        <li>{%if job.applied %}<a href="{{job.job.get_application_url}}">Application</a> Status: {{job.app_status}}{%else%}<a href="{{job.job.get_application_url}}">Apply{%endif%}</a></li>
+        {%if job.applied %}<li><a href="{{job.job.get_application_url}}">Application</a> Status: {{job.app_status}}</li>{%else%}{% if job.is_open %}<li><a href="{{job.job.get_application_url}}">Apply</a></li>{%endif%}{% endif %}
 
         {% if job.admin %}<li><a href="{{ job.job.get_absolute_url }}admin/">Admin</a></li>{% endif %}
 
@@ -38,6 +38,6 @@
     {% endwith %}
     </dl>
 {% empty %}
-    <h2>There are currently positions open.</h2>
+    <h2>There are currently no positions open.</h2>
 {% endfor %}
 {% endblock %}
