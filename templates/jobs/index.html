@@ -34,7 +34,11 @@
         <dt>Open Date:</dt>
         <dd> {{job.job.open_datetime|date:date_format }}</dd>
         <dt>Deadline:</dt>
-        <dd>{{job.job.deadline|date:date_format }}</dd>
+        <dd>{%if not job.is_open %}
+                No longer accepting applications as of:
+               {{job.job.deadline|date:date_format }}
+            {% endif %}
+        </dd>
     {% endwith %}
     </dl>
 {% empty %}
