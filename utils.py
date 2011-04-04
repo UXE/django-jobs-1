@@ -1,11 +1,13 @@
+import random
+
 from sqlalchemy import or_
 
-import random
 
 from wwu_housing.data import Person
 from wwu_housing.library.validator import validate_id
 
 from models import ApplicationComponentPart
+
 
 def get_application_component_status(application, component):
     is_complete = []
