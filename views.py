@@ -379,8 +379,8 @@ def export_application(request, job_slug):
     response["Content-Disposition"] = 'attachment; filename=%s_applications.csv' % job_slug
     writer = csv.writer(response)
     #create column headers
-    columns = []
-    columns.append("Submission Date")
+    columns = ["Submission Date", "Interview Date"]
+
     for component in job.component_set.all():
         for component_part in component.componentpart_set.all():
             part_name = component_part.content_object.short_name or component_part.content_object.question
@@ -393,8 +393,13 @@ def export_application(request, job_slug):
         #only include submitted applications
         if application.is_submitted:
             component_responses = []
-            application_component_parts = application.component_parts.all().order_by('component', 'sequence_number')
             component_responses.append(application.end_datetime.strftime("%m,%d,%y %I:%M"))
+            Interview_date = application.interview_set.all()
+            if Interview_date:
+                component_responses.append(Interview_date[0].datetime.strftime("%m,%d,%y %I:%M"))
+            else:
+                component_responses.append("")
+            application_component_parts = application.component_parts.all().order_by('component', 'sequence_number')
             for component_part in application_component_parts:
                 component_response = application.applicationcomponentpart_set.get(
                                                                     application=application,
