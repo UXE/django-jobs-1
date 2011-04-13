@@ -12,7 +12,10 @@
 <h2>{{job.job.title}}</h2>
     <ul>
         <li><a href="{{job.job.get_absolute_url}}">{%if job.applied %}Job Description{%else%}Learn more{%endif%}</a></li>
-        {%if job.applied %}<li><a href="{{job.job.get_application_url}}">Application</a> Status: {{job.app_status}}</li>{%else%}{% if job.is_open %}<li><a href="{{job.job.get_application_url}}">Apply</a></li>{%endif%}{% endif %}
+        {%if job.applied %}<li><a href="{{job.job.get_application_url}}">Application</a> Status: {{job.app_status}}</li>
+        {%else%}
+            {% if job.job.is_open %}<li><a href="{{job.job.get_application_url}}">Apply</a></li>{%endif%}
+        {% endif %}
 
         {% if job.admin %}<li><a href="{{ job.job.get_absolute_url }}admin/">Admin</a></li>{% endif %}
 
@@ -34,10 +37,11 @@
         <dt>Open Date:</dt>
         <dd> {{job.job.open_datetime|date:date_format }}</dd>
         <dt>Deadline:</dt>
-        <dd>{%if not job.job.is_open %}
-                No longer accepting applications as of:
+        <dd>{%if job.job.will_open or job.job.is_open %}
+                {{job.job.deadline|date:date_format }}
+            {% else%}
+                No longer accepting applications as of: {{job.job.deadline|date:date_format }}
             {% endif %}
-            {{job.job.deadline|date:date_format }}
         </dd>
     {% endwith %}
     </dl>

@@ -34,6 +34,7 @@ from utils import get_application_component_status, _get_persons_for_job
 def job(request, job_slug):
     job = get_object_or_404(Job.objects.all(), slug=job_slug)
     applied = False
+    job_open = True
     status = "In progress"
     if job.close_datetime > datetime.datetime.now() > job.post_datetime:
         if request.user.is_authenticated():
@@ -51,10 +52,11 @@ def job(request, job_slug):
                     except AdminApplication.DoesNotExist:
                             status = "Application Submitted"
 
-    if job.deadline > datetime.datetime.now() > job.post_datetime:
-        job_open = True
-    else:
+    if job.deadline < datetime.datetime.now():
         job_open = False
+    elif job.open_datetime > datetime.datetime.now():
+        job_open = False
+
     context = {"job": job,
                "applied" : applied,
                "status" : status,
