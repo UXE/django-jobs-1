@@ -15,8 +15,6 @@
         <ul>
             <li><a href="{{ job.get_application_url }}">Apply Now</a></li>
         </ul>
-    {% else %}
-        <p>Not accepting applications at this time.</p>
     {% endif %}
 {% endif %}
 <div>{{ job.description|markdown }}</div>
