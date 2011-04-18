@@ -1,7 +1,7 @@
 from django.conf.urls.defaults import *
 from django.views.generic.list_detail import object_list
 
-from wwu_housing.wwu_jobs.views import interview, positionplacement, interview_creation
+from wwu_housing.wwu_jobs.views import interview, positionplacement #, interview_creation
 from wwu_housing.desk_attendant.views  import apply, admin_list
 from models import Job
 from views import admin, applicant, application, component, create_admin_csv, export_application, job, jobs_index
