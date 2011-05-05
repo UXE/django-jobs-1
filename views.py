@@ -74,7 +74,7 @@ def jobs_index(request):
         user = request.user
         applicant = Applicant.objects.filter(user=user)
         applications = Application.objects.filter(applicant=applicant)
-
+    administrator = None
     for eachjob in jobs:
         if eachjob.close_datetime > datetime.datetime.now() and eachjob.post_datetime <= datetime.datetime.now():
             job = {}
@@ -83,17 +83,19 @@ def jobs_index(request):
                 administrator = JobUser.objects.get(user=request.user, job=eachjob)
             except (JobUser.DoesNotExist, TypeError):
                 administrator = None
+
             # if user has a job app for a job whose deadline date has not
             # passed include it.
             for application in applications:
+
                 if application.job == eachjob:
-                    job["job"] = eachjob
-                    job["applied"] = True
-                    job["admin"] = administrator
                     #if the application is submitted obtain status
                     if application.is_submitted:
-                    #TODO: change so submitted app's don't show up if unaccessable
-                    # using the closedate
+                        job["job"] = eachjob
+                        job["applied"] = True
+                        job["admin"] = administrator
+                        #TODO: change so submitted app's don't show up if unaccessable
+                        # using the closedate
                         try:
                             application_status = AdminApplication.objects.get(
                                                             application=application)
@@ -112,14 +114,16 @@ def jobs_index(request):
                             job_list.append(job)
                     # If the user has started an application for this job and the job deadline has
                     # not passed include it with "In Progress" Status
-                    else:
-
-                        if eachjob.deadline > datetime.datetime.now():
-                            job["app_status"] = "In Progress"
-                            job_list.append(job)
+                    elif eachjob.deadline > datetime.datetime.now():
+                        job["job"] = eachjob
+                        job["applied"] = True
+                        job["admin"] = administrator
+                        job["app_status"] = "In Progress"
+                        job_list.append(job)
             # Include job's that are still open regardless of application status
             # or if job deadline has passed and job closedate has not and user is admin
-            if (not job and (eachjob.deadline > datetime.datetime.now())) or (not job and administrator):
+            if not job:
+                if (eachjob.deadline > datetime.datetime.now()) or administrator:
                     job["job"] = eachjob
                     job["applied"] = None
                     job["admin"] = administrator
