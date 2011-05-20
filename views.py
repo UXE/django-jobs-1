@@ -133,17 +133,6 @@ def jobs_index(request):
                "user" : request.user}
     return render_to_response("jobs/index.html", context, context_instance=RequestContext(request))
 
-
-def has_conduct(person):
-    cursor = connection.cursor()
-    cursor.execute("SELECT stunum FROM conduct.students WHERE stunum = %s", [person.student_id])
-    id = cursor.fetchone()
-    if id:
-        return id[0]
-    else:
-        return False
-
-
 @login_required
 def create_admin_csv(request, job_slug):
     job = get_object_or_404(Job.objects.all(), slug=job_slug)
@@ -244,7 +233,7 @@ def admin(request, job_slug):
         else:
             app["address"] = "Off campus"
 
-        app["conduct_id"] = has_conduct(person)
+#       app["conduct_id"] = has_conduct(person)
         try:
             instance = AdminApplication.objects.get(application=application)
         except AdminApplication.DoesNotExist:

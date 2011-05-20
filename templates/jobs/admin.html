@@ -54,7 +54,6 @@
             <th>Applicant</th>
             <th>Address</th>
             <th>GPA</th>
-            <th>In Conduct</th>
             <th>Status</th>
             <th>Interview Time</th>
             <th>Emails Sent</th>
@@ -68,11 +67,6 @@
             <td>
             {% if person.gpa %}
                 {{ person.gpa|floatformat:2 }}
-            {% endif %}
-            </td>
-            <td>
-            {% if person.conduct_id %}
-                <a href="/conduct/history.php?id={{ person.conduct_id }}">Link</a>
             {% endif %}
             </td>
             <td>
